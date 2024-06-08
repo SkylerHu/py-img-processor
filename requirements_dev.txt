@@ -1,0 +1,13 @@
+pip==24.0
+ipython==8.18.1
+
+# test
+tox==4.15.0
+
+Pillow==8
+-r requirements_test.txt
+
+# 打包需要
+setuptools==70.0.0
+wheel==0.43.0
+twine==5.1.0
