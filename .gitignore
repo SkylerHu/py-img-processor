@@ -15,6 +15,7 @@ site
 # Env
 .DS_Store
 *.swp
+.tmp/
 .env/
 .env*/
 .idea/
