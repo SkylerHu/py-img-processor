@@ -3,7 +3,7 @@
 from py_enum import ChoiceEnum
 
 
-class ImageType(ChoiceEnum):
+class ImageFormat(ChoiceEnum):
     JPEG = ("JPEG", "JPEG")
     PNG = ("PNG", "PNG")
     WEBP = ("WebP", "WebP")

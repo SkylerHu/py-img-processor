@@ -6,6 +6,10 @@ class ProcessException(Exception):
     pass
 
 
+class ProcessLimitException(Exception):
+    pass
+
+
 class ParamParseException(ProcessException):
     """解析参数出现错误"""
 

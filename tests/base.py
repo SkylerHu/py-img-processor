@@ -12,4 +12,4 @@ def compare_imgs_by_path(input_path: str, target_path: str, threshold: int = 1) 
 
     ssim = structural_similarity(input_img, target_img, multichannel=True)
 
-    assert ssim >= threshold
+    assert ssim >= threshold, f"ssim {ssim} < {threshold}"

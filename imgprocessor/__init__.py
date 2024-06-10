@@ -31,12 +31,14 @@ class SettingsProxy(object):
     # 是否调试模式
     DEBUG = False
 
-    # 处理原图的大小限制
-    PROCESSOR_MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB
+    # 处理原图的大小限制， 单位 MB
+    PROCESSOR_MAX_FILE_SIZE = 20
     # 处理图像，原图宽高像素限制
     PROCESSOR_MAX_W_H = 30000
     # width x height总像素3亿，处理前后的值都被此配置限制
     PROCESSOR_MAX_PIXEL = 300000000
+    # 图片处理后的默认质量
+    PROCESSOR_DEFAULT_QUALITY = 75
 
     def __getattribute__(self, attr: str) -> typing.Any:
         try:

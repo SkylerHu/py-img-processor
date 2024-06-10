@@ -3,16 +3,17 @@
 import typing
 
 from imgprocessor import enums
-from imgprocessor.exceptions import ParamParseException
+from imgprocessor.exceptions import ParamParseException, ParamValidateException
 
-from .resize import ResizeAction
+from .base import BaseParser  # noqa: F401
+from .resize import ResizeParser
 
 
 class ProcessParams(object):
     """图片处理输入参数"""
 
     __ACTION_PARASER_MAP: dict = {
-        enums.OpAction.RESIZE: ResizeAction,
+        enums.OpAction.RESIZE: ResizeParser,
     }
 
     def __init__(
@@ -64,11 +65,16 @@ class ProcessParams(object):
             if key not in enums.OpAction:  # type: ignore
                 continue
             if key == enums.OpAction.FORMAT:  # type: ignore
+                fmt_values = [v.lower() for v in enums.ImageFormat.values]
+                if param_str not in fmt_values:
+                    raise ParamValidateException(f"参数 format 只能是其中之一：{fmt_values}")
                 fmt = param_str
             elif key == enums.OpAction.QUALITY:  # type: ignore
                 if not param_str.isdigit():
-                    raise ParamParseException("参数 quality 必须是正整数")
+                    raise ParamParseException("参数 quality 必须是大于0的正整数")
                 quality = int(param_str)
+                if quality < 1 or quality > 100:
+                    raise ParamValidateException("参数 quality 取值范围为[1, 100]")
             else:
                 action_cls = cls.__ACTION_PARASER_MAP.get(key)
                 if not action_cls or action_cls.key != key:

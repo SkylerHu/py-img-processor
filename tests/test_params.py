@@ -4,7 +4,7 @@ import typing
 import pytest
 
 from imgprocessor import enums, settings
-from imgprocessor.params import ResizeAction
+from imgprocessor.params import ResizeParser
 from imgprocessor.exceptions import ParamParseException, ParamValidateException
 
 
@@ -41,7 +41,7 @@ def test_resize_compute(src_size: tuple, param_str: str, expected: tuple) -> Non
         param_str: 处理参数
         expected: 期望输出的宽高(w, h)
     """
-    action = ResizeAction.init_by_str(f"{enums.OpAction.RESIZE},{param_str}")
+    action = ResizeParser.init_by_str(f"{enums.OpAction.RESIZE},{param_str}")
     w, h = action.compute(*src_size)
     assert (w, h) == expected
 
@@ -67,7 +67,7 @@ def test_resize_compute(src_size: tuple, param_str: str, expected: tuple) -> Non
 def test_action_exception(src_size: tuple, params: typing.Union[str, dict], exception: Exception, error: str) -> None:
     with pytest.raises(exception, match=error):
         if isinstance(params, str):
-            action = ResizeAction.init_by_str(params)
+            action = ResizeParser.init_by_str(params)
         else:
-            action = ResizeAction.init(params)
+            action = ResizeParser.init(params)
         action.compute(*src_size)

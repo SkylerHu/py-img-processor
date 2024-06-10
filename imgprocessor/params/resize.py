@@ -3,11 +3,11 @@
 import typing
 
 from imgprocessor import enums, settings
-from imgprocessor.exceptions import ParamValidateException
+from imgprocessor.exceptions import ParamValidateException, ProcessLimitException
 from .base import BaseParser
 
 
-class ResizeAction(BaseParser):
+class ResizeParser(BaseParser):
 
     key = enums.OpAction.RESIZE
     ARGS = {
@@ -95,4 +95,9 @@ class ResizeAction(BaseParser):
             # 缺少参数
             raise ParamValidateException("resize操作缺少合法参数")
 
+        if self.limit and (w > src_w or h > src_h):
+            # 超过原图大小，默认不处理
+            w, h = (src_w, src_h)
+        elif w * h > settings.PROCESSOR_MAX_PIXEL:
+            raise ProcessLimitException(f"缩放的目标图像总像素不可超过{settings.PROCESSOR_MAX_PIXEL}像素")
         return (w, h)

@@ -9,6 +9,7 @@ from imgprocessor.exceptions import ParamValidateException, ParamParseException
 
 class BaseParser(object):
     # 用来定义参数
+    key: typing.Any = ""
     ARGS: dict = {}
 
     @classmethod
