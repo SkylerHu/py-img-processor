@@ -12,7 +12,7 @@
 
 Image editor using Python and Pillow.
 
-依赖Pillow开发的Python库，用于图片编辑处理。
+依赖Pillow开发的Python库，用于图像编辑处理。
 
 ## 1. 安装
 
@@ -31,7 +31,7 @@ Image editor using Python and Pillow.
 
 支持的配置项有：
 
-| 配置项 | 类型 | 说明 | 默认值 | 
+| 配置项 | 类型 | 说明 | 默认值 |
 | - | - | - | - |
 | DEBUG | bool | 是否debug开发模式 | False |
 | APP_CACHE_REDIS | dict | 用于缓存的redis配置，eg: `{'host': '127.0.0.1', 'port': 6379, 'db': 0, 'socket_timeout': 10}` | None |

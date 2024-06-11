@@ -10,7 +10,7 @@ from .resize import ResizeParser
 
 
 class ProcessParams(object):
-    """图片处理输入参数"""
+    """图像处理输入参数"""
 
     __ACTION_PARASER_MAP: dict = {
         enums.OpAction.RESIZE: ResizeParser,

@@ -37,7 +37,7 @@ class SettingsProxy(object):
     PROCESSOR_MAX_W_H = 30000
     # width x height总像素3亿，处理前后的值都被此配置限制
     PROCESSOR_MAX_PIXEL = 300000000
-    # 图片处理后的默认质量
+    # 图像处理后的默认质量
     PROCESSOR_DEFAULT_QUALITY = 75
 
     def __getattribute__(self, attr: str) -> typing.Any:

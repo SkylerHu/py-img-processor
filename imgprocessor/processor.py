@@ -69,13 +69,15 @@ def save_img_to_file(
 
 
 def process_image_by_path(
-    input_path: str, out_path: str, params: typing.Union[ProcessParams, dict]
+    input_path: str, out_path: str, params: typing.Union[ProcessParams, dict, str]
 ) -> typing.Optional[typing.ByteString]:
     size = os.path.getsize(input_path)
     if size > settings.PROCESSOR_MAX_FILE_SIZE * 1024 * 1024:
         raise ProcessLimitException(f"图像文件大小不得超过{settings.PROCESSOR_MAX_FILE_SIZE}MB")
     if isinstance(params, dict):
         params = ProcessParams(**params)
+    elif isinstance(params, str):
+        params = ProcessParams.parse_str(params)
     params = typing.cast(ProcessParams, params)
 
     ori_im = Image.open(input_path)

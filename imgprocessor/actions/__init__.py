@@ -38,5 +38,5 @@ def action_resize(im: Image, parsrr: ResizeParser) -> Image:
     if size == im.size:
         # 大小没有变化直接返回
         return im
-    out = im.resize(size, resample=Image.Resampling.LANCZOS)
+    out = im.resize(size, resample=Image.LANCZOS)
     return out

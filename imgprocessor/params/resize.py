@@ -54,7 +54,7 @@ class ResizeParser(BaseParser):
             elif self.m == enums.ResizeMode.MFIT:
                 # 等比缩放
                 if self.w and self.h:
-                    # 指定w与h的矩形外的最小图片
+                    # 指定w与h的矩形外的最小图像
                     if self.w / self.h > src_w / src_h:
                         w, h = self.w, int(self.w * src_h / src_w)
                     else:
@@ -67,7 +67,7 @@ class ResizeParser(BaseParser):
                 # 默认enums.ResizeMode.LFIT
                 # 等比缩放
                 if self.w and self.h:
-                    # 指定w与h的矩形内的最大图片
+                    # 指定w与h的矩形内的最大图像
                     if self.w / self.h > src_w / src_h:
                         w, h = int(self.h * src_w / src_h), self.h
                     else:

@@ -30,14 +30,15 @@ from imgprocessor.exceptions import ParamParseException, ParamValidateException
         ((1080, 1920), "l_1280", (720, 1280)),
         # p
         ((1920, 1080), "p_50", (960, 540)),
-        ((1920, 1080), "p_150", (2880, 1620)),
+        ((1920, 1080), "p_150", (1920, 1080)),
+        ((1920, 1080), "p_150,limit_0", (2880, 1620)),
     ],
 )
 def test_resize_compute(src_size: tuple, param_str: str, expected: tuple) -> None:
     """测试resize操作的参数处理
 
     Args:
-        src_size: 输入图片的宽高(src_w, src_h)
+        src_size: 输入图像的宽高(src_w, src_h)
         param_str: 处理参数
         expected: 期望输出的宽高(w, h)
     """
