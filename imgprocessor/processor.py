@@ -44,10 +44,8 @@ def save_img_to_file(
 ) -> typing.Optional[typing.ByteString]:
     fmt = kwargs.get("format")
 
-    if fmt != im.format:
-        if fmt == enums.ImageFormat.JPEG:
-            if im.mode != "RGB":
-                im = im.convert("RGB")
+    if fmt == enums.ImageFormat.JPEG and im.mode != "RGB":
+        im = im.convert("RGB")
 
     if not kwargs.get("quality"):
         if im.format == enums.ImageFormat.JPEG:
@@ -61,7 +59,8 @@ def save_img_to_file(
         return None
 
     # 没有传递保存的路径，返回文件内容
-    with tempfile.TemporaryFile() as fp:
+    suffix = fmt or im.format or "png"
+    with tempfile.NamedTemporaryFile(suffix=f".{suffix}") as fp:
         im.save(fp.name, **kwargs)
         fp.seek(0)
         content = fp.read()

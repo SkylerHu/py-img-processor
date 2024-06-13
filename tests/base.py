@@ -8,7 +8,7 @@ def compare_imgs_by_path(input_path: str, target_path: str, threshold: int = 1) 
     input_img = cv2.imread(input_path)
     target_img = cv2.imread(target_path)
 
-    assert input_img.shape == target_img.shape
+    assert input_img.shape == target_img.shape, f"{input_img.shape} ==> {target_img.shape}"
 
     ssim = structural_similarity(input_img, target_img, multichannel=True)
 

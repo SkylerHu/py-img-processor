@@ -38,18 +38,18 @@ class BaseParser(object):
                 # 配置的default仅当在没有传递值的时候才生效
                 if _default is not None:
                     data[key] = _default
-                continue
-            value = kwargs.get(key)
-            try:
-                if _type == enums.ArgType.INTEGER:
-                    value = cls._validate_int(value, **config)
-                elif _type == enums.ArgType.STRING:
-                    value = cls._validate_str(value, **config)
-                elif _type == enums.ArgType.CHOICES:
-                    value = cls._validate_choices(value, **config)
-            except ParamValidateException as e:
-                raise ParamValidateException(f"参数 {key}={value} 不符合要求：{e}")
-            data[key] = value
+            else:
+                value = kwargs.get(key)
+                try:
+                    if _type == enums.ArgType.INTEGER:
+                        value = cls._validate_int(value, **config)
+                    elif _type == enums.ArgType.STRING:
+                        value = cls._validate_str(value, **config)
+                    elif _type == enums.ArgType.CHOICES:
+                        value = cls._validate_choices(value, **config)
+                except ParamValidateException as e:
+                    raise ParamValidateException(f"参数 {key}={value} 不符合要求：{e}")
+                data[key] = value
 
         return data
 

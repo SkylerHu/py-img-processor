@@ -31,14 +31,14 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
     base_dir = path
     # 初始化输入图像文件列表
     file_paths = []
-    if os.path.isfile(path):
-        file_paths = [path]
-        base_dir = os.path.dirname(path)
-    elif os.path.isdir(path):
+    if os.path.isdir(path):
         for path, dir_list, file_list in os.walk(path):
             for file_name in file_list:
                 p = os.path.join(path, file_name)
                 file_paths.append(p)
+    else:
+        file_paths = [path]
+        base_dir = os.path.dirname(path)
 
     total = len(file_paths)
     count = 0
@@ -49,7 +49,12 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
         f_tag = f"{count}/{total}\t处理 {file_path}"
         print(f_tag, flush=True, end="\r")
         # 相对path的相对路径
-        relative_path = file_path.split(base_dir, 1)[-1].strip("/")
+        if not base_dir or base_dir in [".", "./"]:
+            relative_path = file_path
+        else:
+            relative_path = file_path.split(base_dir, 1)[-1]
+        relative_path = relative_path.strip("/")
+
         prefix, ext = os.path.splitext(relative_path)
         ac_num = len(args.action)
         for idx, param_str in enumerate(args.action):
@@ -62,6 +67,7 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
 
             tag = f"{f_tag}\t action={idx+1}\t 保存于 {out_path}"
             print(f"{tag}\t ...", flush=True, end="\r")
+
             # 判断目标文件是否存在
             if os.path.exists(out_path):
                 if not args.overwrite:
@@ -84,5 +90,5 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
     return 0
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
+# if __name__ == "__main__":
+#     raise SystemExit(main())

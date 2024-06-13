@@ -37,14 +37,14 @@ def clean_dir(use_special_tmp: typing.Optional[str]) -> typing.Generator:
         new_path = os.path.join(old_cwd, ".tmp")
         os.chdir(new_path)
         # 将原始图像复制一份，不然无法在临时目录中按照相对路径访问图像
-        shutil.copytree(f"{img_dir}", f"{new_path}", dirs_exist_ok=True)
+        shutil.copytree(img_dir, new_path, dirs_exist_ok=True)
         yield
         os.chdir(old_cwd)
     else:
         with tempfile.TemporaryDirectory() as new_path:
             os.chdir(new_path)
             # 将原始图像复制一份，不然无法在临时目录中按照相对路径访问图像
-            shutil.copytree(img_dir, new_path)
+            shutil.copytree(img_dir, new_path, dirs_exist_ok=True)
             yield
             os.chdir(old_cwd)
 

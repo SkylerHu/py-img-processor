@@ -17,7 +17,7 @@ class ResizeParser(BaseParser):
         "l": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
         "s": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
         "limit": {"type": enums.ArgType.INTEGER, "default": 1, "min": 0, "max": 1},
-        "color": {"type": enums.ArgType.STRING, "default": "FFFFFF", "regex": "^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"},
+        "color": {"type": enums.ArgType.STRING, "default": "FFFFFF", "regex": "^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"},
         "p": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": 1000},
     }
 

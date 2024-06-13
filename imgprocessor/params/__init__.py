@@ -3,10 +3,11 @@
 import typing
 
 from imgprocessor import enums
-from imgprocessor.exceptions import ParamParseException, ParamValidateException
+from imgprocessor.exceptions import ParamValidateException
 
 from .base import BaseParser  # noqa: F401
 from .resize import ResizeParser
+from .crop import CropParser
 
 
 class ProcessParams(object):
@@ -14,6 +15,7 @@ class ProcessParams(object):
 
     __ACTION_PARASER_MAP: dict = {
         enums.OpAction.RESIZE: ResizeParser,
+        enums.OpAction.CROP: CropParser,
     }
 
     def __init__(
@@ -29,7 +31,7 @@ class ProcessParams(object):
         for i in actions or []:
             key = i.get("key")
             cls = self.__ACTION_PARASER_MAP.get(key)
-            if not cls or cls.key != key:
+            if not cls:
                 continue
             _actions.append(cls.init(i))
         self.actions = _actions
@@ -52,18 +54,15 @@ class ProcessParams(object):
 
         for item in value.split("/"):
             info = item.split(",", 1)
-            if not info:
-                # 缺少key直接跳过
-                continue
             if len(info) == 1:
                 key = info[0]
+                if not key:
+                    continue
                 param_str = ""
             else:
                 key, param_str = info
 
             # 解析具体参数
-            if key not in enums.OpAction:  # type: ignore
-                continue
             if key == enums.OpAction.FORMAT:  # type: ignore
                 fmt_values = [v.lower() for v in enums.ImageFormat.values]
                 if param_str not in fmt_values:
@@ -71,13 +70,13 @@ class ProcessParams(object):
                 fmt = param_str
             elif key == enums.OpAction.QUALITY:  # type: ignore
                 if not param_str.isdigit():
-                    raise ParamParseException("参数 quality 必须是大于0的正整数")
+                    raise ParamValidateException("参数 quality 必须是大于0的正整数")
                 quality = int(param_str)
                 if quality < 1 or quality > 100:
                     raise ParamValidateException("参数 quality 取值范围为[1, 100]")
             else:
                 action_cls = cls.__ACTION_PARASER_MAP.get(key)
-                if not action_cls or action_cls.key != key:
+                if not action_cls:
                     continue
                 action = action_cls.parse_str(item)
                 actions.append(action)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 import pytest
+import os
 
 from imgprocessor.processor import process_image_by_path
 
@@ -16,9 +17,10 @@ from .base import compare_imgs_by_path
 )
 def test_action(img_name: str, param_str: dict, expected_path: str) -> None:
     # 生成目标文件名称
-    target_tag = param_str.replace(",", "-").replace("/", "--")
-    target_name, target_type = expected_path.split(".")
-    target_path = f"{target_name}-{target_tag}.{target_type}"
+    target_path = f"output/{os.path.basename(expected_path)}"
+    target_dir = os.path.dirname(target_path)
+    if not os.path.isdir(target_dir):
+        os.makedirs(target_dir)
     # 图像处理
     process_image_by_path(img_name, target_path, param_str)
     # 比较结果

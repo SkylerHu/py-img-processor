@@ -33,8 +33,8 @@ class OpAction(ChoiceEnum):
     QUALITY = ("quality", "质量")
     FORMAT = ("format", "格式")
     # 其他
-    CROP = ("crop", "裁剪")
     RESIZE = ("resize", "缩放")
+    CROP = ("crop", "裁剪")
 
 
 class ResizeMode(ChoiceEnum):
