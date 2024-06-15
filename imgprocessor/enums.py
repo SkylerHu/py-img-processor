@@ -52,3 +52,17 @@ class ArgType(ChoiceEnum):
     STRING = ("str", "字符串")
     CHOICES = ("choices", "枚举值")
     BOOLEAN = ("bool", "布尔值")
+
+
+class Geography(ChoiceEnum):
+    """图像中的方向/位置"""
+
+    NW = ("nw", "左上")
+    NORTH = ("north", "中上")
+    NE = ("ne", "右上")
+    WEST = ("west", "左中")
+    CENTER = ("center", "中部")
+    EAST = ("east", "右中")
+    SW = ("sw", "左下")
+    SOUTH = ("south", "中下")
+    SE = ("se", "右下")

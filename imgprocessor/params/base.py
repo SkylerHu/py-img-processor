@@ -35,6 +35,9 @@ class BaseParser(object):
             _type = config["type"]
             _default = config.get("default")
             if key not in kwargs:
+                required = config.get("required")
+                if required:
+                    raise ParamValidateException(f"缺少必要参数{key}")
                 # 配置的default仅当在没有传递值的时候才生效
                 if _default is not None:
                     data[key] = _default

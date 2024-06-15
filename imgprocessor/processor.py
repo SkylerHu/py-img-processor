@@ -13,6 +13,7 @@ from imgprocessor.params import BaseParser, ProcessParams
 
 __ACTION_METHOD: dict = {
     enums.OpAction.RESIZE: actions.action_resize,
+    enums.OpAction.CROP: actions.action_crop,
 }
 
 

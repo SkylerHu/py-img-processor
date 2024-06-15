@@ -3,76 +3,9 @@
 import typing
 import pytest
 
-from imgprocessor import enums, settings
-from imgprocessor.params import ResizeParser, ProcessParams, BaseParser
+from imgprocessor import enums, settings, params as parser
+from imgprocessor.params import ProcessParams, BaseParser
 from imgprocessor.exceptions import ParamParseException, ParamValidateException, ProcessLimitException
-
-
-@pytest.mark.parametrize(
-    "src_size,param_str,expected",
-    [
-        ((1920, 1080), "w_1280", (1280, 720)),
-        ((1920, 1080), "h_720", (1280, 720)),
-        # 范围内最大
-        ((1920, 1080), "m_lfit,w_1280,h_540", (960, 540)),
-        ((1920, 1080), "m_lfit,w_960,h_720", (960, 540)),
-        # 范围外最小
-        ((1920, 1080), "m_mfit,w_1280", (1280, 720)),
-        ((1920, 1080), "m_mfit,h_720", (1280, 720)),
-        ((1920, 1080), "m_mfit,w_1280,h_540", (1280, 720)),
-        ((1920, 1080), "m_mfit,w_960,h_720", (1280, 720)),
-        # 固定宽高，强制缩放
-        ((1920, 1080), "m_fixed,w_1280,h_540", (1280, 540)),
-        # s/l参数
-        ((1920, 1080), "s_720", (1280, 720)),
-        ((1080, 1920), "s_720", (720, 1280)),
-        ((1920, 1080), "l_1280", (1280, 720)),
-        ((1080, 1920), "l_1280", (720, 1280)),
-        # p
-        ((1920, 1080), "p_50", (960, 540)),
-        ((1920, 1080), "p_150", (1920, 1080)),
-        ((1920, 1080), "p_150,limit_0", (2880, 1620)),
-    ],
-)
-def test_resize_compute(src_size: tuple, param_str: str, expected: tuple) -> None:
-    """测试resize操作的参数处理
-
-    Args:
-        src_size: 输入图像的宽高(src_w, src_h)
-        param_str: 处理参数
-        expected: 期望输出的宽高(w, h)
-    """
-    action = ResizeParser.init_by_str(f"{enums.OpAction.RESIZE},{param_str}")
-    w, h = action.compute(*src_size)
-    assert (w, h) == expected
-
-
-@pytest.mark.parametrize(
-    "src_size,params,exception,error",
-    [
-        # resize
-        ((1920, 1080), "resize,m", ParamParseException, "下划线隔开的格式"),
-        ((1920, 1080), "resize,m_lfit", ParamValidateException, "缺少合法参数"),
-        ((1920, 1080), "resize,m_fixed,w_100", ParamValidateException, "参数w和h都必不可少"),
-        ((1920, 1080), "resize,m_pad", ParamValidateException, "枚举值只能是其中之一"),
-        ((1920, 1080), "resize,w_a", ParamValidateException, "参数类型不符合要求"),
-        ((1920, 1080), "resize,w_1.1", ParamValidateException, "必须是整数"),
-        ((1920, 1080), "resize,w_0", ParamValidateException, "参数不在取值范围内"),
-        ((1920, 1080), f"resize,w_{settings.PROCESSOR_MAX_W_H + 1}", ParamValidateException, "参数不在取值范围内"),
-        ((1920, 1080), {"key": "resize", "w": 1.1}, ParamValidateException, "必须是整数"),
-        ((1920, 1080), {"key": "resize", "color": 1}, ParamValidateException, "参数类型不符合要求"),
-        ((1920, 1080), "resize,w_200000", ParamValidateException, "参数不在取值范围内"),
-        ((1920, 1080), "resize,s_100,color_GGG", ParamValidateException, "不符合格式要求"),
-        ((1920, 1080), "resize,w_25000,h_25000,limit_0", ProcessLimitException, "缩放的目标图像总像素不可超过"),
-    ],
-)
-def test_resize_exception(src_size: tuple, params: typing.Union[str, dict], exception: Exception, error: str) -> None:
-    with pytest.raises(exception, match=error):
-        if isinstance(params, str):
-            action = ResizeParser.init_by_str(params)
-        else:
-            action = ResizeParser.init(params)
-        action.compute(*src_size)
 
 
 @pytest.mark.parametrize(
@@ -87,10 +20,10 @@ def test_resize_exception(src_size: tuple, params: typing.Union[str, dict], exce
 )
 def test_parse_params(param_str: typing.Union[dict, str], action_num: int) -> None:
     if isinstance(param_str, dict):
-        params = ProcessParams(**param_str)
+        p = ProcessParams(**param_str)
     else:
-        params = ProcessParams.parse_str(param_str)
-    assert len(params.actions) == action_num
+        p = ProcessParams.parse_str(param_str)
+    assert len(p.actions) == action_num
 
 
 @pytest.mark.parametrize(
@@ -127,3 +60,117 @@ def test_args_config() -> None:
 
     data = TestParser.parse_str("resize,")
     assert list(data.keys()) == ["key"], "没有解析到任何参数"
+
+
+@pytest.mark.parametrize(
+    "src_size,param_str,expected",
+    [
+        ((1920, 1080), "resize,w_1280", (1280, 720)),
+        ((1920, 1080), "resize,h_720", (1280, 720)),
+        # 范围内最大
+        ((1920, 1080), "resize,m_lfit,w_1280,h_540", (960, 540)),
+        ((1920, 1080), "resize,m_lfit,w_960,h_720", (960, 540)),
+        # 范围外最小
+        ((1920, 1080), "resize,m_mfit,w_1280", (1280, 720)),
+        ((1920, 1080), "resize,m_mfit,h_720", (1280, 720)),
+        ((1920, 1080), "resize,m_mfit,w_1280,h_540", (1280, 720)),
+        ((1920, 1080), "resize,m_mfit,w_960,h_720", (1280, 720)),
+        # 固定宽高，强制缩放
+        ((1920, 1080), "resize,m_fixed,w_1280,h_540", (1280, 540)),
+        # s/l参数
+        ((1920, 1080), "resize,s_720", (1280, 720)),
+        ((1080, 1920), "resize,s_720", (720, 1280)),
+        ((1920, 1080), "resize,l_1280", (1280, 720)),
+        ((1080, 1920), "resize,l_1280", (720, 1280)),
+        # p
+        ((1920, 1080), "resize,p_50", (960, 540)),
+        ((1920, 1080), "resize,p_150", (1920, 1080)),
+        ((1920, 1080), "resize,p_150,limit_0", (2880, 1620)),
+    ],
+)
+def test_resize_compute(src_size: tuple, param_str: str, expected: tuple) -> None:
+    """测试resize操作的参数处理
+
+    Args:
+        src_size: 输入图像的宽高(src_w, src_h)
+        param_str: 处理参数
+        expected: 期望输出的宽高(w, h)
+    """
+    action = parser.ResizeParser.init_by_str(param_str)
+    w, h = action.compute(*src_size)
+    assert (w, h) == expected
+
+
+@pytest.mark.parametrize(
+    "src_size,params,exception,error",
+    [
+        # resize
+        ((1920, 1080), "resize,m_lfit", ParamValidateException, "缺少合法参数"),
+        ((1920, 1080), "resize,m", ParamParseException, "下划线隔开的格式"),
+        ((1920, 1080), "resize,m_fixed,w_100", ParamValidateException, "参数w和h都必不可少"),
+        ((1920, 1080), "resize,m_pad", ParamValidateException, "枚举值只能是其中之一"),
+        ((1920, 1080), "resize,w_a", ParamValidateException, "参数类型不符合要求"),
+        ((1920, 1080), "resize,w_1.1", ParamValidateException, "必须是整数"),
+        ((1920, 1080), "resize,w_0", ParamValidateException, "参数不在取值范围内"),
+        ((1920, 1080), f"resize,w_{settings.PROCESSOR_MAX_W_H + 1}", ParamValidateException, "参数不在取值范围内"),
+        ((1920, 1080), {"key": "resize", "w": 1.1}, ParamValidateException, "必须是整数"),
+        ((1920, 1080), {"key": "resize", "color": 1}, ParamValidateException, "参数类型不符合要求"),
+        ((1920, 1080), "resize,w_200000", ParamValidateException, "参数不在取值范围内"),
+        ((1920, 1080), "resize,s_100,color_GGG", ParamValidateException, "不符合格式要求"),
+        ((1920, 1080), "resize,w_25000,h_25000,limit_0", ProcessLimitException, "缩放的目标图像总像素不可超过"),
+    ],
+)
+def test_resize_exception(src_size: tuple, params: typing.Union[str, dict], exception: Exception, error: str) -> None:
+    with pytest.raises(exception, match=error):
+        if isinstance(params, str):
+            action = parser.ResizeParser.init_by_str(params)
+        else:
+            action = parser.ResizeParser.init(params)
+        action.compute(*src_size)
+
+
+@pytest.mark.parametrize(
+    "src_size,param_str,expected",
+    [
+        ((1920, 1080), "crop,w_1280", (0, 0, 1280, 1080)),
+        ((1920, 1080), "crop,h_720", (0, 0, 1920, 720)),
+        ((1920, 1080), "crop,g_nw,w_960,h_540", (0, 0, 960, 540)),
+        ((1920, 1080), "crop,g_north,w_960,h_540", (480, 0, 960, 540)),
+        ((1920, 1080), "crop,g_ne,w_960,h_540", (960, 0, 960, 540)),
+        ((1920, 1080), "crop,g_west,w_960,h_540", (0, 270, 960, 540)),
+        ((1920, 1080), "crop,g_center,w_960,h_540", (480, 270, 960, 540)),
+        ((1920, 1080), "crop,g_east,w_960,h_540", (960, 270, 960, 540)),
+        ((1920, 1080), "crop,g_sw,w_960,h_540", (0, 540, 960, 540)),
+        ((1920, 1080), "crop,g_south,w_960,h_540", (480, 540, 960, 540)),
+        ((1920, 1080), "crop,g_se,w_960,h_540,pf_xywh", (960, 540, 960, 540)),
+        ((1920, 1080), "crop,pf_xywh,x_25,y_25,w_50,h_50", (480, 270, 960, 540)),
+        ((1920, 1080), "crop,pr_10,pb_10", (0, 0, 1910, 1070)),
+        ((1920, 1080), "crop,w_1920,h_1080", (0, 0, 1920, 1080)),
+        ((1920, 1080), "crop,pf_x", (0, 0, 1920, 1080)),
+        ((1920, 1080), "crop,pf_y", (0, 0, 1920, 1080)),
+    ],
+)
+def test_crop_compute(src_size: tuple, param_str: str, expected: tuple) -> None:
+    action = parser.CropParser.init_by_str(param_str)
+    out = action.compute(*src_size)
+    assert out == expected
+
+
+@pytest.mark.parametrize(
+    "src_size,params,exception,error",
+    [
+        # resize
+        ((1920, 1080), "crop,pf_xywh,w_101", ParamValidateException, "所以w作为百分比取值范围为"),
+        ((1920, 1080), "crop,pf_xywh,h_101", ParamValidateException, "所以h作为百分比取值范围为"),
+        ((1920, 1080), "crop,pf_xywh,x_101", ParamValidateException, "所以x作为百分比取值范围为"),
+        ((1920, 1080), "crop,pf_xywh,y_101", ParamValidateException, "所以y作为百分比取值范围为"),
+        ((1920, 1080), "crop,w_1921", ParamValidateException, "区域超过了原始图片"),
+    ],
+)
+def test_crop_exception(src_size: tuple, params: typing.Union[str, dict], exception: Exception, error: str) -> None:
+    with pytest.raises(exception, match=error):
+        if isinstance(params, str):
+            action = parser.CropParser.init_by_str(params)
+        else:
+            action = parser.CropParser.init(params)
+        action.compute(*src_size)

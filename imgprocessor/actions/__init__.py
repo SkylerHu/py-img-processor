@@ -2,7 +2,7 @@
 # coding=utf-8
 from PIL import Image, ImageOps
 
-from imgprocessor.params import ResizeParser
+from imgprocessor.params import ResizeParser, CropParser
 
 
 def pre_processing(im: Image, use_alpha: bool = False) -> Image:
@@ -32,11 +32,22 @@ def pre_processing(im: Image, use_alpha: bool = False) -> Image:
     return im
 
 
-def action_resize(im: Image, parsrr: ResizeParser) -> Image:
+def action_resize(im: Image, parser: ResizeParser) -> Image:
     im = pre_processing(im)
-    size = parsrr.compute(*im.size)
+    size = parser.compute(*im.size)
     if size == im.size:
         # 大小没有变化直接返回
         return im
     out = im.resize(size, resample=Image.LANCZOS)
     return out
+
+
+def action_crop(im: Image, parser: CropParser) -> Image:
+    im = pre_processing(im)
+    x, y, w, h = parser.compute(*im.size)
+
+    if x == 0 and y == 0 and (w, h) == im.size:
+        # 大小没有变化直接返回
+        return im
+    im = im.crop((x, y, x + w, y + h))
+    return im
