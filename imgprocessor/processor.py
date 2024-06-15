@@ -6,15 +6,9 @@ import tempfile
 
 from PIL import Image, ImageOps
 
-from imgprocessor import settings, enums, actions
+from imgprocessor import settings, enums
 from imgprocessor.exceptions import ProcessLimitException
-from imgprocessor.params import BaseParser, ProcessParams
-
-
-__ACTION_METHOD: dict = {
-    enums.OpAction.RESIZE: actions.action_resize,
-    enums.OpAction.CROP: actions.action_crop,
-}
+from imgprocessor.parsers import BaseParser, ProcessParams
 
 
 def handle_img_actions(ori_im: Image, actions: list[BaseParser]) -> Image:
@@ -30,10 +24,7 @@ def handle_img_actions(ori_im: Image, actions: list[BaseParser]) -> Image:
     im = ImageOps.exif_transpose(im)
 
     for parser in actions:
-        method = __ACTION_METHOD.get(parser.key)
-        if not callable(method):
-            continue
-        im = method(im, parser)
+        im = parser.do_action(im)
 
     return im
 
@@ -43,13 +34,14 @@ def save_img_to_file(
     out_path: typing.Optional[str] = None,
     **kwargs: typing.Any,
 ) -> typing.Optional[typing.ByteString]:
-    fmt = kwargs.get("format")
+    fmt = kwargs.get("format") or im.format
+    kwargs["format"] = fmt
 
-    if fmt == enums.ImageFormat.JPEG and im.mode != "RGB":
+    if fmt == enums.ImageFormat.JPEG and im.mode == "RGBA":
         im = im.convert("RGB")
 
     if not kwargs.get("quality"):
-        if im.format == enums.ImageFormat.JPEG:
+        if fmt == enums.ImageFormat.JPEG and im.format == enums.ImageFormat.JPEG:
             kwargs["quality"] = "keep"
         else:
             kwargs["quality"] = settings.PROCESSOR_DEFAULT_QUALITY
@@ -60,7 +52,7 @@ def save_img_to_file(
         return None
 
     # 没有传递保存的路径，返回文件内容
-    suffix = fmt or im.format or "png"
+    suffix = fmt or "png"
     with tempfile.NamedTemporaryFile(suffix=f".{suffix}") as fp:
         im.save(fp.name, **kwargs)
         fp.seek(0)
@@ -84,7 +76,5 @@ def process_image_by_path(
     # 处理图像
     im = handle_img_actions(ori_im, params.actions)
 
-    kwargs = {"format": params.format or ori_im.format, "icc_profile": ori_im.info.get("icc_profile")}
-    if params.quality:
-        kwargs["quality"] = params.quality
+    kwargs = params.save_parser.compute(ori_im, im)
     return save_img_to_file(im, out_path=out_path, **kwargs)

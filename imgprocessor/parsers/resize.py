@@ -2,21 +2,22 @@
 # coding=utf-8
 import typing
 
+from PIL import Image
 from imgprocessor import enums, settings
 from imgprocessor.exceptions import ParamValidateException, ProcessLimitException
-from .base import BaseParser
+from .base import BaseParser, pre_processing
 
 
 class ResizeParser(BaseParser):
 
-    key = enums.OpAction.RESIZE
+    KEY = enums.OpAction.RESIZE
     ARGS = {
-        "m": {"type": enums.ArgType.CHOICES, "default": enums.ResizeMode.LFIT, "choices": enums.ResizeMode},
+        "m": {"type": enums.ArgType.STRING, "default": enums.ResizeMode.LFIT, "choices": enums.ResizeMode},
         "w": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
         "h": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
         "l": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
         "s": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-        "limit": {"type": enums.ArgType.INTEGER, "default": 1, "min": 0, "max": 1},
+        "limit": {"type": enums.ArgType.INTEGER, "default": 1, "choices": [0, 1]},
         "color": {"type": enums.ArgType.STRING, "default": "FFFFFF", "regex": "^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"},
         "p": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": 1000},
     }
@@ -26,8 +27,8 @@ class ResizeParser(BaseParser):
         m: str = enums.ResizeMode.LFIT,  # type: ignore
         w: int = 0,
         h: int = 0,
-        l: int = 1,  # noqa: E741
-        s: int = 1,
+        l: int = 0,  # noqa: E741
+        s: int = 0,
         limit: int = 1,
         color: str = "FFFFFF",
         p: int = 0,
@@ -101,3 +102,12 @@ class ResizeParser(BaseParser):
         elif w * h > settings.PROCESSOR_MAX_PIXEL:
             raise ProcessLimitException(f"缩放的目标图像总像素不可超过{settings.PROCESSOR_MAX_PIXEL}像素")
         return (w, h)
+
+    def do_action(self, im: Image) -> Image:
+        im = pre_processing(im)
+        size = self.compute(*im.size)
+        if size == im.size:
+            # 大小没有变化直接返回
+            return im
+        out = im.resize(size, resample=Image.LANCZOS)
+        return out

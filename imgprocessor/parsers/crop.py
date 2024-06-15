@@ -1,27 +1,27 @@
 #!/usr/bin/env python
 # coding=utf-8
 import typing
-
+from PIL import Image
 from imgprocessor import enums, settings
 from imgprocessor.exceptions import ParamValidateException
-from .base import BaseParser
+from .base import BaseParser, pre_processing
 
 
 class CropParser(BaseParser):
 
-    key = enums.OpAction.CROP
+    KEY = enums.OpAction.CROP
     ARGS = {
         "w": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
         "h": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
         "x": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
         "y": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
-        "g": {"type": enums.ArgType.CHOICES, "choices": enums.Geography},
+        "g": {"type": enums.ArgType.STRING, "choices": enums.Geography},
         # percent field, eg: xywh
         "pf": {"type": enums.ArgType.STRING, "default": ""},
         # padding right
-        "pr": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "padr": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
         # padding bottom
-        "pb": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "padb": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
         # 左和上通过x,y控制
     }
 
@@ -31,10 +31,10 @@ class CropParser(BaseParser):
         h: int = 0,
         x: int = 0,
         y: int = 0,
-        g: str = "",
+        g: typing.Optional[str] = None,
         pf: str = "",
-        pr: int = 0,
-        pb: int = 0,
+        padr: int = 0,
+        padb: int = 0,
         **kwargs: typing.Any,
     ) -> None:
         self.w = w
@@ -43,8 +43,8 @@ class CropParser(BaseParser):
         self.y = y
         self.g = g
         self.pf = pf
-        self.pr = pr
-        self.pb = pb
+        self.padr = padr
+        self.padb = padb
 
     def compute(self, src_w: int, src_h: int) -> tuple:
         x, y, w, h = self.x, self.y, self.w, self.h
@@ -99,12 +99,22 @@ class CropParser(BaseParser):
                 y = int(src_h * y / 100)
 
         # 处理裁边
-        if self.pr:
-            w = w - self.pr
-        if self.pb:
-            h = h - self.pb
+        if self.padr:
+            w = w - self.padr
+        if self.padb:
+            h = h - self.padb
 
         if x < 0 or y < 0 or w < 0 or y < 0 or x + w > src_w or y + h > src_h:
             raise ParamValidateException(f"(x, y, w, h)={(x, y, w, h)} 区域超过了原始图片")
 
         return x, y, w, h
+
+    def do_action(self, im: Image) -> Image:
+        im = pre_processing(im)
+        x, y, w, h = self.compute(*im.size)
+
+        if x == 0 and y == 0 and (w, h) == im.size:
+            # 大小没有变化直接返回
+            return im
+        im = im.crop((x, y, x + w, y + h))
+        return im

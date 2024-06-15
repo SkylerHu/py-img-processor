@@ -1,32 +1,42 @@
 import typing
+
+try:
+    # python3.11只后
+    from typing import Self  # type: ignore
+except Exception:
+    from typing_extensions import Self
+
 import re
 
-from py_enum import ChoiceEnum
+from PIL import Image, ImageOps
 
-from imgprocessor import enums
+from imgprocessor import enums, str_tool
 from imgprocessor.exceptions import ParamValidateException, ParamParseException
 
 
 class BaseParser(object):
     # 用来定义参数
-    key: typing.Any = ""
+    KEY: typing.Any = ""
     ARGS: dict = {}
 
     @classmethod
-    def init(cls, data: dict) -> "BaseParser":
+    def init(cls, data: dict) -> Self:
         params = cls.validate_args(**data)
         ins = cls(**params)
         ins.validate()
         return ins
 
     @classmethod
-    def init_by_str(cls, param_str: str) -> "BaseParser":
+    def init_by_str(cls, param_str: str) -> Self:
         data = cls.parse_str(param_str)
         return cls.init(data)
 
     def validate(self) -> None:
         """由子类继承实现各类实例的数据校验"""
         pass
+
+    def do_action(self, im: Image) -> Image:
+        return im
 
     @classmethod
     def validate_args(cls, **kwargs: typing.Any) -> dict:
@@ -48,8 +58,10 @@ class BaseParser(object):
                         value = cls._validate_int(value, **config)
                     elif _type == enums.ArgType.STRING:
                         value = cls._validate_str(value, **config)
-                    elif _type == enums.ArgType.CHOICES:
-                        value = cls._validate_choices(value, **config)
+
+                    choices = config.get("choices")
+                    if choices and value not in choices:
+                        raise ParamValidateException(f"{key}枚举值只能是其中之一 {choices.values}")
                 except ParamValidateException as e:
                     raise ParamValidateException(f"参数 {key}={value} 不符合要求：{e}")
                 data[key] = value
@@ -57,17 +69,13 @@ class BaseParser(object):
         return data
 
     @classmethod
-    def _validate_choices(
-        cls, value: typing.Any, choices: typing.Optional[ChoiceEnum] = None, **kwargs: dict
-    ) -> typing.Any:
-        if choices is not None and value not in choices:
-            raise ParamValidateException(f"枚举值只能是其中之一 {choices.values}")
-        return value
-
-    @classmethod
-    def _validate_str(cls, value: typing.Any, regex: typing.Optional[str] = None, **kwargs: dict) -> str:
+    def _validate_str(
+        cls, value: typing.Any, regex: typing.Optional[str] = None, enable_base64: bool = False, **kwargs: dict
+    ) -> str:
         if not isinstance(value, str):
             raise ParamValidateException("参数类型不符合要求，必须是字符串类型")
+        if enable_base64:
+            value = str_tool.base64url_decode(value)
         if regex and not re.match(regex, value):
             raise ParamValidateException(f"不符合格式要求，需符合正则：{regex}")
         return value
@@ -108,9 +116,11 @@ class BaseParser(object):
         Returns:
             输出json格式参数，例如返回`{"key": "resize", "h": "100", "m": "lfit"}`
         """
+        params = {}
         info = param_str.split(",")
         key = info[0]
-        params = {}
+        if key != cls.KEY:
+            raise ParamParseException(f"解析出来的key={key}与{cls.__name__}.KEY={cls.KEY}不匹配")
         for item in info[1:]:
             if not item:
                 continue
@@ -122,3 +132,67 @@ class BaseParser(object):
 
         params["key"] = key
         return params
+
+
+def pre_processing(im: Image, use_alpha: bool = False) -> Image:
+    """预处理图像，默认转成`RGB`，若为`use_alpha=True`转为`RGBA`
+
+    Args:
+        im: 输入图像
+        use_alpha: 是否处理透明度
+
+    Returns:
+        输出图像
+    """
+    # 去掉方向信息
+    orientation = im.getexif().get(0x0112)
+    if orientation and 2 <= orientation <= 8:
+        im = ImageOps.exif_transpose(im)
+
+    if im.mode not in ["RGB", "RGBA"]:
+        # 统一处理成RGBA进行操作:
+        # 1. 像rotate/resize操作需要RGB模式；
+        # 2. 像水印操作需要RGBA；
+        im = im.convert("RGBA")
+
+    if use_alpha and im.mode != "RGBA":
+        im = im.convert("RGBA")
+
+    return im
+
+
+class ImgSaveParser(BaseParser):
+    KEY = ""
+    ARGS = {
+        "format": {"type": enums.ArgType.STRING, "default": None},
+        "quality": {"type": enums.ArgType.INTEGER, "default": None, "min": 1, "max": 100},
+        "interlace": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 1},
+    }
+
+    def __init__(
+        self,
+        format: typing.Optional[str] = None,
+        quality: typing.Optional[int] = None,
+        interlace: int = 0,
+        **kwargs: typing.Any,
+    ) -> None:
+        self.format = format
+        self.quality = quality
+        self.interlace = interlace
+
+    def validate(self) -> None:
+        super().validate()
+        if self.format:
+            fmt_values = [v.lower() for v in enums.ImageFormat.values]
+            if self.format not in fmt_values:
+                raise ParamValidateException(f"参数 format 只能是其中之一：{fmt_values}")
+
+    def compute(self, in_im: Image, out_im: Image) -> dict:
+        kwargs = {
+            "format": self.format or in_im.format,
+            # 为了解决色域问题
+            "icc_profile": in_im.info.get("icc_profile"),
+        }
+        if self.quality:
+            kwargs["quality"] = self.quality
+        return kwargs

@@ -3,9 +3,22 @@
 import typing
 import pytest
 
-from imgprocessor import enums, settings, params as parser
-from imgprocessor.params import ProcessParams, BaseParser
+from imgprocessor import enums, settings, parsers
+from imgprocessor.parsers import ProcessParams, BaseParser, _ACTION_PARASER_MAP
 from imgprocessor.exceptions import ParamParseException, ParamValidateException, ProcessLimitException
+
+
+def test_parse_define() -> None:
+    """测试参数解析类的定义：类KEY和其属性的默认值是否一致"""
+    for cls in _ACTION_PARASER_MAP.values():
+        ins = cls()
+        for key, config in cls.ARGS.items():
+            _type = config["type"]
+            _default = config.get("default")
+            msg = f"校验{cls.__name__}的属性{key}，类型{_type}，默认值{_default}"
+            assert hasattr(ins, key), msg
+            value = getattr(ins, key)
+            assert value == _default, msg
 
 
 @pytest.mark.parametrize(
@@ -30,9 +43,9 @@ def test_parse_params(param_str: typing.Union[dict, str], action_num: int) -> No
     "param_str,exception,error",
     [
         ("format,jpg", ParamValidateException, "参数 format 只能是其中之一"),
-        ("quality,a", ParamValidateException, "参数 quality 必须是大于0的正整数"),
-        ("quality,0", ParamValidateException, "参数 quality 取值范围为"),
-        ("quality,101", ParamValidateException, "参数 quality 取值范围为"),
+        ("quality,a", ParamValidateException, "参数类型不符合要求"),
+        ("quality,0", ParamValidateException, "参数不在取值范围内"),
+        ("quality,101", ParamValidateException, "参数不在取值范围内"),
         ("resize,m_xxx", ParamValidateException, "枚举值只能是其中之一"),
         ("resize,s_100,color_xxx", ParamValidateException, "不符合格式要求"),
     ],
@@ -47,8 +60,9 @@ def test_parse_exception(param_str: typing.Union[dict, str], exception: Exceptio
 
 def test_args_config() -> None:
     class TestParser(BaseParser):
+        KEY = enums.OpAction.RESIZE
         ARGS = {
-            "m": {"type": enums.ArgType.CHOICES, "default": None, "choices": enums.ResizeMode},
+            "m": {"type": enums.ArgType.STRING, "default": None, "choices": enums.ResizeMode},
             "w": {"type": "xxx", "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
             "h": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
         }
@@ -96,7 +110,7 @@ def test_resize_compute(src_size: tuple, param_str: str, expected: tuple) -> Non
         param_str: 处理参数
         expected: 期望输出的宽高(w, h)
     """
-    action = parser.ResizeParser.init_by_str(param_str)
+    action = parsers.ResizeParser.init_by_str(param_str)
     w, h = action.compute(*src_size)
     assert (w, h) == expected
 
@@ -123,9 +137,9 @@ def test_resize_compute(src_size: tuple, param_str: str, expected: tuple) -> Non
 def test_resize_exception(src_size: tuple, params: typing.Union[str, dict], exception: Exception, error: str) -> None:
     with pytest.raises(exception, match=error):
         if isinstance(params, str):
-            action = parser.ResizeParser.init_by_str(params)
+            action = parsers.ResizeParser.init_by_str(params)
         else:
-            action = parser.ResizeParser.init(params)
+            action = parsers.ResizeParser.init(params)
         action.compute(*src_size)
 
 
@@ -144,14 +158,14 @@ def test_resize_exception(src_size: tuple, params: typing.Union[str, dict], exce
         ((1920, 1080), "crop,g_south,w_960,h_540", (480, 540, 960, 540)),
         ((1920, 1080), "crop,g_se,w_960,h_540,pf_xywh", (960, 540, 960, 540)),
         ((1920, 1080), "crop,pf_xywh,x_25,y_25,w_50,h_50", (480, 270, 960, 540)),
-        ((1920, 1080), "crop,pr_10,pb_10", (0, 0, 1910, 1070)),
+        ((1920, 1080), "crop,padr_10,padb_10", (0, 0, 1910, 1070)),
         ((1920, 1080), "crop,w_1920,h_1080", (0, 0, 1920, 1080)),
         ((1920, 1080), "crop,pf_x", (0, 0, 1920, 1080)),
         ((1920, 1080), "crop,pf_y", (0, 0, 1920, 1080)),
     ],
 )
 def test_crop_compute(src_size: tuple, param_str: str, expected: tuple) -> None:
-    action = parser.CropParser.init_by_str(param_str)
+    action = parsers.CropParser.init_by_str(param_str)
     out = action.compute(*src_size)
     assert out == expected
 
@@ -170,7 +184,36 @@ def test_crop_compute(src_size: tuple, param_str: str, expected: tuple) -> None:
 def test_crop_exception(src_size: tuple, params: typing.Union[str, dict], exception: Exception, error: str) -> None:
     with pytest.raises(exception, match=error):
         if isinstance(params, str):
-            action = parser.CropParser.init_by_str(params)
+            action = parsers.CropParser.init_by_str(params)
         else:
-            action = parser.CropParser.init(params)
+            action = parsers.CropParser.init(params)
+        action.compute(*src_size)
+
+
+@pytest.mark.parametrize(
+    "src_size,param_str,expected",
+    [
+        ((1920, 1080), "circle,r_60", 60),
+        ((1920, 1080), "circle", 540),
+        ((1080, 1920), "circle", 540),
+    ],
+)
+def test_circle_compute(src_size: tuple, param_str: str, expected: tuple) -> None:
+    action = parsers.CircleParser.init_by_str(param_str)
+    out = action.compute(*src_size)
+    assert out == expected
+
+
+@pytest.mark.parametrize(
+    "src_size,params,exception,error",
+    [
+        ((1920, 1080), "circle,r_a", ParamValidateException, "参数类型不符合要求"),
+    ],
+)
+def test_circle_exception(src_size: tuple, params: typing.Union[str, dict], exception: Exception, error: str) -> None:
+    with pytest.raises(exception, match=error):
+        if isinstance(params, str):
+            action = parsers.CircleParser.init_by_str(params)
+        else:
+            action = parsers.CircleParser.init(params)
         action.compute(*src_size)

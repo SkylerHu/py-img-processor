@@ -29,12 +29,19 @@ class ImageOrientation(ChoiceEnum):
 class OpAction(ChoiceEnum):
     """支持的操作类型"""
 
-    # 以下2个比较特殊，在保存文件时使用
+    # 以下几个比较特殊，在保存文件时使用
     QUALITY = ("quality", "质量")
     FORMAT = ("format", "格式")
+    INTERLACE = ("interlace", "渐进显示")
     # 其他
     RESIZE = ("resize", "缩放")
     CROP = ("crop", "裁剪")
+    CIRCLE = ("circle", "圆角")
+    BLUR = ("blur", "模糊效果")
+    ROTATE = ("rotate", "旋转")
+    ALPHA = ("alpha", "透明度")
+    GRAY = ("gray", "灰度图")
+    WATERMARK = ("watermark", "水印")
 
 
 class ResizeMode(ChoiceEnum):
@@ -47,11 +54,9 @@ class ResizeMode(ChoiceEnum):
 
 
 class ArgType(ChoiceEnum):
+    STRING = ("str", "字符串")
     INTEGER = ("int", "整数")
     FLOAT = ("float", "浮点数")
-    STRING = ("str", "字符串")
-    CHOICES = ("choices", "枚举值")
-    BOOLEAN = ("bool", "布尔值")
 
 
 class Geography(ChoiceEnum):
