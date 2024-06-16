@@ -2,7 +2,7 @@
 # coding=utf-8
 import typing
 
-from PIL import Image
+from PIL import Image, ImageOps
 from imgprocessor import enums, settings
 from imgprocessor.exceptions import ParamValidateException, ProcessLimitException
 from .base import BaseParser, pre_processing
@@ -46,7 +46,7 @@ class ResizeParser(BaseParser):
     def compute(self, src_w: int, src_h: int) -> tuple:
         """计算出`Image.resize`需要的参数"""
         if self.w or self.h:
-            if self.m == enums.ResizeMode.FIXED:
+            if self.m in [enums.ResizeMode.FIXED, enums.ResizeMode.PAD, enums.ResizeMode.FIT]:
                 # 有可能改变原图宽高比
                 if not (self.w and self.h):
                     raise ParamValidateException(f"当m={self.m}的模式下，参数w和h都必不可少且不能为0")
@@ -65,7 +65,7 @@ class ResizeParser(BaseParser):
                 else:
                     w, h = int(self.h * src_w / src_h), self.h
             else:
-                # 默认enums.ResizeMode.LFIT
+                # 默认 enums.ResizeMode.LFIT
                 # 等比缩放
                 if self.w and self.h:
                     # 指定w与h的矩形内的最大图像
@@ -109,5 +109,10 @@ class ResizeParser(BaseParser):
         if size == im.size:
             # 大小没有变化直接返回
             return im
-        out = im.resize(size, resample=Image.LANCZOS)
+        if self.m == enums.ResizeMode.PAD:
+            out = ImageOps.pad(im, size, color=f"#{self.color}")
+        elif self.m == enums.ResizeMode.FIT:
+            out = ImageOps.fit(im, size)
+        else:
+            out = im.resize(size, resample=Image.LANCZOS)
         return out

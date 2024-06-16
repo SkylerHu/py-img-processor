@@ -44,7 +44,7 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
     total = len(file_paths)
     count = 0
     # 输出目录
-    output_dir = args.output
+    output = args.output
     for file_path in file_paths:
         count += 1
         f_tag = f"{count}/{total}\t处理 {file_path}"
@@ -60,11 +60,14 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
         ac_num = len(args.action)
         for idx, param_str in enumerate(args.action):
             # 初始化目标文件路径
-            if ac_num == 1:
-                target_name = relative_path
+            if os.path.isdir(output):
+                if ac_num == 1:
+                    target_name = relative_path
+                else:
+                    target_name = f"{prefix}-{idx}.{ext}"
+                out_path = os.path.join(output, target_name)
             else:
-                target_name = f"{prefix}-{idx}.{ext}"
-            out_path = os.path.join(output_dir, target_name)
+                out_path = output
 
             tag = f"{f_tag}\t action={idx+1}\t 保存于 {out_path}"
             print(f"{tag}\t ...", flush=True, end="\r")

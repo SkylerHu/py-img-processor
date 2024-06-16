@@ -140,10 +140,11 @@ class BaseParser(object):
             if not item:
                 continue
             info = item.split("_", 1)
-            if len(info) != 2:
-                raise ParamParseException(f"参数 {item} 不合法，参考 k_v 下划线隔开的格式")
-            k, v = info
-            params[k] = v
+            if len(info) == 2:
+                k, v = info
+                params[k] = v
+            else:
+                params["value"] = info[0]
 
         params["key"] = key
         return params

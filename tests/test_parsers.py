@@ -5,7 +5,7 @@ import pytest
 
 from imgprocessor import enums, settings, parsers
 from imgprocessor.parsers import ProcessParams, BaseParser, _ACTION_PARASER_MAP
-from imgprocessor.exceptions import ParamParseException, ParamValidateException, ProcessLimitException
+from imgprocessor.exceptions import ParamValidateException, ProcessLimitException
 
 
 def test_parse_define() -> None:
@@ -120,9 +120,8 @@ def test_resize_compute(src_size: tuple, param_str: str, expected: tuple) -> Non
     [
         # resize
         ((1920, 1080), "resize,m_lfit", ParamValidateException, "缺少合法参数"),
-        ((1920, 1080), "resize,m", ParamParseException, "下划线隔开的格式"),
         ((1920, 1080), "resize,m_fixed,w_100", ParamValidateException, "参数w和h都必不可少"),
-        ((1920, 1080), "resize,m_pad", ParamValidateException, "枚举值只能是其中之一"),
+        ((1920, 1080), "resize,m_pad2", ParamValidateException, "枚举值只能是其中之一"),
         ((1920, 1080), "resize,w_a", ParamValidateException, "参数类型不符合要求"),
         ((1920, 1080), "resize,w_1.1", ParamValidateException, "必须是整数"),
         ((1920, 1080), "resize,w_0", ParamValidateException, "参数不在取值范围内"),
