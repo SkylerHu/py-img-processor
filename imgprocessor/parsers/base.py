@@ -161,6 +161,65 @@ def pre_processing(im: Image, use_alpha: bool = False) -> Image:
     return im
 
 
+def compute_by_geography(
+    src_w: int, src_h: int, x: int, y: int, w: int, h: int, g: typing.Optional[str], pf: str
+) -> tuple[int, int]:
+    if g == enums.Geography.NW:
+        x, y = 0, 0
+    elif g == enums.Geography.NORTH:
+        x, y = round(src_w / 2 - w / 2), 0
+    elif g == enums.Geography.NE:
+        x, y = src_w - w, 0
+    elif g == enums.Geography.WEST:
+        x, y = 0, round(src_h / 2 - h / 2)
+    elif g == enums.Geography.CENTER:
+        x, y = round(src_w / 2 - w / 2), round(src_h / 2 - h / 2)
+    elif g == enums.Geography.EAST:
+        x, y = src_w - w, round(src_h / 2 - h / 2)
+    elif g == enums.Geography.SW:
+        x, y = 0, src_h - h
+    elif g == enums.Geography.SOUTH:
+        x, y = round(src_w / 2 - w / 2), src_h - h
+    elif g == enums.Geography.SE:
+        x, y = src_w - w, src_h - h
+    elif pf:
+        if "x" in pf:
+            if x < 0 or x > 100:
+                raise ParamValidateException(f"pf={pf}包含了x，所以x作为百分比取值范围为[0,100]")
+            x = round(src_w * x / 100)
+        if "y" in pf:
+            if y < 0 or y > 100:
+                raise ParamValidateException(f"pf={pf}包含了y，所以y作为百分比取值范围为[0,100]")
+            y = round(src_h * y / 100)
+    return x, y
+
+
+def compute_by_ratio(src_w: int, src_h: int, ratio: str) -> tuple[int, int]:
+    """根据输入宽高，按照比例比计算出最大区域
+
+    Args:
+        src_w: 输入宽度
+        src_h: 输入高度
+        ratio: 比例字符串，eg "4:3"
+
+    Returns:
+        计算后的宽高
+    """
+    w_r, h_r = ratio.split(":")
+    wr, hr = int(w_r), int(h_r)
+    if src_w * hr > src_h * wr:
+        # 相对于目标比例，宽长了
+        w = round(src_h * wr / hr)
+        h = src_h
+    elif src_w * hr < src_h * wr:
+        w = src_w
+        h = int(src_w * hr / wr)
+    else:
+        # 刚好符合比例
+        w, h = src_w, src_h
+    return w, h
+
+
 class ImgSaveParser(BaseParser):
     KEY = ""
     ARGS = {

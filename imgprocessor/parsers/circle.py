@@ -25,7 +25,7 @@ class CircleParser(BaseParser):
     def compute(self, src_w: int, src_h: int) -> int:
         r = self.r
 
-        min_s = int(min(src_w, src_h) / 2)
+        min_s = round(min(src_w, src_h) / 2)
         if not r or r > min_s:
             # 没有设置或是超过最大内切圆的半径，按照最大内切圆的半径处理
             r = min_s

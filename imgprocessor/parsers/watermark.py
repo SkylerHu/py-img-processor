@@ -17,7 +17,7 @@ class WatermarkParser(BaseParser):
         "g": {"type": enums.ArgType.STRING, "choices": enums.Geography},
         "x": {"type": enums.ArgType.INTEGER, "default": 10, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
         "y": {"type": enums.ArgType.INTEGER, "default": 10, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
-        # percent field, eg: xywh
+        # percent field, eg: xy
         "pf": {"type": enums.ArgType.STRING, "default": ""},
         # 是否将图片水印或文字水印铺满原图; 值为1开启
         "fill": {"type": enums.ArgType.INTEGER, "default": 0, "choices": [0, 1]},
@@ -30,7 +30,7 @@ class WatermarkParser(BaseParser):
         # 文字
         "text": {"type": enums.ArgType.STRING, "enable_base64": True},
         "type": {"type": enums.ArgType.STRING, "enable_base64": True},
-        "color": {"type": enums.ArgType.STRING, "default": "FFFFFF", "regex": "^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"},
+        "color": {"type": enums.ArgType.STRING, "default": "000000", "regex": "^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"},
         "size": {"type": enums.ArgType.INTEGER, "default": 40, "min": 1, "max": 1000},
         # 文字水印的阴影透明度, 0表示没有阴影
         "shadow": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 100},
@@ -38,9 +38,9 @@ class WatermarkParser(BaseParser):
         "rotate": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 360},
         # 图文混合水印参数
         # 文字和图片水印的前后顺序; 0表示图片水印在前；1表示文字水印在前
-        "order": {"type": enums.ArgType.INTEGER, "default": 0, "choices": [0, 1]},
+        "order": {"type": enums.ArgType.INTEGER, "default": 0, "choices": enums.ImgOrder},
         # 文字水印和图片水印的对齐方式; 0表示文字水印和图片水印上对齐; 1表示文字水印和图片水印中对齐; 2: 表示文字水印和图片水印下对齐
-        "align": {"type": enums.ArgType.INTEGER, "default": 2, "choices": [0, 1, 2]},
+        "align": {"type": enums.ArgType.INTEGER, "default": 2, "choices": enums.ImgAlign},
         # 文字水印和图片水印间的间距
         "interval": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 1000},
     }
@@ -59,7 +59,7 @@ class WatermarkParser(BaseParser):
         P: typing.Optional[int] = None,
         text: typing.Optional[str] = None,
         type: typing.Optional[str] = None,
-        color: str = "FFFFFF",
+        color: str = "000000",
         size: int = 40,
         shadow: int = 0,
         rotate: int = 0,
