@@ -39,6 +39,8 @@ class SettingsProxy(object):
     PROCESSOR_MAX_PIXEL = 300000000
     # 图像处理后的默认质量
     PROCESSOR_DEFAULT_QUALITY = 75
+    # 默认字体文件; 默认配置了MacOS系统中的字体
+    PROCESSOR_TEXT_FONT = "Arial Unicode.ttf"
 
     def __getattribute__(self, attr: str) -> typing.Any:
         try:

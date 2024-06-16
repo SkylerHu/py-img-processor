@@ -55,7 +55,9 @@ class BaseParser(object):
                 value = kwargs.get(key)
                 try:
                     if _type == enums.ArgType.INTEGER:
-                        value = cls._validate_int(value, **config)
+                        value = cls._validate_number(value, **config)
+                    elif _type == enums.ArgType.FLOAT:
+                        value = cls._validate_number(value, use_float=True, **config)
                     elif _type == enums.ArgType.STRING:
                         value = cls._validate_str(value, **config)
 
@@ -70,28 +72,41 @@ class BaseParser(object):
 
     @classmethod
     def _validate_str(
-        cls, value: typing.Any, regex: typing.Optional[str] = None, enable_base64: bool = False, **kwargs: dict
+        cls,
+        value: typing.Any,
+        regex: typing.Optional[str] = None,
+        enable_base64: bool = False,
+        max_length: typing.Optional[int] = None,
+        **kwargs: dict,
     ) -> str:
         if not isinstance(value, str):
             raise ParamValidateException("参数类型不符合要求，必须是字符串类型")
         if enable_base64:
             value = str_tool.base64url_decode(value)
+        if max_length is not None and len(value) > max_length:
+            raise ParamValidateException(f"长度不允许超过{max_length}个字符")
         if regex and not re.match(regex, value):
             raise ParamValidateException(f"不符合格式要求，需符合正则：{regex}")
         return value
 
     @classmethod
-    def _validate_int(
+    def _validate_number(
         cls,
         value: typing.Any,
         min: typing.Optional[int] = None,
         max: typing.Optional[int] = None,
+        use_float: bool = False,
         **kwargs: dict,
-    ) -> int:
-        if isinstance(value, int):
+    ) -> typing.Union[int, float]:
+        if isinstance(value, int) or (use_float and isinstance(value, float)):
             v = value
         elif isinstance(value, str):
             if not value.isdigit():
+                if use_float:
+                    try:
+                        v = float(value)
+                    except Exception:
+                        raise ParamValidateException("参数类型不符合要求，必须是数值")
                 raise ParamValidateException("参数类型不符合要求，必须是整数")
             v = int(value)
         else:
@@ -167,30 +182,30 @@ def compute_by_geography(
     if g == enums.Geography.NW:
         x, y = 0, 0
     elif g == enums.Geography.NORTH:
-        x, y = round(src_w / 2 - w / 2), 0
+        x, y = int(src_w / 2 - w / 2), 0
     elif g == enums.Geography.NE:
         x, y = src_w - w, 0
     elif g == enums.Geography.WEST:
-        x, y = 0, round(src_h / 2 - h / 2)
+        x, y = 0, int(src_h / 2 - h / 2)
     elif g == enums.Geography.CENTER:
-        x, y = round(src_w / 2 - w / 2), round(src_h / 2 - h / 2)
+        x, y = int(src_w / 2 - w / 2), int(src_h / 2 - h / 2)
     elif g == enums.Geography.EAST:
-        x, y = src_w - w, round(src_h / 2 - h / 2)
+        x, y = src_w - w, int(src_h / 2 - h / 2)
     elif g == enums.Geography.SW:
         x, y = 0, src_h - h
     elif g == enums.Geography.SOUTH:
-        x, y = round(src_w / 2 - w / 2), src_h - h
+        x, y = int(src_w / 2 - w / 2), src_h - h
     elif g == enums.Geography.SE:
         x, y = src_w - w, src_h - h
     elif pf:
         if "x" in pf:
             if x < 0 or x > 100:
                 raise ParamValidateException(f"pf={pf}包含了x，所以x作为百分比取值范围为[0,100]")
-            x = round(src_w * x / 100)
+            x = int(src_w * x / 100)
         if "y" in pf:
             if y < 0 or y > 100:
                 raise ParamValidateException(f"pf={pf}包含了y，所以y作为百分比取值范围为[0,100]")
-            y = round(src_h * y / 100)
+            y = int(src_h * y / 100)
     return x, y
 
 
@@ -209,7 +224,7 @@ def compute_by_ratio(src_w: int, src_h: int, ratio: str) -> tuple[int, int]:
     wr, hr = int(w_r), int(h_r)
     if src_w * hr > src_h * wr:
         # 相对于目标比例，宽长了
-        w = round(src_h * wr / hr)
+        w = int(src_h * wr / hr)
         h = src_h
     elif src_w * hr < src_h * wr:
         w = src_w
@@ -218,6 +233,68 @@ def compute_by_ratio(src_w: int, src_h: int, ratio: str) -> tuple[int, int]:
         # 刚好符合比例
         w, h = src_w, src_h
     return w, h
+
+
+def compute_splice_two_im(
+    w1: int,
+    h1: int,
+    w2: int,
+    h2: int,
+    align: int = enums.PositionAlign.VERTIAL_CENTER,  # type: ignore
+    order: int = enums.PositionOrder.BEFORE,  # type: ignore
+    interval: int = 0,
+) -> tuple:
+    """拼接2个图像，计算整体大小和元素原点位置；数值单位都是像素
+
+    Args:
+        w1: 第1个元素的宽
+        h1: 第1个元素的高
+        w2: 第2个元素的宽
+        h2: 第2个元素的高
+        align: 对齐方式  see enums.PositionAlign
+        order: 排序 see enums.PositionOrder
+        interval: 元素之间的间隔
+
+    Returns:
+        整体占位w宽度
+        整体占位y宽度
+        第1个元素的原点位置x1
+        第1个元素的原点位置y1
+        第2个元素的原点位置x2
+        第2个元素的原点位置y2
+    """
+    if align in [enums.PositionAlign.TOP, enums.PositionAlign.HORIZONTAL_CENTER, enums.PositionAlign.BOTTOM]:
+        # 水平顺序
+        # 计算整体占位大小w,h
+        w, h = w1 + w2 + interval, max(h1, h2)
+
+        if align == enums.PositionAlign.TOP:
+            y1, y2 = 0, 0
+        elif align == enums.PositionAlign.BOTTOM:
+            y1, y2 = h - h1, h - h2
+        else:
+            y1, y2 = int((h - h1) / 2), int((h - h2) / 2)
+
+        if order == enums.PositionOrder.BEFORE:
+            x1, x2 = 0, w1 + interval
+        else:
+            x1, x2 = w2 + interval, 0
+    else:
+        # 垂直
+        w, h = max(w1, w2), h1 + h2 + interval
+        if align == enums.PositionAlign.LEFT:
+            x1, x2 = 0, 0
+        elif align == enums.PositionAlign.RIGHT:
+            x1, x2 = w - w1, w - w2
+        else:
+            x1, x2 = int((w - w1) / 2), int((w - w2) / 2)
+
+        if order == enums.PositionOrder.BEFORE:
+            y1, y2 = 0, h1 + interval
+        else:
+            y1, y2 = h2 + interval, 0
+
+    return w, h, x1, y1, x2, y2
 
 
 class ImgSaveParser(BaseParser):

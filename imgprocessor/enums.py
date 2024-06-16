@@ -73,16 +73,19 @@ class Geography(ChoiceEnum):
     SE = ("se", "右下")
 
 
-class ImgOrder(ChoiceEnum):
+class PositionOrder(ChoiceEnum):
     """两个元素的前后顺序"""
 
-    BEFORE = (0, "0元素在前在前")  # 图片在前
-    AFTER = (1, "0元素在前在后")  # 文字在前
+    BEFORE = (0, "第一输入元素在前/在上")  # 图片在前
+    AFTER = (1, "第一个输入元素在后/在下")  # 文字在前
 
 
-class ImgAlign(ChoiceEnum):
-    """两个元素的对齐方式。"""
+class PositionAlign(ChoiceEnum):
+    """两个元素的对齐方式"""
 
     TOP = (0, "水平上对齐")
-    CENTER = (1, "水平居中对齐")
+    HORIZONTAL_CENTER = (1, "水平居中对齐")
     BOTTOM = (2, "水平下对齐")
+    LEFT = (3, "垂直左对齐")
+    VERTIAL_CENTER = (4, "垂直居中对齐")
+    RIGHT = (5, "垂直右对齐")

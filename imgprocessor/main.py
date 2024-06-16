@@ -4,6 +4,7 @@ import typing
 import os
 import sys
 import argparse
+import traceback
 
 from imgprocessor import VERSION
 from imgprocessor.processor import process_image_by_path
@@ -85,7 +86,7 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
                 print(f"{tag}\t 成功", flush=True)
             except Exception as e:
                 print(f"{tag}\t \033[31m失败：{e}\033[0m", file=sys.stderr, flush=True)
-                # print(traceback.format_exc(), file=sys.stderr, flush=True)
+                print(traceback.format_exc(), file=sys.stderr, flush=True)
 
     return 0
 

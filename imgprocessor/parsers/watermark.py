@@ -2,10 +2,11 @@
 # coding=utf-8
 import typing
 
-from PIL import Image
+from PIL import Image, ImageFont, ImageDraw, ImageFilter, ImageColor
 
 from imgprocessor import enums, settings
-from .base import BaseParser
+from imgprocessor.exceptions import ParamValidateException
+from .base import BaseParser, pre_processing, compute_splice_two_im, compute_by_geography
 
 
 class WatermarkParser(BaseParser):
@@ -25,22 +26,22 @@ class WatermarkParser(BaseParser):
         "pady": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
         # 图片水印路径
         "image": {"type": enums.ArgType.STRING, "enable_base64": True},
-        # 指定图片水印按照要添加水印的原图的比例进行缩放
-        "P": {"type": enums.ArgType.INTEGER, "default": None, "min": 1, "max": 100},
+        # 水印的原始设计参照尺寸，会根据原图大小缩放水印
+        "design": {"type": enums.ArgType.INTEGER, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
         # 文字
-        "text": {"type": enums.ArgType.STRING, "enable_base64": True},
-        "type": {"type": enums.ArgType.STRING, "enable_base64": True},
+        "text": {"type": enums.ArgType.STRING, "enable_base64": True, "max_length": 64},
+        "font": {"type": enums.ArgType.STRING, "enable_base64": True},
         "color": {"type": enums.ArgType.STRING, "default": "000000", "regex": "^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"},
         "size": {"type": enums.ArgType.INTEGER, "default": 40, "min": 1, "max": 1000},
         # 文字水印的阴影透明度, 0表示没有阴影
         "shadow": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 100},
-        # 文字顺时针旋转角度
+        # 顺时针旋转角度
         "rotate": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 360},
         # 图文混合水印参数
         # 文字和图片水印的前后顺序; 0表示图片水印在前；1表示文字水印在前
-        "order": {"type": enums.ArgType.INTEGER, "default": 0, "choices": enums.ImgOrder},
+        "order": {"type": enums.ArgType.INTEGER, "default": 0, "choices": enums.PositionOrder},
         # 文字水印和图片水印的对齐方式; 0表示文字水印和图片水印上对齐; 1表示文字水印和图片水印中对齐; 2: 表示文字水印和图片水印下对齐
-        "align": {"type": enums.ArgType.INTEGER, "default": 2, "choices": enums.ImgAlign},
+        "align": {"type": enums.ArgType.INTEGER, "default": 2, "choices": enums.PositionAlign},
         # 文字水印和图片水印间的间距
         "interval": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 1000},
     }
@@ -56,9 +57,9 @@ class WatermarkParser(BaseParser):
         padx: int = 0,
         pady: int = 0,
         image: typing.Optional[str] = None,
-        P: typing.Optional[int] = None,
+        design: typing.Optional[int] = None,
         text: typing.Optional[str] = None,
-        type: typing.Optional[str] = None,
+        font: typing.Optional[str] = None,
         color: str = "000000",
         size: int = 40,
         shadow: int = 0,
@@ -77,9 +78,9 @@ class WatermarkParser(BaseParser):
         self.padx = padx
         self.pady = pady
         self.image = image
-        self.P = P
+        self.design = design
         self.text = text
-        self.type = type
+        self.font = font
         self.color = color
         self.size = size
         self.shadow = shadow
@@ -88,5 +89,124 @@ class WatermarkParser(BaseParser):
         self.align = align
         self.interval = interval
 
+    def validate(self) -> None:
+        super().validate()
+        if not self.image and not self.text:
+            raise ParamValidateException("image或者text参数必须传递一个")
+
+    def get_watermark_im(self) -> Image:
+        """初始化水印对象"""
+        w1, h1, w2, h2 = 0, 0, 0, 0
+        icon = None
+        if self.image:
+            icon = Image.open(self.image)
+            icon = pre_processing(icon, use_alpha=True)
+            if not self.text:
+                # 没有文字，直接返回
+                return icon
+            w1, h1 = icon.size
+
+        try:
+            _font_path = self.font or settings.PROCESSOR_TEXT_FONT
+            font = ImageFont.truetype(_font_path, self.size)
+        except OSError:
+            raise ParamValidateException(f"未找到字体 {_font_path}")
+        w2, h2 = font.getsize(self.text)
+
+        w, h, x1, y1, x2, y2 = compute_splice_two_im(
+            w1,
+            h1,
+            w2,
+            h2,
+            align=self.align,
+            order=self.order,
+            interval=self.interval,
+        )
+
+        mark = Image.new("RGBA", (w, h))
+        if font:
+            draw = ImageDraw.Draw(mark, mode="RGBA")
+            text_color = f"#{self.color}"
+            draw.text((x2, y2), self.text, font=font, fill=text_color)
+            # 去文字边框
+            # https://blog.csdn.net/jinixin/article/details/79248842
+            fcolor_channel = ImageColor.getrgb(text_color)
+            r, g, b, a = mark.split()
+            r = r.point(lambda x: fcolor_channel[0])
+            g = g.point(lambda x: fcolor_channel[1])
+            b = b.point(lambda x: fcolor_channel[2])
+            mark = Image.merge("RGBA", (r, g, b, a))
+
+            if self.shadow:
+                # 添加阴影效果
+                shadow = mark.filter(ImageFilter.BLUR)
+                mark.paste(shadow, (x2 + 2, y2 + 2))
+
+        if icon:
+            # icon放在文字之后粘贴，是因为文字要做一些其他处理
+            mark.paste(icon, (x1, y1))
+
+        return mark
+
     def do_action(self, im: Image) -> Image:
+        im = pre_processing(im, use_alpha=True)
+        src_w, src_h = im.size
+
+        pf = self.pf or ""
+        if self.g:
+            # g在的时候pf不生效
+            pf = ""
+
+        mark = self.get_watermark_im()
+        w, h = mark.size
+
+        if self.design:
+            # 处理缩放
+            rate = min(src_w, src_h) / self.design
+            if rate != 1:
+                w, h = int(w * rate), int(h * rate)
+                mark = mark.resize((w, h), resample=Image.LANCZOS)
+
+        if 0 < self.rotate < 360:
+            # 处理旋转
+            mark = mark.rotate(360 - self.rotate, expand=True)
+            # 旋转会改变大小
+            w, h = mark.size
+
+        if w > src_w or h > src_h:
+            # 水印大小超过原图了, 原图矩形内的最大图像
+            if w / h > src_w / src_h:
+                w, h = int(h * src_w / src_h), h
+            else:
+                w, h = w, int(w * src_h / src_w)
+            mark = mark.resize((w, h), resample=Image.LANCZOS)
+
+        if self.t < 100:
+            # 处理透明度
+            _, _, _, alpha_channel = mark.split()
+            alpha_channel = alpha_channel.point(lambda i: min(int(255 * self.t / 100), i))
+            mark.putalpha(alpha_channel)
+
+        # 计算位置，粘贴水印
+        x, y = compute_by_geography(src_w, src_h, self.x, self.y, w, h, self.g, pf)
+        im.paste(mark, (x, y), mark)
+
+        if self.fill:
+            # 铺满整个图片
+            # 寻找平铺最左上角的原点
+            wx, wy = x, y
+            while wx > 0:
+                wx = wx - w - self.padx
+            while wy > 0:
+                wy = wy - h - self.pady
+            # 往右下角方向平铺
+            ux = wx
+            while ux <= src_w:
+                uy = wy
+                while uy <= src_h:
+                    if (ux, uy) != (x, y):
+                        im.paste(mark, (ux, uy), mark)
+                    uy = uy + h + self.pady
+                ux = ux + w + self.padx
+
         return im

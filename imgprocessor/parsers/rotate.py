@@ -27,5 +27,5 @@ class RotateParser(BaseParser):
         im = pre_processing(im)
         if 0 < self.value < 360:
             # 函数提供的是逆时针旋转
-            im = im.rotate(360 - self.value)
+            im = im.rotate(360 - self.value, expand=True)
         return im

@@ -57,41 +57,41 @@ class ResizeParser(BaseParser):
                 if self.w and self.h:
                     # 指定w与h的矩形外的最小图像
                     if self.w / self.h > src_w / src_h:
-                        w, h = self.w, round(self.w * src_h / src_w)
+                        w, h = self.w, int(self.w * src_h / src_w)
                     else:
-                        w, h = round(self.h * src_w / src_h), self.h
+                        w, h = int(self.h * src_w / src_h), self.h
                 elif self.w:
-                    w, h = self.w, round(self.w * src_h / src_w)
+                    w, h = self.w, int(self.w * src_h / src_w)
                 else:
-                    w, h = round(self.h * src_w / src_h), self.h
+                    w, h = int(self.h * src_w / src_h), self.h
             else:
                 # 默认enums.ResizeMode.LFIT
                 # 等比缩放
                 if self.w and self.h:
                     # 指定w与h的矩形内的最大图像
                     if self.w / self.h > src_w / src_h:
-                        w, h = round(self.h * src_w / src_h), self.h
+                        w, h = int(self.h * src_w / src_h), self.h
                     else:
-                        w, h = self.w, round(self.w * src_h / src_w)
+                        w, h = self.w, int(self.w * src_h / src_w)
                 elif self.w:
-                    w, h = self.w, round(self.w * src_h / src_w)
+                    w, h = self.w, int(self.w * src_h / src_w)
                 else:
-                    w, h = round(self.h * src_w / src_h), self.h
+                    w, h = int(self.h * src_w / src_h), self.h
         elif self.l:
             # 按最长边缩放
             if src_w > src_h:
-                w, h = self.l, round(src_h * self.l / src_w)
+                w, h = self.l, int(src_h * self.l / src_w)
             else:
-                w, h = round(src_w * self.l / src_h), self.l
+                w, h = int(src_w * self.l / src_h), self.l
         elif self.s:
             # 按最短边缩放
             if src_w > src_h:
-                w, h = round(src_w * self.s / src_h), self.s
+                w, h = int(src_w * self.s / src_h), self.s
             else:
-                w, h = self.s, round(src_h * self.s / src_w)
+                w, h = self.s, int(src_h * self.s / src_w)
         elif self.p:
             # 按照比例缩放
-            w, h = round(src_w * self.p / 100), round(src_h * self.p / 100)
+            w, h = int(src_w * self.p / 100), int(src_h * self.p / 100)
         else:
             # 缺少参数
             raise ParamValidateException("resize操作缺少合法参数")
