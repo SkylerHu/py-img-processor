@@ -4,8 +4,9 @@ import typing
 import pytest
 
 from imgprocessor import enums, settings, parsers
+from imgprocessor.str_tool import base64url_encode
 from imgprocessor.parsers import ProcessParams, BaseParser, _ACTION_PARASER_MAP
-from imgprocessor.exceptions import ParamValidateException, ProcessLimitException
+from imgprocessor.exceptions import ParamValidateException, ProcessLimitException, ParamParseException
 
 
 def test_parse_define() -> None:
@@ -47,6 +48,7 @@ def test_parse_params(param_str: typing.Union[dict, str], action_num: int) -> No
         ("quality,0", ParamValidateException, "参数不在取值范围内"),
         ("quality,101", ParamValidateException, "参数不在取值范围内"),
         ("resize,m_xxx", ParamValidateException, "枚举值只能是其中之一"),
+        ("resize,m_xxx/,", ParamParseException, "参数必须指定操作类型"),
         ("resize,s_100,color_xxx", ParamValidateException, "不符合格式要求"),
     ],
 )
@@ -161,6 +163,7 @@ def test_resize_exception(src_size: tuple, params: typing.Union[str, dict], exce
         ((1920, 1080), "crop,w_1920,h_1080", (0, 0, 1920, 1080)),
         ((1920, 1080), "crop,pf_x", (0, 0, 1920, 1080)),
         ((1920, 1080), "crop,pf_y", (0, 0, 1920, 1080)),
+        ((1920, 1080), "crop,ratio_1:1", (0, 0, 1080, 1080)),
     ],
 )
 def test_crop_compute(src_size: tuple, param_str: str, expected: tuple) -> None:
@@ -216,3 +219,38 @@ def test_circle_exception(src_size: tuple, params: typing.Union[str, dict], exce
         else:
             action = parsers.CircleParser.init(params)
         action.compute(*src_size)
+
+
+@pytest.mark.usefixtures("clean_dir")
+@pytest.mark.parametrize(
+    "param_str,expected",
+    [
+        (f"watermark,image_{base64url_encode('wolf-50.png')}", (50, 50)),
+        (f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')}", (190, 48)),
+    ],
+)
+def test_wm_gen_im(param_str: str, expected: tuple) -> None:
+    action = parsers.WatermarkParser.init_by_str(param_str)
+    out = action.get_watermark_im()
+    assert out.size == expected
+
+
+@pytest.mark.usefixtures("clean_dir")
+@pytest.mark.parametrize(
+    "params,exception,error",
+    [
+        ("watermark,size_14", ParamValidateException, "image或者text参数必须传递一个"),
+        (
+            f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('bk-PingFang-Heavy.ttf')}",
+            ParamValidateException,
+            "未找到字体",
+        ),
+    ],
+)
+def test_wm_exception(params: typing.Union[str, dict], exception: Exception, error: str) -> None:
+    with pytest.raises(exception, match=error):
+        if isinstance(params, str):
+            action = parsers.WatermarkParser.init_by_str(params)
+        else:
+            action = parsers.WatermarkParser.init(params)
+        action.get_watermark_im()

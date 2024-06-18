@@ -124,23 +124,24 @@ class WatermarkParser(BaseParser):
         )
 
         mark = Image.new("RGBA", (w, h))
-        if font:
-            draw = ImageDraw.Draw(mark, mode="RGBA")
-            text_color = f"#{self.color}"
-            draw.text((x2, y2), self.text, font=font, fill=text_color)
-            # 去文字边框
-            # https://blog.csdn.net/jinixin/article/details/79248842
-            fcolor_channel = ImageColor.getrgb(text_color)
-            r, g, b, a = mark.split()
-            r = r.point(lambda x: fcolor_channel[0])
-            g = g.point(lambda x: fcolor_channel[1])
-            b = b.point(lambda x: fcolor_channel[2])
-            mark = Image.merge("RGBA", (r, g, b, a))
+        # 处理文字
+        draw = ImageDraw.Draw(mark, mode="RGBA")
+        text_color = f"#{self.color}"
+        draw.text((x2, y2), self.text, font=font, fill=text_color)
+        # 去文字边框
+        # https://blog.csdn.net/jinixin/article/details/79248842
+        fcolor_channel = ImageColor.getrgb(text_color)
+        r, g, b, a = mark.split()
+        r = r.point(lambda x: fcolor_channel[0])
+        g = g.point(lambda x: fcolor_channel[1])
+        b = b.point(lambda x: fcolor_channel[2])
+        mark = Image.merge("RGBA", (r, g, b, a))
 
-            if self.shadow:
-                # 添加阴影效果
-                shadow = mark.filter(ImageFilter.BLUR)
-                mark.paste(shadow, (x2 + 2, y2 + 2))
+        if self.shadow:
+            # 添加阴影效果
+            shadow = mark.filter(ImageFilter.BLUR)
+            # # shadow = mark.filter(ImageFilter.BoxBlur(2))
+            mark.paste(shadow, (x2 + 2, y2 + 2))
 
         if icon:
             # icon放在文字之后粘贴，是因为文字要做一些其他处理

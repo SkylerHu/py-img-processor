@@ -10,7 +10,7 @@ from .base import BaseParser
 
 class GrayParser(BaseParser):
 
-    KEY = enums.OpAction.ALPHA
+    KEY = enums.OpAction.GRAY
     ARGS = {}
 
     def __init__(

@@ -3,7 +3,7 @@
 import typing
 
 from imgprocessor import enums
-
+from imgprocessor.exceptions import ParamParseException
 from .base import BaseParser, ImgSaveParser  # noqa: F401
 from .resize import ResizeParser
 from .crop import CropParser
@@ -68,12 +68,11 @@ class ProcessParams(object):
             info = item.split(",", 1)
             if len(info) == 1:
                 key = info[0]
-                if not key:
-                    continue
                 param_str = ""
             else:
                 key, param_str = info
-
+            if not key:
+                raise ParamParseException(f"参数必须指定操作类型 [{item}]不符合参数要求")
             if key in [enums.OpAction.FORMAT, enums.OpAction.QUALITY, enums.OpAction.INTERLACE]:
                 save_args.append(f"{key}_{param_str}")
             else:

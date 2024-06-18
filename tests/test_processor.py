@@ -6,6 +6,7 @@ import pytest
 from PIL import Image
 
 from imgprocessor import settings, enums
+from imgprocessor.str_tool import base64url_encode
 from imgprocessor.processor import handle_img_actions, save_img_to_file, process_image_by_path
 from imgprocessor.parsers import ProcessParams
 from imgprocessor.exceptions import ProcessLimitException
@@ -60,7 +61,34 @@ def test_by_path() -> None:
 @pytest.mark.parametrize(
     "img_name,param_str,expected_path",
     [
-        ("lenna-400x225.jpg", "resize,s_200", "expected/lenna-400x225-resize-s_200.jpg"),
+        # 第一个resize其实没有任何操作
+        (
+            "lenna-400x225.jpg",
+            "resize,s_225/resize,m_fit,w_300,h_200/resize,m_pad,w_100,h_100/rotate,360/alpha,100",
+            "expected/lenna-resize-pad.jpg",
+        ),
+        # 第一个crop其实没有任何操作
+        (
+            "lenna-400x225.jpg",
+            "crop,w_400/resize,s_100/crop,w_100,h_100,g_center/alpha,40/circle,r_100/rotate,45/blur,r_1/format,png",
+            "expected/lenna-edit.png",
+        ),
+        (
+            "lenna-400x225.jpg",
+            "resize,s_100/crop,w_100,h_100,g_center/gray",
+            "expected/lenna-gray.png",
+        ),
+        (
+            "lenna-400x225.jpg",
+            f"watermark,image_{base64url_encode('wolf-50.png')},g_center,t_50,rotate_315,"
+            f"fill_1,align_1,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')},size_13",
+            "expected/lenna-watermark.jpg",
+        ),
+        (
+            "lenna-400x225.jpg",
+            f"watermark,t_100,rotate_360,text_{base64url_encode('Hello 世界')},color_FFFFFF",
+            "expected/lenna-watermark-v2.jpg",
+        ),
     ],
 )
 def test_action(img_name: str, param_str: dict, expected_path: str) -> None:
