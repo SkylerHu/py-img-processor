@@ -13,13 +13,15 @@ from imgprocessor.main import main
     "argv,code",
     [
         ("-P expected/  -O tmp/test  --action resize,s_200 --overwrite", 0),
-        ("-P lenna-400x225.jpg  -O expected2/  --action resize,s_200 resize,l_200 --overwrite", 0),
+        ("-P ./  -O tmp/test  --action resize,s_200 --overwrite", 0),
+        ("-P expected/  -O tmp/test2  --action resize,s_200 --overwrite", 1),
+        ("-P lenna-400x225.jpg  -O expected/  --action resize,s_200 resize,l_200 --overwrite", 0),
         ("-P lenna-400x225.jpg  -O expected/  --action resize,s_200 --overwrite", 0),
-        ("-P lenna-400x225.jpg  -O expected/  --action resize,s_200", 1),
+        ("-P lenna-400x225.jpg  -O ./  --action resize,s_200", 1),
     ],
 )
 def test_run_main(argv: str, code: int, monkeypatch) -> None:
-    USE_DIR = "expected"
+    USE_DIR = "tmp/test"
     if not os.path.exists(USE_DIR):
         os.makedirs(USE_DIR)
     # 新建个文件用于测试overwrite参数

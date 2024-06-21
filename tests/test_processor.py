@@ -64,7 +64,8 @@ def test_by_path() -> None:
         # 第一个resize其实没有任何操作
         (
             "lenna-400x225.jpg",
-            "resize,s_225/resize,m_fit,w_300,h_200/resize,m_pad,w_100,h_100/rotate,360/alpha,100",
+            "resize,s_225/resize,m_fit,w_300,h_200/resize,m_pad,w_100,h_100/rotate,360/alpha,100/"
+            f"watermark,y_20,text_{base64url_encode('Hello 世界')},color_FFFFFF,size_80",
             "expected/lenna-resize-pad.jpg",
         ),
         # 第一个crop其实没有任何操作
@@ -86,8 +87,14 @@ def test_by_path() -> None:
         ),
         (
             "lenna-400x225.jpg",
-            f"watermark,t_100,rotate_360,text_{base64url_encode('Hello 世界')},color_FFFFFF",
+            f"resize,s_100/watermark,t_100,rotate_360,text_{base64url_encode('Hello 世界')},"
+            f"color_FFFFFF,shadow_50,design_480",
             "expected/lenna-watermark-v2.jpg",
+        ),
+        (
+            "lenna-400x225.jpg",
+            f"resize,s_100/watermark,text_{base64url_encode('Hello 世界')},color_FFFFFF,rotate_90,size_60,design_100",
+            "expected/lenna-watermark-v3.jpg",
         ),
     ],
 )

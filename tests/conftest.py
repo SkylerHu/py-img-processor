@@ -68,15 +68,3 @@ def img_rotate_90_with_exif(img_origin: Image) -> Image:
     im.save(path, exif=exif)
     im = Image.open(path)
     return im
-
-
-@pytest.fixture
-def img_rotate_90(img_origin: Image) -> Image:
-    """逆时针旋转了90度的图"""
-    name = img_origin.filename.split("/")[-1].split(".")[0]
-    path = f"{name}_rotate_90.jpg"
-    im = img_origin.convert("RGB")
-    im = im.rotate(90, expand=True)
-    im.save(path)
-    im = Image.open(path)
-    return im

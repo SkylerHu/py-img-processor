@@ -2,7 +2,7 @@
 # coding=utf-8
 import typing
 
-from PIL import Image, ImageFont, ImageDraw, ImageFilter, ImageColor
+from PIL import Image, ImageFont, ImageDraw
 
 from imgprocessor import enums, settings
 from imgprocessor.exceptions import ParamValidateException
@@ -124,24 +124,23 @@ class WatermarkParser(BaseParser):
         )
 
         mark = Image.new("RGBA", (w, h))
-        # 处理文字
         draw = ImageDraw.Draw(mark, mode="RGBA")
-        text_color = f"#{self.color}"
-        draw.text((x2, y2), self.text, font=font, fill=text_color)
-        # 去文字边框
-        # https://blog.csdn.net/jinixin/article/details/79248842
-        fcolor_channel = ImageColor.getrgb(text_color)
-        r, g, b, a = mark.split()
-        r = r.point(lambda x: fcolor_channel[0])
-        g = g.point(lambda x: fcolor_channel[1])
-        b = b.point(lambda x: fcolor_channel[2])
-        mark = Image.merge("RGBA", (r, g, b, a))
 
+        # 阴影要单独处理透明度，放在文字之前处理
         if self.shadow:
-            # 添加阴影效果
-            shadow = mark.filter(ImageFilter.BLUR)
-            # # shadow = mark.filter(ImageFilter.BoxBlur(2))
-            mark.paste(shadow, (x2 + 2, y2 + 2))
+            offset = max(int(self.size / 20), 2)
+            shadow_color = "#000000"
+            # 左上到右下的阴影，只保留这一个
+            draw.text((x2 + offset, y2 + offset), self.text, font=font, fill=shadow_color)
+            # draw.text((x2 - offset, y2 + offset), self.text, font=font, fill=shadow_color)
+            # draw.text((x2 + offset, y2 - offset), self.text, font=font, fill=shadow_color)
+            # draw.text((x2 - offset, y2 - offset), self.text, font=font, fill=shadow_color)
+            _, _, _, alpha_channel = mark.split()
+            alpha_channel = alpha_channel.point(lambda i: min(int(255 * self.shadow / 100), i))
+            mark.putalpha(alpha_channel)
+
+        # 处理文字
+        draw.text((x2, y2), self.text, font=font, fill=f"#{self.color}")
 
         if icon:
             # icon放在文字之后粘贴，是因为文字要做一些其他处理
@@ -177,9 +176,11 @@ class WatermarkParser(BaseParser):
         if w > src_w or h > src_h:
             # 水印大小超过原图了, 原图矩形内的最大图像
             if w / h > src_w / src_h:
-                w, h = int(h * src_w / src_h), h
+                w, h = src_w, int(src_w * h / w)
+                self.x = 0
             else:
-                w, h = w, int(w * src_h / src_w)
+                w, h = int(src_h * w / h), src_h
+                self.y = 0
             mark = mark.resize((w, h), resample=Image.LANCZOS)
 
         if self.t < 100:

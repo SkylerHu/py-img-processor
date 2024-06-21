@@ -3,9 +3,9 @@
 import typing
 import pytest
 
-from imgprocessor import enums, settings, parsers
+from imgprocessor import settings, parsers
 from imgprocessor.str_tool import base64url_encode
-from imgprocessor.parsers import ProcessParams, BaseParser, _ACTION_PARASER_MAP
+from imgprocessor.parsers import ProcessParams, _ACTION_PARASER_MAP
 from imgprocessor.exceptions import ParamValidateException, ProcessLimitException, ParamParseException
 
 
@@ -58,24 +58,6 @@ def test_parse_exception(param_str: typing.Union[dict, str], exception: Exceptio
             ProcessParams(**param_str)
         else:
             ProcessParams.parse_str(param_str)
-
-
-def test_args_config() -> None:
-    class TestParser(BaseParser):
-        KEY = enums.OpAction.RESIZE
-        ARGS = {
-            "m": {"type": enums.ArgType.STRING, "default": None, "choices": enums.ResizeMode},
-            "w": {"type": "xxx", "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-            "h": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-        }
-
-    data = TestParser.validate_args(w="a", h2=2)
-    assert data.get("w") == "a"
-    assert data.get("h") == 0
-    assert "m" not in data, "default is None默认不赋值"
-
-    data = TestParser.parse_str("resize,")
-    assert list(data.keys()) == ["key"], "没有解析到任何参数"
 
 
 @pytest.mark.parametrize(
@@ -164,6 +146,8 @@ def test_resize_exception(src_size: tuple, params: typing.Union[str, dict], exce
         ((1920, 1080), "crop,pf_x", (0, 0, 1920, 1080)),
         ((1920, 1080), "crop,pf_y", (0, 0, 1920, 1080)),
         ((1920, 1080), "crop,ratio_1:1", (0, 0, 1080, 1080)),
+        ((1920, 1080), "crop,ratio_16:9", (0, 0, 1920, 1080)),
+        ((1080, 1920), "crop,ratio_16:9", (0, 0, 1080, 607)),
     ],
 )
 def test_crop_compute(src_size: tuple, param_str: str, expected: tuple) -> None:

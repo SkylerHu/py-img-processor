@@ -28,6 +28,13 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
 
     args = parser.parse_args(argv)
 
+    # 输出目录
+    output = args.output
+    if not os.path.isdir(output):
+        print("\033[31m参数output目录不存在,请先创建\033[0m", file=sys.stderr, flush=True)
+        return 1
+
+    # 输入
     path = args.path
     base_dir = path
     # 初始化输入图像文件列表
@@ -43,8 +50,6 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
 
     total = len(file_paths)
     count = 0
-    # 输出目录
-    output = args.output
     for file_path in file_paths:
         count += 1
         f_tag = f"{count}/{total}\t处理 {file_path}"
@@ -60,14 +65,11 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
         ac_num = len(args.action)
         for idx, param_str in enumerate(args.action):
             # 初始化目标文件路径
-            if os.path.isdir(output):
-                if ac_num == 1:
-                    target_name = relative_path
-                else:
-                    target_name = f"{prefix}-{idx}.{ext}"
-                out_path = os.path.join(output, target_name)
+            if ac_num == 1:
+                target_name = relative_path
             else:
-                out_path = output
+                target_name = f"{prefix}-{idx}.{ext}"
+            out_path = os.path.join(output, target_name)
 
             tag = f"{f_tag}\t action={idx+1}\t 保存于 {out_path}"
             print(f"{tag}\t ...", flush=True, end="\r")

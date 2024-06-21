@@ -36,7 +36,7 @@ class BaseParser(object):
         pass
 
     def do_action(self, im: Image) -> Image:
-        return im
+        raise NotImplementedError
 
     @classmethod
     def validate_args(cls, **kwargs: typing.Any) -> dict:
@@ -98,7 +98,7 @@ class BaseParser(object):
         use_float: bool = False,
         **kwargs: dict,
     ) -> typing.Union[int, float]:
-        if isinstance(value, int) or (use_float and isinstance(value, float)):
+        if isinstance(value, int) or (use_float and isinstance(value, (int, float))):
             v = value
         elif isinstance(value, str):
             if not value.isdigit():
@@ -107,8 +107,10 @@ class BaseParser(object):
                         v = float(value)
                     except Exception:
                         raise ParamValidateException("参数类型不符合要求，必须是数值")
-                raise ParamValidateException("参数类型不符合要求，必须是整数")
-            v = int(value)
+                else:
+                    raise ParamValidateException("参数类型不符合要求，必须是整数")
+            else:
+                v = int(value)
         else:
             raise ParamValidateException("必须是整数")
         if min is not None and v < min:
@@ -137,8 +139,6 @@ class BaseParser(object):
         if key != cls.KEY:
             raise ParamParseException(f"解析出来的key={key}与{cls.__name__}.KEY={cls.KEY}不匹配")
         for item in info[1:]:
-            if not item:
-                continue
             info = item.split("_", 1)
             if len(info) == 2:
                 k, v = info
