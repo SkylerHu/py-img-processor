@@ -6,7 +6,7 @@ import pytest
 from PIL import Image
 
 from imgprocessor import settings, enums
-from imgprocessor.str_tool import base64url_encode
+from imgprocessor.utils import base64url_encode
 from imgprocessor import processor
 from imgprocessor.parsers import ProcessParams
 from imgprocessor.exceptions import ProcessLimitException

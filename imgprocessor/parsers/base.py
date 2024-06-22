@@ -10,7 +10,7 @@ import re
 
 from PIL import Image, ImageOps
 
-from imgprocessor import enums, str_tool
+from imgprocessor import enums, utils
 from imgprocessor.exceptions import ParamValidateException, ParamParseException
 
 
@@ -92,7 +92,7 @@ class BaseParser(object):
         if not isinstance(value, str):
             raise ParamValidateException("参数类型不符合要求，必须是字符串类型")
         if enable_base64:
-            value = str_tool.base64url_decode(value)
+            value = utils.base64url_decode(value)
         if max_length is not None and len(value) > max_length:
             raise ParamValidateException(f"长度不允许超过{max_length}个字符")
         if regex and not re.match(regex, value):

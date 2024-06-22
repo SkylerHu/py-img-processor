@@ -74,7 +74,7 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
                     target_name = f"{prefix}-{idx}.{ext}"
                 out_path = os.path.join(output, target_name)
 
-            tag = f"{f_tag}\t action={idx+1}\t 保存于 {out_path}"
+            tag = f"{f_tag}\t action={idx + 1}\t 保存于 {out_path}"
             print(f"{tag}\t ...", flush=True, end="\r")
 
             # 判断目标文件是否存在

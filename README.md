@@ -34,11 +34,8 @@ Image editor using Python and Pillow.
 | 配置项 | 类型 | 说明 | 默认值 |
 | - | - | - | - |
 | DEBUG | bool | 是否debug开发模式 | False |
-| APP_CACHE_REDIS | dict | 用于缓存的redis配置，eg: `{'host': '127.0.0.1', 'port': 6379, 'db': 0, 'socket_timeout': 10}` | None |
-
-
-### 3.2 日志配置
-提供以下几种loggers：
-- `pykit_tools` 用于消息的父日志记录器，一般用以下细分的logger
-- `pykit_tools.cmd` 用于记录`cmd.exec_command`执行的命令行
-- `pykit_tools.error` 用于处理错误时输出，例如`handle_exception`中有用到
+| PROCESSOR_MAX_FILE_SIZE | int | 处理原图的大小限制， 单位 MB | 20 |
+| PROCESSOR_MAX_W_H | int | 处理图像，原图宽高像素限制 | 30000 |
+| PROCESSOR_MAX_PIXEL | int | width x height总像素3亿，处理前后的值都被此配置限制 | 300000000 |
+| PROCESSOR_DEFAULT_QUALITY | int | 图像处理后的默认质量 | 75 |
+| PROCESSOR_TEXT_FONT | str | 默认字体文件，默认从系统中寻找；也可以直接传递字体文件路径 | Arial Unicode.ttf |

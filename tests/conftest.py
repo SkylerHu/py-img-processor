@@ -5,12 +5,11 @@ import typing
 import os
 import shutil
 import tempfile
-from distutils.version import StrictVersion
 
 import pytest
 from PIL import Image
 
-from imgprocessor import enums
+from imgprocessor import enums, utils
 
 
 def pytest_addoption(parser):
@@ -37,10 +36,12 @@ def clean_dir(use_special_tmp: typing.Optional[str]) -> typing.Generator:
     def copy_images(src_dir: str, target_dir: str) -> None:
         # 将原始图像复制一份，不然无法在临时目录中按照相对路径访问图像
         shutil.copytree(src_dir, target_dir, dirs_exist_ok=True)
-        pil_version = StrictVersion(Image.__version__).version[0]
-        expected_dir = f"expected-{pil_version}"
+
+        pil_version = utils.get_pil_version()
+        expected_dir = f"expected-{pil_version.version[0]}"
         if os.path.isdir(expected_dir):
-            shutil.copytree(expected_dir, "expected", dirs_exist_ok=True)
+            for file_name in os.listdir(expected_dir):
+                shutil.copyfile(f"{expected_dir}/{file_name}", f"expected/{file_name}")
 
     if use_special_tmp:
         new_path = os.path.join(old_cwd, ".tmp")

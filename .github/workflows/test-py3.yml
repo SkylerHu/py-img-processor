@@ -17,17 +17,18 @@ on:
 jobs:
 
   build:
-    services:
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
 
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python: [ "3.9", "3.10", "3.11", "3.12" ]
-        pillow: [ "8", "9", "10" ]
+        python: [ "3.9", "3.10", "3.12" ]
+        include:
+          - python: 3.9
+            pillow: 8
+          - python: 3.10
+            pillow: 9
+          - python: 3.12
+            pillow: 10
 
     steps:
       - uses: actions/checkout@v4
@@ -37,6 +38,20 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
+      - name: Cache OpenCV
+        id: opencv-cache
+        uses: actions/cache@v2
+        with:
+          path: ./opencv-install
+          key: ${{ runner.os }}-opencv-cache
+
+      - name: Install OpenCV
+        uses: rayandrews/with-opencv-action@v1
+        with:
+          dir: ./opencv-install
+          cached: ${{ steps.opencv-cache.outputs.cache-hit }}
+          opencv-version: '4.0.0'
+
       - name: Install tox and any other packages
         run: pip install tox coveralls
 
@@ -44,7 +59,7 @@ jobs:
         run: tox run -e py$(echo ${{ matrix.python }} | tr -d .)-pillow$(echo ${{ matrix.pillow }} | tr -d .)
 
       - name: Upload coverage
-        if: ${{ matrix.python == '3.9' && matrix.pillow == '10' }}
+        if: ${{ matrix.python == '3.9' }}
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run:

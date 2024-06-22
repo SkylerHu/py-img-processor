@@ -4,7 +4,7 @@ import typing
 
 from PIL import Image, ImageFont, ImageDraw
 
-from imgprocessor import enums, settings
+from imgprocessor import enums, settings, utils
 from imgprocessor.exceptions import ParamValidateException
 from .base import BaseParser, pre_processing, compute_splice_two_im, compute_by_geography
 
@@ -111,7 +111,11 @@ class WatermarkParser(BaseParser):
             font = ImageFont.truetype(_font_path, self.size)
         except OSError:
             raise ParamValidateException(f"未找到字体 {_font_path}")
-        w2, h2 = font.getsize(self.text)
+
+        if utils.get_pil_version() >= utils.Version("10.0.0"):
+            _, _, w2, h2 = font.getbbox(self.text)
+        else:
+            w2, h2 = font.getsize(self.text)
 
         w, h, x1, y1, x2, y2 = compute_splice_two_im(
             w1,

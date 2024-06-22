@@ -2,7 +2,8 @@
 pytest
 pytest-env
 pytest-cov
-# 因为要支持Pillow>=8的版本，所以指定了一些库的低版本
+typing_extensions
+
+numpy==1.26.4
 opencv-python==4.10.0.82
-imageio==2.3.0  # via scikit-image
-scikit-image==0.18.0
+scikit-image

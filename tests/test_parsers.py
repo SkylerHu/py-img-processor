@@ -2,11 +2,9 @@
 # coding=utf-8
 import typing
 import pytest
-from distutils.version import StrictVersion
-from PIL import Image
 
 from imgprocessor import settings, parsers
-from imgprocessor.str_tool import base64url_encode
+from imgprocessor.utils import base64url_encode
 from imgprocessor.parsers import ProcessParams, _ACTION_PARASER_MAP
 from imgprocessor.exceptions import ParamValidateException, ProcessLimitException, ParamParseException
 
@@ -212,6 +210,8 @@ def test_circle_exception(src_size: tuple, params: typing.Union[str, dict], exce
     "param_str,expected",
     [
         (f"watermark,image_{base64url_encode('wolf-50.png')}", (50, 50)),
+        # 在8.0.0版本处理结果会是(189,48)，后后面小版本修复了
+        (f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')}", (190, 48)),
     ],
 )
 def test_wm_gen_im(param_str: str, expected: tuple) -> None:
@@ -220,32 +220,32 @@ def test_wm_gen_im(param_str: str, expected: tuple) -> None:
     assert out.size == expected
 
 
-@pytest.mark.skipif(StrictVersion(Image.__version__).version[0] != 9, reason="限定Pillow版本")
-@pytest.mark.usefixtures("clean_dir")
-@pytest.mark.parametrize(
-    "param_str,expected",
-    [
-        (f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')}", (190, 48)),
-    ],
-)
-def test_wm_gen_im_v9(param_str: str, expected: tuple) -> None:
-    action = parsers.WatermarkParser.init_by_str(param_str)
-    out = action.get_watermark_im()
-    assert out.size == expected
+# @pytest.mark.skipif(StrictVersion(Image.__version__).version[0] != 9, reason="限定Pillow版本")
+# @pytest.mark.usefixtures("clean_dir")
+# @pytest.mark.parametrize(
+#     "param_str,expected",
+#     [
+#         (f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')}", (190, 48)),
+#     ],
+# )
+# def test_wm_gen_im_v9(param_str: str, expected: tuple) -> None:
+#     action = parsers.WatermarkParser.init_by_str(param_str)
+#     out = action.get_watermark_im()
+#     assert out.size == expected
 
 
-@pytest.mark.skipif(StrictVersion(Image.__version__).version[0] != 8, reason="限定Pillow版本")
-@pytest.mark.usefixtures("clean_dir")
-@pytest.mark.parametrize(
-    "param_str,expected",
-    [
-        (f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')}", (189, 48)),
-    ],
-)
-def test_wm_gen_im_v8(param_str: str, expected: tuple) -> None:
-    action = parsers.WatermarkParser.init_by_str(param_str)
-    out = action.get_watermark_im()
-    assert out.size == expected
+# @pytest.mark.skipif(StrictVersion(Image.__version__).version[0] != 8, reason="限定Pillow版本")
+# @pytest.mark.usefixtures("clean_dir")
+# @pytest.mark.parametrize(
+#     "param_str,expected",
+#     [
+#         (f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')}", (190, 48)),
+#     ],
+# )
+# def test_wm_gen_im_v8(param_str: str, expected: tuple) -> None:
+#     action = parsers.WatermarkParser.init_by_str(param_str)
+#     out = action.get_watermark_im()
+#     assert out.size == expected
 
 
 @pytest.mark.usefixtures("clean_dir")

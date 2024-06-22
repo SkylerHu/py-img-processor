@@ -7,7 +7,12 @@ tox==4.15.0
 # docs
 -r requirements_docs.txt
 
-Pillow==8
+Pillow==8.4.0
+# 因为要支持Pillow>=8的版本，所以指定了一些库的低版本
+opencv-python==4.10.0.82
+imageio==2.3.0  # via scikit-image
+scikit-image==0.18.0
+typing_extensions==4.12.2
 -r requirements_test.txt
 
 # 打包需要
