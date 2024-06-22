@@ -28,7 +28,7 @@ setup(
     keywords=["image", "img-processor", "image-processor", "imgprocessor", "img-editor", "image-editor"],
     long_description=read_me,
     long_description_content_type="text/markdown",
-    packages=find_packages(exclude=["tests*", "tests"]),
+    packages=find_packages(exclude=["*tests*", "tests"]),
     license="MIT Licence",
     include_package_data=True,
     zip_safe=False,

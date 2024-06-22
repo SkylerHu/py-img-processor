@@ -19,6 +19,9 @@ class BaseParser(object):
     KEY: typing.Any = ""
     ARGS: dict = {}
 
+    def __init__(self, **kwargs: typing.Any) -> None:
+        pass
+
     @classmethod
     def init(cls, data: dict) -> Self:
         params = cls.validate_args(**data)
@@ -37,6 +40,13 @@ class BaseParser(object):
 
     def do_action(self, im: Image) -> Image:
         raise NotImplementedError
+
+    def to_dict(self) -> dict:
+        data = {}
+        for k in self.ARGS.keys():
+            if k in self.__dict__:
+                data[k] = self.__dict__.get(k)
+        return data
 
     @classmethod
     def validate_args(cls, **kwargs: typing.Any) -> dict:
@@ -180,6 +190,7 @@ def pre_processing(im: Image, use_alpha: bool = False) -> Image:
 def compute_by_geography(
     src_w: int, src_h: int, x: int, y: int, w: int, h: int, g: typing.Optional[str], pf: str
 ) -> tuple[int, int]:
+    """计算 大小(w,h)的图像相对于(src_w, src_h)图像的原点(x,y)位置"""
     if g == enums.Geography.NW:
         x, y = 0, 0
     elif g == enums.Geography.NORTH:

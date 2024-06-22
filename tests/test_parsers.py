@@ -2,6 +2,8 @@
 # coding=utf-8
 import typing
 import pytest
+from distutils.version import StrictVersion
+from PIL import Image
 
 from imgprocessor import settings, parsers
 from imgprocessor.str_tool import base64url_encode
@@ -210,10 +212,37 @@ def test_circle_exception(src_size: tuple, params: typing.Union[str, dict], exce
     "param_str,expected",
     [
         (f"watermark,image_{base64url_encode('wolf-50.png')}", (50, 50)),
-        (f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')}", (190, 48)),
     ],
 )
 def test_wm_gen_im(param_str: str, expected: tuple) -> None:
+    action = parsers.WatermarkParser.init_by_str(param_str)
+    out = action.get_watermark_im()
+    assert out.size == expected
+
+
+@pytest.mark.skipif(StrictVersion(Image.__version__).version[0] != 9, reason="限定Pillow版本")
+@pytest.mark.usefixtures("clean_dir")
+@pytest.mark.parametrize(
+    "param_str,expected",
+    [
+        (f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')}", (190, 48)),
+    ],
+)
+def test_wm_gen_im_v9(param_str: str, expected: tuple) -> None:
+    action = parsers.WatermarkParser.init_by_str(param_str)
+    out = action.get_watermark_im()
+    assert out.size == expected
+
+
+@pytest.mark.skipif(StrictVersion(Image.__version__).version[0] != 8, reason="限定Pillow版本")
+@pytest.mark.usefixtures("clean_dir")
+@pytest.mark.parametrize(
+    "param_str,expected",
+    [
+        (f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')}", (189, 48)),
+    ],
+)
+def test_wm_gen_im_v8(param_str: str, expected: tuple) -> None:
     action = parsers.WatermarkParser.init_by_str(param_str)
     out = action.get_watermark_im()
     assert out.size == expected
@@ -238,3 +267,20 @@ def test_wm_exception(params: typing.Union[str, dict], exception: Exception, err
         else:
             action = parsers.WatermarkParser.init(params)
         action.get_watermark_im()
+
+
+@pytest.mark.parametrize(
+    "input_params,param_str,expected",
+    [
+        # 仅测试compute，参数image图像不存在
+        ((1920, 1080, 1024, 768), "merge,image_aW1hZ2U,g_center", (1920, 1080, 0, 0, 448, 156)),
+        ((1920, 1080, 1024, 768), "merge,image_aW1hZ2U,x_800,y_800", (1920, 1568, 0, 0, 800, 800)),
+        ((768, 1024, 1920, 1080), "merge,image_aW1hZ2U,g_se", (1920, 1080, 1152, 56, 0, 0)),
+        ((768, 1080, 1920, 1024), "merge,image_aW1hZ2U,g_se", (1920, 1080, 1152, 0, 0, 56)),
+        ((768, 1024, 1920, 1080), "merge,image_aW1hZ2U,order_0", (2688, 1080, 0, 56, 768, 0)),
+    ],
+)
+def test_merge_compute(input_params: tuple, param_str: str, expected: tuple) -> None:
+    action = parsers.MergeParser.init_by_str(param_str)
+    out = action.compute(*input_params)
+    assert out == expected

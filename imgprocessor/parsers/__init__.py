@@ -13,6 +13,7 @@ from .rotate import RotateParser
 from .alpha import AlphaParser
 from .gray import GrayParser
 from .watermark import WatermarkParser
+from .merge import MergeParser
 
 
 _ACTION_PARASER_MAP: dict[str, BaseParser] = {
@@ -24,6 +25,7 @@ _ACTION_PARASER_MAP: dict[str, BaseParser] = {
     enums.OpAction.ALPHA: AlphaParser,  # type: ignore
     enums.OpAction.GRAY: GrayParser,  # type: ignore
     enums.OpAction.WATERMARK: WatermarkParser,  # type: ignore
+    enums.OpAction.MERGE: MergeParser,  # type: ignore
 }
 
 

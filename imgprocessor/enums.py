@@ -42,6 +42,8 @@ class OpAction(ChoiceEnum):
     ALPHA = ("alpha", "透明度")
     GRAY = ("gray", "灰度图")
     WATERMARK = ("watermark", "水印")
+    # 特殊操作
+    MERGE = ("merge", "合并图像")
 
 
 class ResizeMode(ChoiceEnum):

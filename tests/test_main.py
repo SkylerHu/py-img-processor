@@ -13,10 +13,10 @@ from imgprocessor.main import main
     "argv,code",
     [
         ("-P expected/  -O tmp/test  --action resize,s_200 --overwrite", 0),
-        ("-P ./  -O tmp/test  --action resize,s_200 --overwrite", 0),
+        ("-P dir1/  -O tmp/test  --action resize,s_200 --overwrite", 0),
         ("-P expected/  -O tmp/test2  --action resize,s_200 --overwrite", 1),
         ("-P lenna-400x225.jpg  -O expected/  --action resize,s_200 resize,l_200 --overwrite", 0),
-        ("-P lenna-400x225.jpg  -O expected/  --action resize,s_200 --overwrite", 0),
+        ("-P lenna-400x225.jpg  -O expected/lenna-edit.png  --action resize,s_200 --overwrite", 0),
         ("-P lenna-400x225.jpg  -O ./  --action resize,s_200", 1),
     ],
 )
@@ -31,3 +31,12 @@ def test_run_main(argv: str, code: int, monkeypatch) -> None:
 
     monkeypatch.setattr(imgprocessor.processor, "process_image_by_path", lambda *args, **kwargs: True)
     assert main(argv=argv.split()) == code
+
+
+@pytest.mark.usefixtures("clean_dir")
+def test_img_use_main() -> None:
+    img_path = "lenna.jpg"
+    assert not os.path.isfile(img_path)
+
+    argv = f"-P {img_path}  -O ./  --action resize,s_200"
+    assert main(argv=argv.split()) == 1

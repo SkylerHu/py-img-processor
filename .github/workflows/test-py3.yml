@@ -1,0 +1,51 @@
+name: unit testing
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+  workflow_dispatch:
+
+
+jobs:
+
+  build:
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python: [ "3.9", "3.10", "3.11", "3.12" ]
+        pillow: [ "8", "9", "10" ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install tox and any other packages
+        run: pip install tox coveralls
+
+      - name: Run tox targets for ${{ matrix.python }}
+        run: tox run -e py$(echo ${{ matrix.python }} | tr -d .)-pillow$(echo ${{ matrix.pillow }} | tr -d .)
+
+      - name: Upload coverage
+        if: ${{ matrix.python == '3.9' && matrix.pillow == '10' }}
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run:
+          coveralls

@@ -39,9 +39,9 @@ class WatermarkParser(BaseParser):
         "rotate": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 360},
         # 图文混合水印参数
         # 文字和图片水印的前后顺序; 0表示图片水印在前；1表示文字水印在前
-        "order": {"type": enums.ArgType.INTEGER, "default": 0, "choices": enums.PositionOrder},
+        "order": {"type": enums.ArgType.INTEGER, "default": enums.PositionOrder.BEFORE, "choices": enums.PositionOrder},
         # 文字水印和图片水印的对齐方式; 0表示文字水印和图片水印上对齐; 1表示文字水印和图片水印中对齐; 2: 表示文字水印和图片水印下对齐
-        "align": {"type": enums.ArgType.INTEGER, "default": 2, "choices": enums.PositionAlign},
+        "align": {"type": enums.ArgType.INTEGER, "default": enums.PositionAlign.BOTTOM, "choices": enums.PositionAlign},
         # 文字水印和图片水印间的间距
         "interval": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 1000},
     }
@@ -144,7 +144,7 @@ class WatermarkParser(BaseParser):
 
         if icon:
             # icon放在文字之后粘贴，是因为文字要做一些其他处理
-            mark.paste(icon, (x1, y1))
+            mark.paste(icon, (x1, y1), icon)
 
         return mark
 

@@ -28,12 +28,6 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
 
     args = parser.parse_args(argv)
 
-    # 输出目录
-    output = args.output
-    if not os.path.isdir(output):
-        print("\033[31m参数output目录不存在,请先创建\033[0m", file=sys.stderr, flush=True)
-        return 1
-
     # 输入
     path = args.path
     base_dir = path
@@ -49,6 +43,13 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
         base_dir = os.path.dirname(path)
 
     total = len(file_paths)
+    ac_num = len(args.action)
+
+    # 输出目录
+    output = args.output
+    if (total > 1 or ac_num > 1) and not os.path.isdir(output):
+        print("\033[31m参数output目录不存在,请先创建\033[0m", file=sys.stderr, flush=True)
+        return 1
     count = 0
     for file_path in file_paths:
         count += 1
@@ -62,14 +63,16 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
         relative_path = relative_path.strip("/")
 
         prefix, ext = os.path.splitext(relative_path)
-        ac_num = len(args.action)
         for idx, param_str in enumerate(args.action):
             # 初始化目标文件路径
-            if ac_num == 1:
-                target_name = relative_path
+            if total == 1 and ac_num == 1 and os.path.splitext(output)[-1]:
+                out_path = output
             else:
-                target_name = f"{prefix}-{idx}.{ext}"
-            out_path = os.path.join(output, target_name)
+                if ac_num == 1:
+                    target_name = relative_path
+                else:
+                    target_name = f"{prefix}-{idx}.{ext}"
+                out_path = os.path.join(output, target_name)
 
             tag = f"{f_tag}\t action={idx+1}\t 保存于 {out_path}"
             print(f"{tag}\t ...", flush=True, end="\r")
@@ -92,6 +95,7 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
             except Exception as e:
                 print(f"{tag}\t \033[31m失败：{e}\033[0m", file=sys.stderr, flush=True)
                 print(traceback.format_exc(), file=sys.stderr, flush=True)
+                return 1
 
     return 0
 

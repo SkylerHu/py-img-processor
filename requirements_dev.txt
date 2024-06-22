@@ -4,6 +4,9 @@ ipython==8.18.1
 # test
 tox==4.15.0
 
+# docs
+-r requirements_docs.txt
+
 Pillow==8
 -r requirements_test.txt
 

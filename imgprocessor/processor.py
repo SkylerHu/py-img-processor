@@ -3,6 +3,7 @@
 import typing
 import os
 import tempfile
+import colorsys
 
 from PIL import Image, ImageOps
 
@@ -78,3 +79,36 @@ def process_image_by_path(
 
     kwargs = params.save_parser.compute(ori_im, im)
     return save_img_to_file(im, out_path=out_path, **kwargs)
+
+
+def extract_main_color(img_path: str, delta_h: float = 0.3) -> str:
+    """获取图像主色调
+
+    Args:
+        img_path: 输入图像的路径
+        delta_h: 像素色相和平均色相做减法的绝对值小于改值，才用于计算主色调，取值范围[0,1]
+    Returns:
+        颜色值，eg: FFFFFF
+    """
+    r, g, b = 0, 0, 0
+    im = Image.open(img_path)
+    if im.mode != "RGB":
+        im = im.convert("RGB")
+    # 转换成HSV即 色相(Hue)、饱和度(Saturation)、明度(alue)，取值范围[0,1]
+    # 取H计算平均色相
+    all_h = [colorsys.rgb_to_hsv(*im.getpixel((x, y)))[0] for x in range(im.size[0]) for y in range(im.size[1])]
+    avg_h = sum(all_h) / (im.size[0] * im.size[1])
+    # 取与平均色相相近的像素色值rgb用于计算，像素值取值范围[0,255]
+    beyond = list(
+        filter(
+            lambda x: abs(colorsys.rgb_to_hsv(*x)[0] - avg_h) < delta_h,
+            [im.getpixel((x, y)) for x in range(im.size[0]) for y in range(im.size[1])],
+        )
+    )
+    if len(beyond):
+        r = int(sum(e[0] for e in beyond) / len(beyond))
+        g = int(sum(e[1] for e in beyond) / len(beyond))
+        b = int(sum(e[2] for e in beyond) / len(beyond))
+
+    color = "{}{}{}".format(hex(r)[2:].zfill(2), hex(g)[2:].zfill(2), hex(b)[2:].zfill(2))
+    return color.upper()

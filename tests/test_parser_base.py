@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
+import typing
 import pytest
 
 from PIL import Image
@@ -20,6 +21,10 @@ def test_args_config() -> None:
             "t": {"type": enums.ArgType.STRING, "max_length": 2},
         }
 
+        def __init__(self, x: typing.Optional[int] = None, **kwargs: typing.Any) -> None:
+            super().__init__(**kwargs)
+            self.x = x
+
     data = TestParser.validate_args(w="a", h2=2, x=1)
     assert data.get("w") == "a"
     assert data.get("h") == 0
@@ -27,6 +32,9 @@ def test_args_config() -> None:
 
     data = TestParser.parse_str("resize,h_1.5,x_1")
     assert sorted(data.keys()) == sorted(["key", "x", "h"])
+
+    p = TestParser.init_by_str("resize,h_1.5,x_1")
+    assert p.to_dict() == {"x": 1}
 
     with pytest.raises(ParamValidateException, match="缺少必要参数"):
         TestParser.init_by_str("resize,h_1.5")

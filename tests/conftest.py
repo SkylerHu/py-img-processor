@@ -5,6 +5,7 @@ import typing
 import os
 import shutil
 import tempfile
+from distutils.version import StrictVersion
 
 import pytest
 from PIL import Image
@@ -33,18 +34,24 @@ def clean_dir(use_special_tmp: typing.Optional[str]) -> typing.Generator:
     old_cwd = os.getcwd()
     img_dir = os.path.join(old_cwd, "tests/imgs")
 
+    def copy_images(src_dir: str, target_dir: str) -> None:
+        # 将原始图像复制一份，不然无法在临时目录中按照相对路径访问图像
+        shutil.copytree(src_dir, target_dir, dirs_exist_ok=True)
+        pil_version = StrictVersion(Image.__version__).version[0]
+        expected_dir = f"expected-{pil_version}"
+        if os.path.isdir(expected_dir):
+            shutil.copytree(expected_dir, "expected", dirs_exist_ok=True)
+
     if use_special_tmp:
         new_path = os.path.join(old_cwd, ".tmp")
         os.chdir(new_path)
-        # 将原始图像复制一份，不然无法在临时目录中按照相对路径访问图像
-        shutil.copytree(img_dir, new_path, dirs_exist_ok=True)
+        copy_images(img_dir, new_path)
         yield
         os.chdir(old_cwd)
     else:
         with tempfile.TemporaryDirectory() as new_path:
             os.chdir(new_path)
-            # 将原始图像复制一份，不然无法在临时目录中按照相对路径访问图像
-            shutil.copytree(img_dir, new_path, dirs_exist_ok=True)
+            copy_images(img_dir, new_path)
             yield
             os.chdir(old_cwd)
 
