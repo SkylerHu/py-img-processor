@@ -41,6 +41,7 @@ setup(
     install_requires=[
         "py-enum>=1.1.1",
         "Pillow>=8",
+        "typing_extensions",
     ],
     python_requires=">=3.9",
     classifiers=[
