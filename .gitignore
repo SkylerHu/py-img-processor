@@ -31,5 +31,3 @@ dist/
 .pytest_cache/
 .tox/
 .cache
-
-tests/imgs/*
