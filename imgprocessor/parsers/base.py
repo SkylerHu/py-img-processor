@@ -314,7 +314,8 @@ class ImgSaveParser(BaseParser):
     ARGS = {
         "format": {"type": enums.ArgType.STRING, "default": None},
         "quality": {"type": enums.ArgType.INTEGER, "default": None, "min": 1, "max": 100},
-        "interlace": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 1},
+        # 1 表示将原图设置成渐进显示
+        "interlace": {"type": enums.ArgType.INTEGER, "default": 0, "choices": [0, 1]},
     }
 
     def __init__(
@@ -338,9 +339,14 @@ class ImgSaveParser(BaseParser):
     def compute(self, in_im: Image, out_im: Image) -> dict:
         kwargs = {
             "format": self.format or in_im.format,
-            # 为了解决色域问题
-            "icc_profile": in_im.info.get("icc_profile"),
+            # png 和 gif 格式的选项是 interlace（一般翻译成交错），jpeg(jpg) 的选项则是 progressive （翻译成 渐进）
+            "progressive": True if self.interlace else False,
+            "interlace": self.interlace,
         }
+        # 为了解决色域问题
+        icc_profile = in_im.info.get("icc_profile")
+        if icc_profile:
+            kwargs["icc_profile"] = icc_profile
         if self.quality:
             kwargs["quality"] = self.quality
         return kwargs

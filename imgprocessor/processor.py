@@ -38,11 +38,11 @@ def save_img_to_file(
     fmt = kwargs.get("format") or im.format
     kwargs["format"] = fmt
 
-    if fmt == enums.ImageFormat.JPEG and im.mode == "RGBA":
+    if fmt.upper() == enums.ImageFormat.JPEG and im.mode == "RGBA":
         im = im.convert("RGB")
 
     if not kwargs.get("quality"):
-        if fmt == enums.ImageFormat.JPEG and im.format == enums.ImageFormat.JPEG:
+        if fmt.upper() == enums.ImageFormat.JPEG and im.format == enums.ImageFormat.JPEG:
             kwargs["quality"] = "keep"
         else:
             kwargs["quality"] = settings.PROCESSOR_DEFAULT_QUALITY

@@ -112,6 +112,11 @@ def test_main_color():
             "resize,s_100/format,png",
             "expected/lenna-merge.png",
         ),
+        (
+            "img-with-icc.png",
+            "resize,s_100/interlace,1/format,jpeg",
+            "expected/img-with-icc.jpg",
+        ),
     ],
 )
 def test_action(img_name: str, param_str: dict, expected_path: str) -> None:

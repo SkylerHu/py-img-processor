@@ -6,7 +6,7 @@ import pytest
 from PIL import Image
 
 from imgprocessor import enums, settings
-from imgprocessor.parsers import base as parser_base
+from imgprocessor.parsers import base as parser_base, ProcessParams
 from imgprocessor.exceptions import ParamValidateException, ParamParseException
 
 
@@ -88,3 +88,10 @@ def test_pre_processing(img_rotate_90_with_exif: Image) -> None:
     assert img_rotate_90_with_exif.getexif().get(0x0112) > 0
     im = parser_base.pre_processing(img_rotate_90_with_exif)
     assert im.getexif().get(0x0112) is None
+
+
+def test_process_params() -> None:
+    p = ProcessParams.parse_str("interlace,1/format,png")
+    im = Image.new("RGBA", (200, 200))
+    save_params = p.save_parser.compute(im, im)
+    assert save_params == {"interlace": 1, "format": "png", "progressive": True}
