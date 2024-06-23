@@ -22,15 +22,15 @@ class WatermarkParser(BaseParser):
         "pf": {"type": enums.ArgType.STRING, "default": ""},
         # 是否将图片水印或文字水印铺满原图; 值为1开启
         "fill": {"type": enums.ArgType.INTEGER, "default": 0, "choices": [0, 1]},
-        "padx": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
-        "pady": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "padx": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 4096},
+        "pady": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 4096},
         # 图片水印路径
-        "image": {"type": enums.ArgType.STRING, "enable_base64": True},
+        "image": {"type": enums.ArgType.STRING, "base64_encode": True},
         # 水印的原始设计参照尺寸，会根据原图大小缩放水印
         "design": {"type": enums.ArgType.INTEGER, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
         # 文字
-        "text": {"type": enums.ArgType.STRING, "enable_base64": True, "max_length": 64},
-        "font": {"type": enums.ArgType.STRING, "enable_base64": True},
+        "text": {"type": enums.ArgType.STRING, "base64_encode": True, "max_length": 64},
+        "font": {"type": enums.ArgType.STRING, "base64_encode": True},
         "color": {"type": enums.ArgType.STRING, "default": "000000", "regex": "^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"},
         "size": {"type": enums.ArgType.INTEGER, "default": 40, "min": 1, "max": 1000},
         # 文字水印的阴影透明度, 0表示没有阴影

@@ -13,11 +13,11 @@ class MergeParser(BaseParser):
     KEY = enums.OpAction.MERGE
     ARGS = {
         # 要处理的图片
-        "image": {"type": enums.ArgType.STRING, "required": True, "enable_base64": True},
+        "image": {"type": enums.ArgType.STRING, "required": True, "base64_encode": True},
         # 对image的处理参数
-        "action": {"type": enums.ArgType.STRING, "enable_base64": True},
+        "action": {"type": enums.ArgType.STRING, "base64_encode": True},
         # 使用输入图像的大小作为参照进行缩放
-        "scale": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": 100},
+        "p": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": 1000},
         # 对齐方式
         "order": {"type": enums.ArgType.INTEGER, "choices": enums.PositionOrder},
         "align": {"type": enums.ArgType.INTEGER, "default": enums.PositionAlign.BOTTOM, "choices": enums.PositionAlign},
@@ -39,7 +39,7 @@ class MergeParser(BaseParser):
         self,
         image: typing.Optional[str] = None,
         action: typing.Optional[str] = None,
-        scale: int = 0,
+        p: int = 0,
         order: typing.Optional[int] = None,
         align: int = 2,
         interval: int = 0,
@@ -52,7 +52,7 @@ class MergeParser(BaseParser):
     ) -> None:
         self.image = image
         self.action = action
-        self.scale = scale
+        self.p = p
         self.order = order
         self.align = align
         self.interval = interval
@@ -99,8 +99,8 @@ class MergeParser(BaseParser):
 
             params = ProcessParams.parse_str(self.action)
             im2 = handle_img_actions(im2, params.actions)
-        if self.scale:
-            w2, h2 = int(src_w * self.scale / 100), int(src_h * self.scale / 100)
+        if self.p:
+            w2, h2 = int(src_w * self.p / 100), int(src_h * self.p / 100)
             im2 = im2.resize((w2, h2), resample=Image.LANCZOS)
         w2, h2 = im2.size
 

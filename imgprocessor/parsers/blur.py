@@ -13,7 +13,7 @@ class BlurParser(BaseParser):
     KEY = enums.OpAction.BLUR
     ARGS = {
         # 模糊半径，值越大，图片越模糊
-        "r": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": 50},
+        "r": {"type": enums.ArgType.INTEGER, "required": True, "min": 1, "max": 50},
     }
 
     def __init__(

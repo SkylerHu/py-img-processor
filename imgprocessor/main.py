@@ -20,10 +20,12 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
 
     parser.add_argument("-V", "--version", action="version", version=f"%(prog)s {VERSION}")
     parser.add_argument(
-        "-P", "--path", type=str, required=True, help="输入图像的文件路径/目录，若是目录可以批量处理目录下所有图像"
+        "-P", "--path", type=str, required=True, help="输入图像的文件路径/目录，若是目录则批量处理目录下所有图像"
     )
     parser.add_argument("--action", type=str, nargs="+", help="操作参数，可对同一个文件多组操作")
-    parser.add_argument("-O", "--output", type=str, required=True, help="输出图像目录")
+    parser.add_argument(
+        "-O", "--output", type=str, required=True, help="输出图像路径，多个图像或多个操作时请设置已存在的目录"
+    )
     parser.add_argument("--overwrite", action="store_true", help="是否覆盖输出路径中已有文件")
 
     args = parser.parse_args(argv)

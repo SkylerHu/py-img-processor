@@ -64,6 +64,19 @@ def save_img_to_file(
 def process_image_by_path(
     input_path: str, out_path: str, params: typing.Union[ProcessParams, dict, str]
 ) -> typing.Optional[typing.ByteString]:
+    """处理图像
+
+    Args:
+        input_path: 输入图像文件路径
+        out_path: 输出图像保存路径
+        params: 图像处理参数
+
+    Raises:
+        ProcessLimitException: 超过处理限制会抛出异常
+
+    Returns:
+        默认输出直接存储无返回，仅当out_path为空时会返回处理后图像的二进制内容
+    """
     size = os.path.getsize(input_path)
     if size > settings.PROCESSOR_MAX_FILE_SIZE * 1024 * 1024:
         raise ProcessLimitException(f"图像文件大小不得超过{settings.PROCESSOR_MAX_FILE_SIZE}MB")
@@ -87,6 +100,7 @@ def extract_main_color(img_path: str, delta_h: float = 0.3) -> str:
     Args:
         img_path: 输入图像的路径
         delta_h: 像素色相和平均色相做减法的绝对值小于改值，才用于计算主色调，取值范围[0,1]
+
     Returns:
         颜色值，eg: FFFFFF
     """

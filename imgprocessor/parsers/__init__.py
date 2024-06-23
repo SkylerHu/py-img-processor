@@ -34,10 +34,11 @@ class ProcessParams(object):
 
     def __init__(
         self,
+        enable_base64: bool = False,
         actions: typing.Optional[list] = None,
         **kwargs: typing.Any,
     ) -> None:
-        self.save_parser: ImgSaveParser = ImgSaveParser.init(kwargs)
+        self.save_parser: ImgSaveParser = ImgSaveParser.init(kwargs, enable_base64=enable_base64)
 
         _actions = []
         for i in actions or []:
@@ -45,7 +46,7 @@ class ProcessParams(object):
             cls = _ACTION_PARASER_MAP.get(key)
             if not cls:
                 continue
-            _actions.append(cls.init(i))
+            _actions.append(cls.init(i, enable_base64=enable_base64))
         self.actions = _actions
 
     @classmethod
@@ -85,4 +86,4 @@ class ProcessParams(object):
                 actions.append(action)
 
         kwargs = ImgSaveParser.parse_str(",".join(save_args))
-        return cls(actions=actions, **kwargs)
+        return cls(enable_base64=True, actions=actions, **kwargs)

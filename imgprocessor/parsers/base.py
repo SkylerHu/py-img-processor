@@ -23,8 +23,8 @@ class BaseParser(object):
         pass
 
     @classmethod
-    def init(cls, data: dict) -> Self:
-        params = cls.validate_args(**data)
+    def init(cls, data: dict, enable_base64: bool = False) -> Self:
+        params = cls.validate_args(enable_base64=enable_base64, **data)
         ins = cls(**params)
         ins.validate()
         return ins
@@ -32,7 +32,7 @@ class BaseParser(object):
     @classmethod
     def init_by_str(cls, param_str: str) -> Self:
         data = cls.parse_str(param_str)
-        return cls.init(data)
+        return cls.init(data, enable_base64=True)
 
     def validate(self) -> None:
         """由子类继承实现各类实例的数据校验"""
@@ -49,7 +49,7 @@ class BaseParser(object):
         return data
 
     @classmethod
-    def validate_args(cls, **kwargs: typing.Any) -> dict:
+    def validate_args(cls, enable_base64: bool = False, **kwargs: typing.Any) -> dict:
         data = {}
         for key, config in cls.ARGS.items():
             _type = config["type"]
@@ -69,7 +69,7 @@ class BaseParser(object):
                     elif _type == enums.ArgType.FLOAT:
                         value = cls._validate_number(value, use_float=True, **config)
                     elif _type == enums.ArgType.STRING:
-                        value = cls._validate_str(value, **config)
+                        value = cls._validate_str(value, enable_base64=enable_base64, **config)
 
                     choices = config.get("choices")
                     if choices and value not in choices:
@@ -84,14 +84,15 @@ class BaseParser(object):
     def _validate_str(
         cls,
         value: typing.Any,
-        regex: typing.Optional[str] = None,
         enable_base64: bool = False,
+        regex: typing.Optional[str] = None,
+        base64_encode: bool = False,
         max_length: typing.Optional[int] = None,
         **kwargs: dict,
     ) -> str:
         if not isinstance(value, str):
             raise ParamValidateException("参数类型不符合要求，必须是字符串类型")
-        if enable_base64:
+        if enable_base64 and base64_encode:
             value = utils.base64url_decode(value)
         if max_length is not None and len(value) > max_length:
             raise ParamValidateException(f"长度不允许超过{max_length}个字符")

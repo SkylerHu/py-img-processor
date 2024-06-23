@@ -108,7 +108,7 @@ def test_main_color():
         (
             "lenna-400x225.jpg",
             f"resize,s_200/merge,image_{base64url_encode('wolf-300.png')},action_{base64url_encode('resize,s_250')},"
-            f"g_ne,color_0000/merge,image_{base64url_encode('wolf-50.png')},scale_50,g_sw,color_0000/"
+            f"g_ne,color_0000/merge,image_{base64url_encode('wolf-50.png')},p_50,g_sw,color_0000/"
             "resize,s_100/format,png",
             "expected/lenna-merge.png",
         ),

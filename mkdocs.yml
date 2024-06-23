@@ -1,5 +1,5 @@
-site_name: pykit-tools
-repo_url: https://github.com/SkylerHu/pykit-tools
+site_name: 图像处理Python库
+repo_url: https://github.com/SkylerHu/py-img-processor
 docs_dir: .
 
 theme:
@@ -22,7 +22,7 @@ plugins:
       default_handler: python
       handlers:
         python:
-          paths: [pykit_tools]
+          paths: [imgprocessor]
           options:
             heading_level: 3
             show_root_heading: true

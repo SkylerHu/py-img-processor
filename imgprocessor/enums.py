@@ -4,6 +4,8 @@ from py_enum import ChoiceEnum
 
 
 class ImageFormat(ChoiceEnum):
+    """图像转换的格式"""
+
     JPEG = ("JPEG", "JPEG")
     PNG = ("PNG", "PNG")
     WEBP = ("WebP", "WebP")
@@ -30,8 +32,8 @@ class OpAction(ChoiceEnum):
     """支持的操作类型"""
 
     # 以下几个比较特殊，在保存文件时使用
-    QUALITY = ("quality", "质量")
     FORMAT = ("format", "格式")
+    QUALITY = ("quality", "质量")
     INTERLACE = ("interlace", "渐进显示")
     # 其他
     RESIZE = ("resize", "缩放")
@@ -47,6 +49,8 @@ class OpAction(ChoiceEnum):
 
 
 class ResizeMode(ChoiceEnum):
+    """图像缩放的模式"""
+
     LFIT = ("lfit", "等比缩放，缩放图限制为指定w与h的矩形内的最大图片")  # 类似ImageOps.contain
     MFIT = ("mfit", "等比缩放，缩放图为延伸出指定w与h的矩形框外的最小图片")  # 类似ImageOps.cover
     FIT = ("fit", "将原图等比缩放为延伸出指定w与h的矩形框外的最小图片，然后将超出的部分进行居中裁剪")  # ImageOps.fit
@@ -61,7 +65,7 @@ class ArgType(ChoiceEnum):
 
 
 class Geography(ChoiceEnum):
-    """图像中的方向/位置"""
+    """图像中的九宫格位置"""
 
     NW = ("nw", "左上")
     NORTH = ("north", "中上")

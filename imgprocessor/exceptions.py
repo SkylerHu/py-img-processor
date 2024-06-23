@@ -3,10 +3,14 @@
 
 
 class ProcessException(Exception):
+    """图像处理异常基类"""
+
     pass
 
 
 class ProcessLimitException(Exception):
+    """图像处理限制"""
+
     pass
 
 

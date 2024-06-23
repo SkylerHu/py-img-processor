@@ -15,11 +15,12 @@ def test_parse_define() -> None:
         ins = cls()
         for key, config in cls.ARGS.items():
             _type = config["type"]
-            _default = config.get("default")
-            msg = f"校验{cls.__name__}的属性{key}，类型{_type}，默认值{_default}"
-            assert hasattr(ins, key), msg
-            value = getattr(ins, key)
-            assert value == _default, msg
+            if not config.get("required"):
+                _default = config.get("default")
+                msg = f"校验{cls.__name__}的属性{key}，类型{_type}，默认值{_default}"
+                assert hasattr(ins, key), msg
+                value = getattr(ins, key)
+                assert value == _default, msg
 
 
 @pytest.mark.parametrize(
@@ -205,6 +206,20 @@ def test_circle_exception(src_size: tuple, params: typing.Union[str, dict], exce
         action.compute(*src_size)
 
 
+@pytest.mark.parametrize(
+    "src_size,params,exception,error",
+    [
+        ((1920, 1080), "blur", ParamValidateException, "缺少必要参数"),
+    ],
+)
+def test_blur_exception(src_size: tuple, params: typing.Union[str, dict], exception: Exception, error: str) -> None:
+    with pytest.raises(exception, match=error):
+        if isinstance(params, str):
+            parsers.BlurParser.init_by_str(params)
+        else:
+            parsers.BlurParser.init(params)
+
+
 @pytest.mark.usefixtures("clean_dir")
 @pytest.mark.parametrize(
     "param_str,expected",
@@ -218,34 +233,6 @@ def test_wm_gen_im(param_str: str, expected: tuple) -> None:
     action = parsers.WatermarkParser.init_by_str(param_str)
     out = action.get_watermark_im()
     assert out.size == expected
-
-
-# @pytest.mark.skipif(StrictVersion(Image.__version__).version[0] != 9, reason="限定Pillow版本")
-# @pytest.mark.usefixtures("clean_dir")
-# @pytest.mark.parametrize(
-#     "param_str,expected",
-#     [
-#         (f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')}", (190, 48)),
-#     ],
-# )
-# def test_wm_gen_im_v9(param_str: str, expected: tuple) -> None:
-#     action = parsers.WatermarkParser.init_by_str(param_str)
-#     out = action.get_watermark_im()
-#     assert out.size == expected
-
-
-# @pytest.mark.skipif(StrictVersion(Image.__version__).version[0] != 8, reason="限定Pillow版本")
-# @pytest.mark.usefixtures("clean_dir")
-# @pytest.mark.parametrize(
-#     "param_str,expected",
-#     [
-#         (f"watermark,text_{base64url_encode('Hello 世界')},font_{base64url_encode('PingFang-Heavy.ttf')}", (190, 48)),
-#     ],
-# )
-# def test_wm_gen_im_v8(param_str: str, expected: tuple) -> None:
-#     action = parsers.WatermarkParser.init_by_str(param_str)
-#     out = action.get_watermark_im()
-#     assert out.size == expected
 
 
 @pytest.mark.usefixtures("clean_dir")

@@ -12,7 +12,7 @@ class CircleParser(BaseParser):
 
     KEY = enums.OpAction.CIRCLE
     ARGS = {
-        "r": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "r": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
     }
 
     def __init__(
