@@ -49,6 +49,12 @@ Image editor using Python and Pillow.
 > `注意`：`PROCESSOR_TEXT_FONT` 字体的设置是文字水印必要参数，需保证系统已安装该字体。默认值 `Arial Unicode.ttf` 是MacOS系统存在的字体，建议设置字体文件路径。
 
 ## 2.2 图像处理
+
+测试图片 `lenna-400x225.jpg` (像素400x225)
+
+![](./docs/imgs/lenna-400x225.jpg)
+
+
 ### 处理函数
 `process_image_by_path(input_path, out_path, params)`
 
@@ -71,12 +77,16 @@ from imgprocessor.utils import base64url_encode
 from imgprocessor.processor import process_image_by_path
 
 process_image_by_path(
-    "tests/imgs/lenna-400x225.jpg",
+    "docs/imgs/lenna-400x225.jpg",
     "/tmp/output.png",
     # 对图片缩放、裁剪、生成圆角、并转成png存储
-    "resize,s_1080/crop,w_700,h_700//watermark,text_{base64url_encode('Hello 世界')}/circle,r_10/format,png",
+    f"resize,s_200/crop,w_200,h_200,g_center/watermark,text_{base64url_encode('Hello 世界')},color_FFF,size_20/circle,r_10/format,png",
 )
 ```
+
+输出图像 (像素200x200)：
+
+![](./docs/imgs/lenna-edit.png)
 
 ### 图像处理参数为JSON
 - 只是形式不同，参数和字符串形式无本质区别；
@@ -85,14 +95,14 @@ process_image_by_path(
 
 ```python
 process_image_by_path(
-    "tests/imgs/lenna-400x225.jpg",
+    "docs/imgs/lenna-400x225.jpg",
     "/tmp/output.png",
     {
         "actions": [
-            {"key": "resize", "s": 1080},
-            {"key": "crop", "w": 700, "h": 700},
+            {"key": "resize", "s": 200},
+            {"key": "crop", "w": 200, "h": 200, "g": "center"},
             # JSON形式参数, text无需encode
-            {"key": "watermark", "text": "Hello 世界"},
+            {"key": "watermark", "text": "Hello 世界", "color": "FFF", "size": 20},
             {"key": "circle", "r": 10},
         ],
         "format": "png",
@@ -123,16 +133,26 @@ optional arguments:
 示例：
 ```shell
 # 对单个图像进行多个操作，actions有2个参数，会输出2个图像文件
-img-processor -P tests/imgs/lenna-400x225.jpg -O /tmp/ --action resize,s_300 circle,r_100 --overwrite
+img-processor -P docs/imgs/lenna-400x225.jpg -O /tmp/ --action resize,s_200/format,webp resize,s_225/crop,w_225,h_225,g_center/circle/format,png --overwrite
 ```
 
 > 注意：action参数仅支持字符串表达形式。
+
+会输出2个图像文件：
+
+`/tmp/lenna-400x225-0.webp` (像素355x200)
+
+![](./docs/imgs/lenna-400x225-0.webp)
+
+`/tmp/lenna-400x225-1.png` (像素225x225)
+
+![](./docs/imgs/lenna-400x225-1.png)
 
 
 ## 提取图像主色调
 ```python
 from imgprocessor.processor import extract_main_color
 
-extract_main_color("tests/imgs/lenna-400x225.jpg")
+extract_main_color("docs/imgs/lenna-400x225.jpg")
 # 输出： "905C4C"
 ```

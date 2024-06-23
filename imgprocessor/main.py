@@ -7,7 +7,7 @@ import argparse
 import traceback
 
 from imgprocessor import VERSION
-from imgprocessor.processor import process_image_by_path
+from imgprocessor.processor import ProcessParams, process_image_by_path
 
 
 def main(argv: typing.Optional[list[str]] = None) -> int:
@@ -59,21 +59,24 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
         print(f_tag, flush=True, end="\r")
         # 相对path的相对路径
         if not base_dir or base_dir in [".", "./"]:
-            relative_path = file_path
+            input_file_name = file_path
         else:
-            relative_path = file_path.split(base_dir, 1)[-1]
-        relative_path = relative_path.strip("/")
+            input_file_name = file_path.split(base_dir, 1)[-1]
+        input_file_name = input_file_name.strip("/")
 
-        prefix, ext = os.path.splitext(relative_path)
+        prefix, ext = os.path.splitext(input_file_name)
         for idx, param_str in enumerate(args.action):
+            params = ProcessParams.parse_str(param_str)
             # 初始化目标文件路径
             if total == 1 and ac_num == 1 and os.path.splitext(output)[-1]:
                 out_path = output
             else:
+                if params.save_parser.format:
+                    ext = f".{params.save_parser.format}"
                 if ac_num == 1:
-                    target_name = relative_path
+                    target_name = f"{prefix}{ext}"
                 else:
-                    target_name = f"{prefix}-{idx}.{ext}"
+                    target_name = f"{prefix}-{idx}{ext}"
                 out_path = os.path.join(output, target_name)
 
             tag = f"{f_tag}\t action={idx + 1}\t 保存于 {out_path}"

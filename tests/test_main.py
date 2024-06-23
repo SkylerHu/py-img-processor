@@ -12,7 +12,7 @@ from imgprocessor.main import main
 @pytest.mark.parametrize(
     "argv,code",
     [
-        ("-P expected/  -O tmp/test  --action resize,s_200 --overwrite", 0),
+        ("-P expected/  -O tmp/test  --action resize,s_200/format,webp --overwrite", 0),
         ("-P dir1/  -O tmp/test  --action resize,s_200 --overwrite", 0),
         ("-P expected/  -O tmp/test2  --action resize,s_200 --overwrite", 1),
         ("-P lenna-400x225.jpg  -O expected/  --action resize,s_200 resize,l_200 --overwrite", 0),
