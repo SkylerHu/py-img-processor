@@ -99,7 +99,7 @@ def extract_main_color(img_path: str, delta_h: float = 0.3) -> str:
 
     Args:
         img_path: 输入图像的路径
-        delta_h: 像素色相和平均色相做减法的绝对值小于改值，才用于计算主色调，取值范围[0,1]
+        delta_h: 像素色相和平均色相做减法的绝对值小于该值，才用于计算主色调，取值范围[0,1]
 
     Returns:
         颜色值，eg: FFFFFF

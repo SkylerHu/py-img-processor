@@ -38,7 +38,7 @@ class ProcessParams(object):
         actions: typing.Optional[list] = None,
         **kwargs: typing.Any,
     ) -> None:
-        self.save_parser: ImgSaveParser = ImgSaveParser.init(kwargs, enable_base64=enable_base64)
+        self.save_parser: ImgSaveParser = ImgSaveParser.init(kwargs, enable_base64=enable_base64)  # type: ignore
 
         _actions = []
         for i in actions or []:
