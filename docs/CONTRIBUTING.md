@@ -19,10 +19,9 @@
 - `requirements_dev.txt` 开发需要的环境
 - `requirements_test.txt` 跑测试用例需要的环境
 - `tests` 测试用例目录
-    - `app` 对应Django中的App模块，定义了数据库等
     - `conftest.py` pytest测试用例全局变量配置
     - `settings` Django settings配置，在pytest.ini中引用
-- `py_eunm` lib核心代码
+- `imgprocessor` lib核心代码
 - `MANIFEST.in` 打包相关-清单文件配置
 - `Makefile` 构建配置，可以执行`make help`查看具体命令
     - 定义了测试、打包、发版等很多命令

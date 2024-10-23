@@ -1,11 +1,5 @@
 import typing
 
-try:
-    # python3.11只后
-    from typing import Self  # type: ignore
-except Exception:
-    from typing_extensions import Self
-
 import re
 
 from PIL import Image, ImageOps
@@ -23,14 +17,14 @@ class BaseParser(object):
         pass
 
     @classmethod
-    def init(cls, data: dict, enable_base64: bool = False) -> Self:
+    def init(cls, data: dict, enable_base64: bool = False) -> "BaseParser":
         params = cls.validate_args(enable_base64=enable_base64, **data)
         ins = cls(**params)
         ins.validate()
         return ins
 
     @classmethod
-    def init_by_str(cls, param_str: str) -> Self:
+    def init_by_str(cls, param_str: str) -> "BaseParser":
         data = cls.parse_str(param_str)
         return cls.init(data, enable_base64=True)
 
