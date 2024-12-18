@@ -56,3 +56,6 @@ mkdocs serve  # 可以启动本地访问文档
 - `twine check dist/py*(.whl|.tar.gz)` 检查生成的文件是否符合pypi的要求
 - `twine upload -r pypi dist/py*(.whl|.tar.gz)` 上传包
     - 需要本地`~/.pypirc`配置用户名密码
+
+# 其他
+- 之后可考虑使用 [pillow-simd](https://github.com/uploadcare/pillow-simd) 提升性能, [性能测试](https://python-pillow.org/pillow-perf/)

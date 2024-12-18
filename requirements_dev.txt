@@ -3,6 +3,7 @@ ipython==8.18.1
 
 # test
 tox==4.15.0
+coveralls==4.0.1
 
 # docs
 -r requirements_docs.txt

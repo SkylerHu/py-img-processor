@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.1.0
+- fix: 修复 `resize` 等场景按照比例计算像素时，用 `round` 替换 `int` 操作
+
 ## 1.0.3
 - fix: 去掉对`typing_extensions`的依赖
 
