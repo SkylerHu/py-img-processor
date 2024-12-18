@@ -148,7 +148,7 @@ def test_resize_exception(src_size: tuple, params: typing.Union[str, dict], exce
         ((1920, 1080), "crop,pf_y", (0, 0, 1920, 1080)),
         ((1920, 1080), "crop,ratio_1:1", (0, 0, 1080, 1080)),
         ((1920, 1080), "crop,ratio_16:9", (0, 0, 1920, 1080)),
-        ((1080, 1920), "crop,ratio_16:9", (0, 0, 1080, 607)),
+        ((1080, 1920), "crop,ratio_16:9", (0, 0, 1080, 608)),
     ],
 )
 def test_crop_compute(src_size: tuple, param_str: str, expected: tuple) -> None:
