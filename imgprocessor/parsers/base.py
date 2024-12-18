@@ -208,11 +208,11 @@ def compute_by_geography(
         if "x" in pf:
             if x < 0 or x > 100:
                 raise ParamValidateException(f"pf={pf}包含了x，所以x作为百分比取值范围为[0,100]")
-            x = int(src_w * x / 100)
+            x = round(src_w * x / 100)
         if "y" in pf:
             if y < 0 or y > 100:
                 raise ParamValidateException(f"pf={pf}包含了y，所以y作为百分比取值范围为[0,100]")
-            y = int(src_h * y / 100)
+            y = round(src_h * y / 100)
     return x, y
 
 
@@ -231,11 +231,11 @@ def compute_by_ratio(src_w: int, src_h: int, ratio: str) -> tuple[int, int]:
     wr, hr = int(w_r), int(h_r)
     if src_w * hr > src_h * wr:
         # 相对于目标比例，宽长了
-        w = int(src_h * wr / hr)
+        w = round(src_h * wr / hr)
         h = src_h
     elif src_w * hr < src_h * wr:
         w = src_w
-        h = int(src_w * hr / wr)
+        h = round(src_w * hr / wr)
     else:
         # 刚好符合比例
         w, h = src_w, src_h

@@ -51,8 +51,8 @@ class OpAction(ChoiceEnum):
 class ResizeMode(ChoiceEnum):
     """图像缩放的模式"""
 
-    LFIT = ("lfit", "等比缩放，缩放图限制为指定w与h的矩形内的最大图片")  # 类似ImageOps.contain
-    MFIT = ("mfit", "等比缩放，缩放图为延伸出指定w与h的矩形框外的最小图片")  # 类似ImageOps.cover
+    LFIT = ("lfit", "等比缩放，缩放图限制为指定w与h的矩形内的最大图片")  # 类似 ImageOps.contain
+    MFIT = ("mfit", "等比缩放，缩放图为延伸出指定w与h的矩形框外的最小图片")  # 类似 ImageOps.cover
     FIT = ("fit", "将原图等比缩放为延伸出指定w与h的矩形框外的最小图片，然后将超出的部分进行居中裁剪")  # ImageOps.fit
     PAD = ("pad", "将原图缩放为指定w与h的矩形内的最大图片，然后使用指定颜色居中填充空白部分")  # ImageOps.pad
     FIXED = ("fixed", "固定宽高，强制缩放")

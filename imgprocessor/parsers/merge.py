@@ -100,7 +100,7 @@ class MergeParser(BaseParser):
             params = ProcessParams.parse_str(self.action)
             im2 = handle_img_actions(im2, params.actions)
         if self.p:
-            w2, h2 = int(src_w * self.p / 100), int(src_h * self.p / 100)
+            w2, h2 = round(src_w * self.p / 100), round(src_h * self.p / 100)
             im2 = im2.resize((w2, h2), resample=Image.LANCZOS)
         w2, h2 = im2.size
 
