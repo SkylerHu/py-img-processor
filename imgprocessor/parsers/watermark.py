@@ -132,7 +132,7 @@ class WatermarkParser(BaseParser):
 
         # 阴影要单独处理透明度，放在文字之前处理
         if self.shadow:
-            offset = max(int(self.size / 20), 2)
+            offset = max(round(self.size / 20), 2)
             shadow_color = "#000000"
             # 左上到右下的阴影，只保留这一个
             draw.text((x2 + offset, y2 + offset), self.text, font=font, fill=shadow_color)
@@ -140,7 +140,7 @@ class WatermarkParser(BaseParser):
             # draw.text((x2 + offset, y2 - offset), self.text, font=font, fill=shadow_color)
             # draw.text((x2 - offset, y2 - offset), self.text, font=font, fill=shadow_color)
             _, _, _, alpha_channel = mark.split()
-            alpha_channel = alpha_channel.point(lambda i: min(int(255 * self.shadow / 100), i))
+            alpha_channel = alpha_channel.point(lambda i: min(round(255 * self.shadow / 100), i))
             mark.putalpha(alpha_channel)
 
         # 处理文字
@@ -168,7 +168,7 @@ class WatermarkParser(BaseParser):
             # 处理缩放
             rate = min(src_w, src_h) / self.design
             if rate != 1:
-                w, h = int(w * rate), int(h * rate)
+                w, h = round(w * rate), round(h * rate)
                 mark = mark.resize((w, h), resample=Image.LANCZOS)
 
         if 0 < self.rotate < 360:
@@ -180,17 +180,17 @@ class WatermarkParser(BaseParser):
         if w > src_w or h > src_h:
             # 水印大小超过原图了, 原图矩形内的最大图像
             if w / h > src_w / src_h:
-                w, h = src_w, int(src_w * h / w)
+                w, h = src_w, round(src_w * h / w)
                 self.x = 0
             else:
-                w, h = int(src_h * w / h), src_h
+                w, h = round(src_h * w / h), src_h
                 self.y = 0
             mark = mark.resize((w, h), resample=Image.LANCZOS)
 
         if self.t < 100:
             # 处理透明度
             _, _, _, alpha_channel = mark.split()
-            alpha_channel = alpha_channel.point(lambda i: min(int(255 * self.t / 100), i))
+            alpha_channel = alpha_channel.point(lambda i: min(round(255 * self.t / 100), i))
             mark.putalpha(alpha_channel)
 
         # 计算位置，粘贴水印

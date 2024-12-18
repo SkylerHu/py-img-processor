@@ -64,14 +64,14 @@ class CropParser(BaseParser):
             if "w" in pf:
                 if w < 0 or w > 100:
                     raise ParamValidateException(f"pf={pf}包含了w，所以w作为百分比取值范围为[0,100]")
-                w = int(src_w * w / 100)
+                w = round(src_w * w / 100)
             elif not w:
                 w = src_w
 
             if "h" in pf:
                 if h < 0 or h > 100:
                     raise ParamValidateException(f"pf={pf}包含了h，所以h作为百分比取值范围为[0,100]")
-                h = int(src_h * h / 100)
+                h = round(src_h * h / 100)
             elif not h:
                 h = src_h
 

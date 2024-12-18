@@ -28,7 +28,7 @@ Image editor using Python and Pillow.
 
 ## 2. 使用(Usage)
 
-具体使用说明查看 [readthedocs](https://py-img-processor.readthedocs.io) 。
+具体使用说明查看 [readthedocs](https://py-img-processor.readthedocs.io/) 。
 
 ## 2.1 运行配置
 可以通过指定环境变量`PY_SETTINGS_MODULE`加载配置文件：
