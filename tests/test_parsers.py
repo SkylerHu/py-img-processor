@@ -256,10 +256,10 @@ def test_wm_exception(params: typing.Union[str, dict], exception: Exception, err
         action.get_watermark_im()
 
 
+@pytest.mark.usefixtures("clean_dir")
 @pytest.mark.parametrize(
     "input_params,param_str,expected",
     [
-        # 仅测试compute，参数image图像不存在
         ((1920, 1080, 1024, 768), "merge,image_aW1hZ2U,g_center", (1920, 1080, 0, 0, 448, 156)),
         ((1920, 1080, 1024, 768), "merge,image_aW1hZ2U,x_800,y_800", (1920, 1568, 0, 0, 800, 800)),
         ((768, 1024, 1920, 1080), "merge,image_aW1hZ2U,g_se", (1920, 1080, 1152, 56, 0, 0)),
@@ -268,6 +268,27 @@ def test_wm_exception(params: typing.Union[str, dict], exception: Exception, err
     ],
 )
 def test_merge_compute(input_params: tuple, param_str: str, expected: tuple) -> None:
+    # 保证文件真实存在
+    param_str = param_str.replace("aW1hZ2U", base64url_encode("wolf-50.png"))
     action = parsers.MergeParser.init_by_str(param_str)
     out = action.compute(*input_params)
     assert out == expected
+
+
+@pytest.mark.usefixtures("clean_dir")
+@pytest.mark.parametrize(
+    "params,exception,error",
+    [
+        (
+            f"merge,image_{base64url_encode('wolf-300.png')},action_{base64url_encode('resize,s_0')}",
+            ParamValidateException,
+            "merage操作中action参数校验异常",
+        )
+    ],
+)
+def test_merge_exception(params: typing.Union[str, dict], exception: Exception, error: str) -> None:
+    with pytest.raises(exception, match=error):
+        if isinstance(params, str):
+            parsers.MergeParser.init_by_str(params)
+        else:
+            parsers.MergeParser.init(params)
