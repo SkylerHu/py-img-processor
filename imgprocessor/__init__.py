@@ -41,6 +41,10 @@ class SettingsProxy(object):
     PROCESSOR_DEFAULT_QUALITY = 75
     # 默认字体文件; 默认配置了MacOS系统中的字体
     PROCESSOR_TEXT_FONT = "Arial Unicode.ttf"
+    # 工作目录：例如水印文件必须限制在设置目录下，避免恶意访问文件
+    PROCESSOR_WORKSPACE = None
+    # 当资源文件uri使用链接地址时，限制地址域名来源
+    PROCESSOR_ALLOW_DOMAINS = ()
 
     def __getattribute__(self, attr: str) -> typing.Any:
         try:

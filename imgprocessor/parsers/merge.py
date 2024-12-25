@@ -5,7 +5,8 @@ import typing
 from PIL import Image
 
 from imgprocessor import enums, settings
-from .base import BaseParser, pre_processing, compute_by_geography, compute_splice_two_im
+from imgprocessor.exceptions import ParamValidateException
+from .base import BaseParser, pre_processing, compute_by_geography, compute_splice_two_im, trans_uri_to_im
 
 
 class MergeParser(BaseParser):
@@ -13,7 +14,7 @@ class MergeParser(BaseParser):
     KEY = enums.OpAction.MERGE
     ARGS = {
         # 要处理的图片
-        "image": {"type": enums.ArgType.STRING, "required": True, "base64_encode": True},
+        "image": {"type": enums.ArgType.URI, "required": True, "base64_encode": True},
         # 对image的处理参数
         "action": {"type": enums.ArgType.STRING, "base64_encode": True},
         # 使用输入图像的大小作为参照进行缩放
@@ -37,7 +38,7 @@ class MergeParser(BaseParser):
 
     def __init__(
         self,
-        image: typing.Optional[str] = None,
+        image: str = "",
         action: typing.Optional[str] = None,
         p: int = 0,
         order: typing.Optional[int] = None,
@@ -61,6 +62,15 @@ class MergeParser(BaseParser):
         self.y = y
         self.pf = pf
         self.color = color
+
+        self.action_params = None
+        if self.action:
+            from imgprocessor.processor import ProcessParams
+
+            try:
+                self.action_params = ProcessParams.parse_str(self.action)
+            except ParamValidateException as e:
+                raise ParamValidateException(f"merage操作中action参数校验异常，{self.action} 解析出 {e}")
 
     def compute(self, src_w: int, src_h: int, w2: int, h2: int) -> tuple:
         if self.order in enums.PositionOrder:  # type: ignore
@@ -92,13 +102,12 @@ class MergeParser(BaseParser):
         im = pre_processing(im, use_alpha=True)
         src_w, src_h = im.size
 
-        im2 = Image.open(self.image)
+        im2 = trans_uri_to_im(self.image)
         im2 = pre_processing(im2, use_alpha=True)
-        if self.action:
-            from imgprocessor.processor import ProcessParams, handle_img_actions
+        if self.action_params:
+            from imgprocessor.processor import ProcessorCtr
 
-            params = ProcessParams.parse_str(self.action)
-            im2 = handle_img_actions(im2, params.actions)
+            im2 = ProcessorCtr.handle_img_actions(im2, self.action_params.actions)
         if self.p:
             w2, h2 = round(src_w * self.p / 100), round(src_h * self.p / 100)
             im2 = im2.resize((w2, h2), resample=Image.LANCZOS)

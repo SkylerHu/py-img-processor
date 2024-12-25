@@ -62,6 +62,7 @@ class ArgType(ChoiceEnum):
     STRING = ("str", "字符串")
     INTEGER = ("int", "整数")
     FLOAT = ("float", "浮点数")
+    URI = ("uri", "资源路径/链接")
 
 
 class Geography(ChoiceEnum):

@@ -4,7 +4,8 @@ import typing
 
 from imgprocessor import enums
 from imgprocessor.exceptions import ParamParseException
-from .base import BaseParser, ImgSaveParser  # noqa: F401
+
+from .base import BaseParser, ImgSaveParser
 from .resize import ResizeParser
 from .crop import CropParser
 from .circle import CircleParser
@@ -40,7 +41,7 @@ class ProcessParams(object):
     ) -> None:
         self.save_parser: ImgSaveParser = ImgSaveParser.init(kwargs, enable_base64=enable_base64)  # type: ignore
 
-        _actions = []
+        _actions: list[BaseParser] = []
         for i in actions or []:
             key = i.get("key")
             cls = _ACTION_PARASER_MAP.get(key)
