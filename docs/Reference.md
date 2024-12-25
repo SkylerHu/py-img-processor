@@ -143,8 +143,8 @@
 | size | 否 | 字体大小 | 默认：40 |
 | shadow | 否 | 文字水印的阴影透明度 | [0,100]<br>默认值：0，表示没有阴影 |
 | rotate | 否 | 水印顺时针旋转角度 | [0,360]<br>默认值：0，表示不旋转 |
-| order | 否 | 文字和图片水印的前后顺序 | 0（默认值）：表示图片水印在前<br>1：表示文字水印在前 |
-| align | 否 | 文字和图片水印的对齐方式 | 0：表示文字水印和图片水印上对齐<br>1：表示文字水印和图片水印中对齐<br>2（默认值）：表示文字水印和图片水印下对齐 |
+| order | 否 | 文字和图片水印的前后顺序 | 0（默认值）：表示图片水印在前<br>1：表示文字水印在前<br>see [PositionOrder](./#enums.PositionOrder) |
+| align | 否 | 文字和图片水印的对齐方式 | 0：表示文字水印和图片水印上对齐<br>1：表示文字水印和图片水印中对齐<br>2（默认值）：表示文字水印和图片水印下对齐<br>3：垂直左对齐<br>4：垂直居中对齐<br>5：垂直右对齐 <br>see [PositionAlign](./#enums.PositionAlign) |
 | interval 否 | | 文字和图片水印间的间距 | [0,1000]，默认值：0；单位：px |
 | t | 否 | 水印的不透明度 | [0, 100]，100不透明 |
 | design | 否 | 水印尺寸的设计参照尺寸；<br>design=1000意思是水印按照短边1000图像设计的；<br>需参照图像和design的比例进行缩放水印 | 当design=1000，若水印100x100，原图1080x720，则将水印缩放为72x72 |
@@ -160,13 +160,13 @@
 | image | 是 | 要参与合并的图像文件路径，需 [base64url_encode](./#utils.base64url_encode) 编码 | |
 | action | 否 | 对`iamge`图像按照字符串参数进行预处理，需 [base64url_encode](./#utils.base64url_encode) 编码 |
 | p | 否 | 按图像的百分比缩放`image`图像 | [1, 1000]<br>小于100为缩小，大于100为放大 |
-| order | 否 | 图像和`image`的前后顺序 | 0（默认值）：表示图片水印在前<br>1：表示文字水印在前 |
-| align | 否 | 图像和`image`的对齐方式 | 0：表示文字水印和图片水印上对齐<br>1：表示文字水印和图片水印中对齐<br>2（默认值）：表示文字水印和图片水印下对齐 |
+| order | 否 | 图像和`image`的前后顺序 | 0：该image在后<br>1：该image在前<br>不传递该参数align和interval不生效<br>see [PositionOrder](./#enums.PositionOrder) |
+| align | 否 | 图像和`image`的对齐方式 | 0：水平上对齐<br>1：水平居中对齐<br>2（默认值）：水平下对齐<br>3：垂直左对齐<br>4：垂直居中对齐<br>5：垂直右对齐<br>see [PositionAlign](./#enums.PositionAlign) |
 | interval 否 | | 图像和`image`间的间距 | [0,1000]，默认值：0；单位：px |
 | x | 否 | `image`在图像上的起点横坐标 | [0, 图像边界]<br>默认 `0` |
 | y | 否 | `image`在图像上的起点纵坐标 | [0, 图像边界]<br>默认 `0` |
 | g | 否 | 按照九宫格计算水印的位置，优先级高于`x、y` | |
-| pf | 否 | `xywh`相应字段按照比例计算；<br>设置后相应字段取值范围为[1,100]；<br>设置了`g`该参数无效 | `xywh`4个字母的任意组合 |
+| pf | 否 | `xy`相应字段按照比例计算；<br>设置后相应字段取值范围为[1,100]；<br>设置了`g`该参数无效 | `xy`2个字母的任意组合 |
 | color | 否 | 拼接后扩展部分的填充颜色 | 默认： FFFFFF (白色) |
 
 示例：
@@ -178,7 +178,7 @@
 ::: processor
     options:
         members:
-          - process_image_by_path
+          - process_image
           - extract_main_color
 
 ::: utils

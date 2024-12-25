@@ -56,7 +56,7 @@ Image editor using Python and Pillow.
 
 
 ### 处理函数
-`process_image_by_path(input_path, out_path, params)`
+`process_image(input_path, out_path, params)`
 
 参数说明：
 
@@ -74,9 +74,9 @@ Image editor using Python and Pillow.
 
 ```python
 from imgprocessor.utils import base64url_encode
-from imgprocessor.processor import process_image_by_path
+from imgprocessor.processor import process_image
 
-process_image_by_path(
+process_image(
     "docs/imgs/lenna-400x225.jpg",
     "/tmp/output.png",
     # 对图片缩放、裁剪、生成圆角、并转成png存储
@@ -94,7 +94,7 @@ process_image_by_path(
 - 其他参数都放在 `actions` 数组中；
 
 ```python
-process_image_by_path(
+process_image(
     "docs/imgs/lenna-400x225.jpg",
     "/tmp/output.png",
     {
