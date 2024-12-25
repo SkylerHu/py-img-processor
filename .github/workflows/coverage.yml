@@ -29,7 +29,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ./opencv-install
-          key: ${{ runner.os }}-opencv-cache
+          key: ${{ runner.os }}-opencv-cache-3.9
 
       - name: Install OpenCV
         uses: rayandrews/with-opencv-action@v1
