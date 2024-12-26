@@ -3,7 +3,7 @@
 import typing
 import pytest
 
-from imgprocessor import settings, parsers
+from imgprocessor import settings, parsers, enums
 from imgprocessor.utils import base64url_encode
 from imgprocessor.parsers import ProcessParams, _ACTION_PARASER_MAP
 from imgprocessor.exceptions import ParamValidateException, ProcessLimitException, ParamParseException
@@ -15,6 +15,8 @@ def test_parse_define() -> None:
         ins = cls()
         for key, config in cls.ARGS.items():
             _type = config["type"]
+            if _type == enums.ArgType.ACTION:
+                continue
             if not config.get("required"):
                 _default = config.get("default")
                 msg = f"校验{cls.__name__}的属性{key}，类型{_type}，默认值{_default}"
@@ -280,9 +282,9 @@ def test_merge_compute(input_params: tuple, param_str: str, expected: tuple) -> 
     "params,exception,error",
     [
         (
-            f"merge,image_{base64url_encode('wolf-300.png')},action_{base64url_encode('resize,s_0')}",
+            f"merge,image_{base64url_encode('wolf-300.png')},actions_{base64url_encode('resize,s_0')}",
             ParamValidateException,
-            "merage操作中action参数校验异常",
+            "merage操作中actions参数校验异常",
         )
     ],
 )

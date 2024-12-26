@@ -14,7 +14,8 @@ from imgprocessor.parsers.base import trans_uri_to_im
 class ProcessorCtr(object):
 
     def __init__(self, input_uri: str, out_path: str, params: typing.Union[ProcessParams, dict, str]) -> None:
-        self.input_uri = BaseParser._validate_uri(input_uri)
+        # 输入文件不检验路径
+        self.input_uri = BaseParser._validate_uri(input_uri, workspaces=tuple([]))
         self.out_path = out_path
         # 初始化处理参数
         if isinstance(params, dict):

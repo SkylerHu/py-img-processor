@@ -45,6 +45,8 @@ Image editor using Python and Pillow.
 | PROCESSOR_MAX_PIXEL | int | width x height总像素3亿，处理前后的值都被此配置限制 | 300000000 |
 | PROCESSOR_DEFAULT_QUALITY | int | 图像处理后的默认质量 | 75 |
 | PROCESSOR_TEXT_FONT | str | 默认字体文件，默认从系统中寻找；也可以直接传递字体文件路径 | Arial Unicode.ttf |
+| PROCESSOR_WORKSPACES | tuple | 限制水印等资源路径 （startswith匹配）， 默认None无限制 | None |
+| PROCESSOR_ALLOW_DOMAINS | tuple | 限制链接地址域名 （endswith匹配），默认None无限制 | None |
 
 > `注意`：`PROCESSOR_TEXT_FONT` 字体的设置是文字水印必要参数，需保证系统已安装该字体。默认值 `Arial Unicode.ttf` 是MacOS系统存在的字体，建议设置字体文件路径。
 

@@ -75,6 +75,9 @@ class BaseParser(object):
                         value = cls._validate_str(value, enable_base64=enable_base64, **config)
                     elif _type == enums.ArgType.URI:
                         value = cls._validate_uri(value, enable_base64=enable_base64, **config)
+                    elif _type == enums.ArgType.ACTION:
+                        if value and isinstance(value, str):
+                            value = cls._validate_str(value, enable_base64=enable_base64, **config)
 
                     choices = config.get("choices")
                     if choices and value not in choices:
@@ -140,7 +143,7 @@ class BaseParser(object):
     def _validate_uri(
         cls,
         value: typing.Any,
-        workspace: typing.Optional[str] = None,
+        workspaces: typing.Optional[tuple] = None,
         allow_domains: typing.Optional[tuple] = None,
         **kwargs: typing.Any,
     ) -> str:
@@ -166,18 +169,18 @@ class BaseParser(object):
             if not os.path.isfile(value):
                 raise ParamValidateException("系统文件不存在")
 
-            workspace = settings.PROCESSOR_WORKSPACE if workspace is None else workspace
-            if workspace:
-                _workspace = os.path.realpath(os.fspath(workspace))
-                if not value.startswith(_workspace):
-                    raise ParamValidateException(f"文件必须在 PROCESSOR_WORKSPACE={workspace} 目录下")
+            workspaces = settings.PROCESSOR_WORKSPACES if workspaces is None else workspaces
+            if workspaces:
+                _workspace = [os.path.realpath(os.fspath(i)) for i in workspaces]
+                if not value.startswith(tuple(_workspace)):
+                    raise ParamValidateException(f"文件必须在 PROCESSOR_WORKSPACES={workspaces} 目录下")
         else:
             # 是链接地址
             domain = parsed_url.netloc
             if not domain:
                 raise ParamValidateException("链接未解析出域名")
             allow_domains = settings.PROCESSOR_ALLOW_DOMAINS if allow_domains is None else allow_domains
-            if allow_domains and not parsed_url.netloc.endswith(allow_domains):
+            if allow_domains and not parsed_url.netloc.endswith(tuple(allow_domains)):
                 raise ParamValidateException(f"域名不合法, {parsed_url.netloc} 不在 {allow_domains} 范围内")
         return value
 

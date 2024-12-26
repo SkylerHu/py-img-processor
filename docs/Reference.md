@@ -163,9 +163,9 @@
 | order | 否 | 图像和`image`的前后顺序 | 0：该image在后<br>1：该image在前<br>不传递该参数align和interval不生效<br>see [PositionOrder](./#enums.PositionOrder) |
 | align | 否 | 图像和`image`的对齐方式 | 0：水平上对齐<br>1：水平居中对齐<br>2（默认值）：水平下对齐<br>3：垂直左对齐<br>4：垂直居中对齐<br>5：垂直右对齐<br>see [PositionAlign](./#enums.PositionAlign) |
 | interval 否 | | 图像和`image`间的间距 | [0,1000]，默认值：0；单位：px |
+| g | 否 | 按照九宫格计算水印的位置，优先级高于`x、y` | |
 | x | 否 | `image`在图像上的起点横坐标 | [0, 图像边界]<br>默认 `0` |
 | y | 否 | `image`在图像上的起点纵坐标 | [0, 图像边界]<br>默认 `0` |
-| g | 否 | 按照九宫格计算水印的位置，优先级高于`x、y` | |
 | pf | 否 | `xy`相应字段按照比例计算；<br>设置后相应字段取值范围为[1,100]；<br>设置了`g`该参数无效 | `xy`2个字母的任意组合 |
 | color | 否 | 拼接后扩展部分的填充颜色 | 默认： FFFFFF (白色) |
 
