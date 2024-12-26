@@ -44,7 +44,7 @@ def test_by_path() -> None:
     processor.process_image("lenna-400x225.jpg", output_path, {"actions": [{"key": "action", "w": 100}]})
 
 
-def test_limit_exception() -> None:
+def test_limit_exception(monkeypatch, link_uri) -> None:
     with pytest.raises(ProcessLimitException, match="图像文件大小不得超过"):
         with tempfile.NamedTemporaryFile() as fp:
             fp.write((settings.PROCESSOR_MAX_FILE_SIZE * 1024 * 1024 + 1) * b"b")
@@ -58,6 +58,10 @@ def test_limit_exception() -> None:
     with pytest.raises(ProcessLimitException, match="图像总像素不可超过"):
         im = Image.new("L", (20000, 20000))
         validate_ori_im(im)
+
+    monkeypatch.setattr(os.path, "getsize", lambda x: settings.PROCESSOR_MAX_FILE_SIZE * 1024 * 1024 + 1)
+    with pytest.raises(ProcessLimitException, match="图像文件大小不得超过"):
+        trans_uri_to_im(link_uri)
 
 
 @pytest.mark.usefixtures("clean_dir")
@@ -119,6 +123,22 @@ def test_main_color() -> None:
             "img-with-icc.png",
             "resize,s_100/interlace,1/format,jpeg",
             "expected/img-with-icc.jpg",
+        ),
+        (
+            "lenna-400x225.jpg",
+            {
+                "actions": [
+                    {"key": "resize", "l": 100},
+                    {
+                        "key": "merge",
+                        "image": "https://avatars.githubusercontent.com/u/5877158",
+                        "actions": [{"key": "resize", "s": 150}],
+                        "bg": 1,
+                    },
+                ],
+                "format": "png",
+            },
+            "expected/lenna-merge-v2.png",
         ),
     ],
 )

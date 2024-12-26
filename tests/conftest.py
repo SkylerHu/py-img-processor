@@ -76,3 +76,8 @@ def img_rotate_90_with_exif(img_origin: Image) -> Image:
     im.save(path, exif=exif)
     im = Image.open(path)
     return im
+
+
+@pytest.fixture
+def link_uri():
+    return "https://avatars.githubusercontent.com/u/5877158"

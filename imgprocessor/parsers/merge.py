@@ -33,7 +33,7 @@ class MergeParser(BaseParser):
         # 拼接后大小包含2个图像，空白区域使用color颜色填充
         "color": {
             "type": enums.ArgType.STRING,
-            "default": "FFFFFF",
+            "default": "0000",
             "regex": r"^([0-9a-fA-F]{6}|[0-9a-fA-F]{8}|[0-9a-fA-F]{3,4})$",
         },
     }
@@ -51,7 +51,7 @@ class MergeParser(BaseParser):
         x: int = 0,
         y: int = 0,
         pf: str = "",
-        color: str = "FFFFFF",
+        color: str = "0000",
         **kwargs: typing.Any,
     ) -> None:
         self.image = image

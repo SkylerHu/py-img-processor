@@ -5,7 +5,7 @@ import typing
 import os
 import re
 import tempfile
-from urllib.parse import urlparse
+import urllib.parse
 from urllib.request import urlretrieve
 
 from PIL import Image, ImageOps
@@ -140,13 +140,7 @@ class BaseParser(object):
         return v
 
     @classmethod
-    def _validate_uri(
-        cls,
-        value: typing.Any,
-        workspaces: typing.Optional[tuple] = None,
-        allow_domains: typing.Optional[tuple] = None,
-        **kwargs: typing.Any,
-    ) -> str:
+    def _validate_uri(cls, value: typing.Any, **kwargs: typing.Any) -> str:
         """校验输入的资源，转换为本地绝对路径
 
         Args:
@@ -163,13 +157,13 @@ class BaseParser(object):
         # 首先是字符串
         value = cls._validate_str(value, **kwargs)
         # 判断是否是链接
-        parsed_url = urlparse(value)
+        parsed_url = urllib.parse.urlparse(value)
         if parsed_url.scheme not in _ALLOW_SCHEMES:
             value = os.path.realpath(os.fspath(value))
             if not os.path.isfile(value):
                 raise ParamValidateException("系统文件不存在")
 
-            workspaces = settings.PROCESSOR_WORKSPACES if workspaces is None else workspaces
+            workspaces = settings.PROCESSOR_WORKSPACES
             if workspaces:
                 _workspace = [os.path.realpath(os.fspath(i)) for i in workspaces]
                 if not value.startswith(tuple(_workspace)):
@@ -179,7 +173,7 @@ class BaseParser(object):
             domain = parsed_url.netloc
             if not domain:
                 raise ParamValidateException("链接未解析出域名")
-            allow_domains = settings.PROCESSOR_ALLOW_DOMAINS if allow_domains is None else allow_domains
+            allow_domains = settings.PROCESSOR_ALLOW_DOMAINS
             if allow_domains and not parsed_url.netloc.endswith(tuple(allow_domains)):
                 raise ParamValidateException(f"域名不合法, {parsed_url.netloc} 不在 {allow_domains} 范围内")
         return value
@@ -385,7 +379,7 @@ def trans_uri_to_im(uri: str) -> Image:
     Returns:
         Image对象
     """
-    parsed_url = urlparse(uri)
+    parsed_url = urllib.parse.urlparse(uri)
     if parsed_url.scheme in _ALLOW_SCHEMES:
         with tempfile.NamedTemporaryFile() as fp:
             # 输入值计算md5作为文件名；重复地址本地若存在不下载多次

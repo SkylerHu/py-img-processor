@@ -158,7 +158,7 @@
 | 参数 | 必选 | 描述 | 取值范围 |
 | - |  - |  - |  - |
 | image | 是 | 要参与合并的图像文件路径，需 [base64url_encode](./#utils.base64url_encode) 编码 | |
-| action | 否 | 对`iamge`图像按照字符串参数进行预处理，需 [base64url_encode](./#utils.base64url_encode) 编码 |
+| actions | 否 | 对`iamge`图像按照字符串参数进行预处理，需 [base64url_encode](./#utils.base64url_encode) 编码 |
 | p | 否 | 按图像的百分比缩放`image`图像 | [1, 1000]<br>小于100为缩小，大于100为放大 |
 | order | 否 | 图像和`image`的前后顺序 | 0：该image在后<br>1：该image在前<br>不传递该参数align和interval不生效<br>see [PositionOrder](./#enums.PositionOrder) |
 | align | 否 | 图像和`image`的对齐方式 | 0：水平上对齐<br>1：水平居中对齐<br>2（默认值）：水平下对齐<br>3：垂直左对齐<br>4：垂直居中对齐<br>5：垂直右对齐<br>see [PositionAlign](./#enums.PositionAlign) |
@@ -167,7 +167,7 @@
 | x | 否 | `image`在图像上的起点横坐标 | [0, 图像边界]<br>默认 `0` |
 | y | 否 | `image`在图像上的起点纵坐标 | [0, 图像边界]<br>默认 `0` |
 | pf | 否 | `xy`相应字段按照比例计算；<br>设置后相应字段取值范围为[1,100]；<br>设置了`g`该参数无效 | `xy`2个字母的任意组合 |
-| color | 否 | 拼接后扩展部分的填充颜色 | 默认： FFFFFF (白色) |
+| color | 否 | 拼接后扩展部分的填充颜色 | 默认： 0000 (透明) |
 
 示例：
 
