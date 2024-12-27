@@ -158,16 +158,19 @@
 | 参数 | 必选 | 描述 | 取值范围 |
 | - |  - |  - |  - |
 | image | 是 | 要参与合并的图像文件路径，需 [base64url_encode](./#utils.base64url_encode) 编码 | |
-| actions | 否 | 对`iamge`图像按照字符串参数进行预处理，需 [base64url_encode](./#utils.base64url_encode) 编码 |
-| p | 否 | 按图像的百分比缩放`image`图像 | [1, 1000]<br>小于100为缩小，大于100为放大 |
+| actions | 否 | 对`iamge`按照字符串参数进行预处理，需 [base64url_encode](./#utils.base64url_encode) 编码 |
+| p | 否 | 按输入图像的百分比缩放`image`图像 | [1, 1000]<br>小于100为缩小，大于100为放大 |
 | order | 否 | 图像和`image`的前后顺序 | 0：该image在后<br>1：该image在前<br>不传递该参数align和interval不生效<br>see [PositionOrder](./#enums.PositionOrder) |
 | align | 否 | 图像和`image`的对齐方式 | 0：水平上对齐<br>1：水平居中对齐<br>2（默认值）：水平下对齐<br>3：垂直左对齐<br>4：垂直居中对齐<br>5：垂直右对齐<br>see [PositionAlign](./#enums.PositionAlign) |
-| interval 否 | | 图像和`image`间的间距 | [0,1000]，默认值：0；单位：px |
+| interval | 否 | | 图像和`image`间的间距 | [0,1000]，默认值：0；单位：px |
 | g | 否 | 按照九宫格计算水印的位置，优先级高于`x、y` | |
 | x | 否 | `image`在图像上的起点横坐标 | [0, 图像边界]<br>默认 `0` |
 | y | 否 | `image`在图像上的起点纵坐标 | [0, 图像边界]<br>默认 `0` |
 | pf | 否 | `xy`相应字段按照比例计算；<br>设置后相应字段取值范围为[1,100]；<br>设置了`g`该参数无效 | `xy`2个字母的任意组合 |
+| bg | 否 | 是否将imgae当做背景放在输入图像之下；定义输入图像和image参数的拼接顺序 | `0` (默认值) 否，顺序为(输入图像,image)； `1` 是，将image当做背景，顺序为(image,输入图像) |
 | color | 否 | 拼接后扩展部分的填充颜色 | 默认： 0000 (透明) |
+
+> 注： 参数 `bg` 取值 `1` 时，order之后的参数则是：图像在image上的坐标/数值。
 
 示例：
 
