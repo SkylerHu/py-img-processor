@@ -9,7 +9,7 @@ import tempfile
 import pytest
 from PIL import Image
 
-from imgprocessor import enums, utils
+from imgprocessor import enums, utils, SettingsProxy
 
 
 def pytest_addoption(parser):
@@ -18,7 +18,7 @@ def pytest_addoption(parser):
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def use_special_tmp(request: pytest.FixtureRequest) -> typing.Optional[str]:
     return request.config.getoption("--use_special_tmp")
 
@@ -79,5 +79,12 @@ def img_rotate_90_with_exif(img_origin: Image) -> Image:
 
 
 @pytest.fixture
-def link_uri():
+def link_uri() -> str:
+    """用的github头像"""
     return "https://avatars.githubusercontent.com/u/5877158"
+
+
+@pytest.fixture
+def mock_settings(monkeypatch):
+    """mock只读的settings"""
+    monkeypatch.setattr(SettingsProxy, "__setattr__", lambda self, name, value: self.__setattr__(name, value))

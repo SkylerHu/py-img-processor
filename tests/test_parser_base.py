@@ -95,3 +95,20 @@ def test_process_params() -> None:
     im = Image.new("RGBA", (200, 200))
     save_params = p.save_parser.compute(im, im)
     assert save_params == {"interlace": 1, "format": "png", "progressive": True}
+
+
+@pytest.mark.usefixtures("mock_settings")
+def test_validate_uri(monkeypatch, link_uri) -> None:
+    monkeypatch.setattr(settings, "PROCESSOR_WORKSPACES", ("/tmp",))
+    with pytest.raises(ParamValidateException, match="系统文件不存在"):
+        parser_base.BaseParser._validate_uri("a/test.jpg")
+    with pytest.raises(ParamValidateException, match="文件必须在 PROCESSOR_WORKSPACES"):
+        parser_base.BaseParser._validate_uri("tests/imgs/lenna-400x225.jpg")
+
+    monkeypatch.setattr(settings, "PROCESSOR_ALLOW_DOMAINS", (".githubusercontent.com",))
+    # 无异常
+    parser_base.BaseParser._validate_uri(link_uri)
+    with pytest.raises(ParamValidateException, match="链接未解析出域名"):
+        parser_base.BaseParser._validate_uri("http://")
+    with pytest.raises(ParamValidateException, match="域名不合法"):
+        parser_base.BaseParser._validate_uri("http://test.com/test.jpg")
