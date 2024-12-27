@@ -140,6 +140,22 @@ def test_main_color() -> None:
             },
             "expected/lenna-merge-v2.png",
         ),
+        # 该用例相比上面，输入资源换了个顺序，调整了处理逻辑，注意bg参数，最终输出结果是一致的
+        (
+            "https://avatars.githubusercontent.com/u/5877158",
+            {
+                "actions": [
+                    {"key": "resize", "s": 150},
+                    {
+                        "key": "merge",
+                        "image": "lenna-400x225.jpg",
+                        "actions": [{"key": "resize", "l": 100}],
+                    },
+                ],
+                "format": "png",
+            },
+            "expected/lenna-merge-v2.png",
+        ),
     ],
 )
 def test_action(img_name: str, param_str: dict, expected_path: str) -> None:
