@@ -394,7 +394,7 @@ def trans_uri_to_im(uri: str) -> Image:
 
             ori_im = Image.open(fp)
             validate_ori_im(ori_im)
-            # 1. 解决临时文件close后im对象能正常使用
+            # 解决临时文件close后im对象不能正常使用得问题
             ori_im = ori_im.copy()
     else:
         size = os.path.getsize(uri)
