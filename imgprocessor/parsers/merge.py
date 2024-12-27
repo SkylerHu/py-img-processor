@@ -19,12 +19,12 @@ class MergeParser(BaseParser):
         "actions": {"type": enums.ArgType.ACTION, "base64_encode": True},
         # 使用输入图像的大小作为参照进行缩放
         "p": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": 1000},
+        # 是否将imgae当做背景放在输入图像之下; 定义输入图像和image参数的拼接顺序
+        "bg": {"type": enums.ArgType.INTEGER, "default": 0, "choices": [0, 1]},
         # 对齐方式
         "order": {"type": enums.ArgType.INTEGER, "choices": enums.PositionOrder},
         "align": {"type": enums.ArgType.INTEGER, "default": enums.PositionAlign.BOTTOM, "choices": enums.PositionAlign},
         "interval": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 1000},
-        # 是否imgae覆盖在输入图像之上; 有order参数时因无重叠所以无实际意义
-        "bg": {"type": enums.ArgType.INTEGER, "default": 0, "choices": [0, 1]},
         # 粘贴的位置
         "g": {"type": enums.ArgType.STRING, "choices": enums.Geography},
         "x": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
@@ -119,15 +119,17 @@ class MergeParser(BaseParser):
         if self.p:
             w2, h2 = round(src_w * self.p / 100), round(src_h * self.p / 100)
             im2 = im2.resize((w2, h2), resample=Image.LANCZOS)
+
+        if self.bg:
+            # 调整拼接顺序
+            im, im2 = im2, im
+
+        src_w, src_h = im.size
         w2, h2 = im2.size
 
         # 计算合并像素点
         w, h, x1, y1, x2, y2 = self.compute(src_w, src_h, w2, h2)
         out = Image.new("RGBA", (w, h), color=f"#{self.color}")
-        if not self.bg:
-            out.paste(im, (x1, y1), im)
-            out.paste(im2, (x2, y2), im2)
-        else:
-            out.paste(im2, (x2, y2), im2)
-            out.paste(im, (x1, y1), im)
+        out.paste(im, (x1, y1), im)
+        out.paste(im2, (x2, y2), im2)
         return out

@@ -156,26 +156,28 @@ class BaseParser(object):
         """
         # 首先是字符串
         value = cls._validate_str(value, **kwargs)
+        ori_value = value
         # 判断是否是链接
         parsed_url = urllib.parse.urlparse(value)
         if parsed_url.scheme not in _ALLOW_SCHEMES:
             value = os.path.realpath(os.fspath(value))
             if not os.path.isfile(value):
-                raise ParamValidateException("系统文件不存在")
+                raise ParamValidateException(f"系统文件不存在: {ori_value}")
 
-            workspaces = settings.PROCESSOR_WORKSPACES
-            if workspaces:
-                _workspace = [os.path.realpath(os.fspath(i)) for i in workspaces]
-                if not value.startswith(tuple(_workspace)):
-                    raise ParamValidateException(f"文件必须在 PROCESSOR_WORKSPACES={workspaces} 目录下")
+            workspaces: tuple = settings.PROCESSOR_WORKSPACES or ()
+            _workspace = [os.path.realpath(os.fspath(ws)) for ws in workspaces]
+            if _workspace and not value.startswith(tuple(_workspace)):
+                raise ParamValidateException(f"文件必须在 PROCESSOR_WORKSPACES={workspaces} 目录下: {ori_value}")
         else:
             # 是链接地址
             domain = parsed_url.netloc
             if not domain:
-                raise ParamValidateException("链接未解析出域名")
+                raise ParamValidateException(f"链接未解析出域名: {ori_value}")
             allow_domains = settings.PROCESSOR_ALLOW_DOMAINS
             if allow_domains and not parsed_url.netloc.endswith(tuple(allow_domains)):
-                raise ParamValidateException(f"域名不合法, {parsed_url.netloc} 不在 {allow_domains} 范围内")
+                raise ParamValidateException(
+                    f"域名不合法, {parsed_url.netloc} 不在 {allow_domains} 范围内: {ori_value}"
+                )
         return value
 
     @classmethod
