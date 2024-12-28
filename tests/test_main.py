@@ -29,7 +29,7 @@ def test_run_main(argv: str, code: int, monkeypatch) -> None:
     pathlib.Path(tmp_file).touch()
     assert os.path.isfile(tmp_file) is True
 
-    monkeypatch.setattr(imgprocessor.processor, "process_image_by_path", lambda *args, **kwargs: True)
+    monkeypatch.setattr(imgprocessor.processor, "process_image", lambda *args, **kwargs: True)
     assert main(argv=argv.split()) == code
 
 

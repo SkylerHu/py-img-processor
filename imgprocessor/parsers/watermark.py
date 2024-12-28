@@ -6,7 +6,7 @@ from PIL import Image, ImageFont, ImageDraw
 
 from imgprocessor import enums, settings, utils
 from imgprocessor.exceptions import ParamValidateException
-from .base import BaseParser, pre_processing, compute_splice_two_im, compute_by_geography
+from .base import BaseParser, pre_processing, compute_splice_two_im, compute_by_geography, trans_uri_to_im
 
 
 class WatermarkParser(BaseParser):
@@ -25,12 +25,13 @@ class WatermarkParser(BaseParser):
         "padx": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 4096},
         "pady": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 4096},
         # 图片水印路径
-        "image": {"type": enums.ArgType.STRING, "base64_encode": True},
+        "image": {"type": enums.ArgType.URI, "base64_encode": True},
         # 水印的原始设计参照尺寸，会根据原图大小缩放水印
         "design": {"type": enums.ArgType.INTEGER, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
         # 文字
         "text": {"type": enums.ArgType.STRING, "base64_encode": True, "max_length": 64},
         "font": {"type": enums.ArgType.STRING, "base64_encode": True},
+        # 文字默认黑色
         "color": {"type": enums.ArgType.STRING, "default": "000000", "regex": "^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"},
         "size": {"type": enums.ArgType.INTEGER, "default": 40, "min": 1, "max": 1000},
         # 文字水印的阴影透明度, 0表示没有阴影
@@ -99,7 +100,7 @@ class WatermarkParser(BaseParser):
         w1, h1, w2, h2 = 0, 0, 0, 0
         icon = None
         if self.image:
-            icon = Image.open(self.image)
+            icon = trans_uri_to_im(self.image)
             icon = pre_processing(icon, use_alpha=True)
             if not self.text:
                 # 没有文字，直接返回

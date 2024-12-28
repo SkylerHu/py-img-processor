@@ -20,7 +20,7 @@ class ResizeParser(BaseParser):
         "limit": {"type": enums.ArgType.INTEGER, "default": 1, "choices": [0, 1]},
         "color": {
             "type": enums.ArgType.STRING,
-            "default": "FFFFFF",
+            "default": "FFFFFF",  # 默认白色
             "regex": r"^([0-9a-fA-F]{6}|[0-9a-fA-F]{8}|[0-9a-fA-F]{3,4})$",
         },
         "p": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": 1000},

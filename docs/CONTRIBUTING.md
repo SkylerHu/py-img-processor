@@ -40,6 +40,11 @@
     # 运行所有环境的测试用例
     tox run
 
+可通过参数 `use_special_tmp` 保存处理的图片 `.tmp/output/` 目录下，方便肉眼和 `tests/imgs/expected` 中图像对比：
+
+    pytest tests --use_special_tmp
+
+
 # 文档
 ```shell
 mkdocs build --clean  # 生成site文档网站
