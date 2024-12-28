@@ -31,6 +31,7 @@ class WatermarkParser(BaseParser):
         # 文字
         "text": {"type": enums.ArgType.STRING, "base64_encode": True, "max_length": 64},
         "font": {"type": enums.ArgType.STRING, "base64_encode": True},
+        # 文字默认黑色
         "color": {"type": enums.ArgType.STRING, "default": "000000", "regex": "^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"},
         "size": {"type": enums.ArgType.INTEGER, "default": 40, "min": 1, "max": 1000},
         # 文字水印的阴影透明度, 0表示没有阴影

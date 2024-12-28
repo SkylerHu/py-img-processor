@@ -33,7 +33,7 @@ class MergeParser(BaseParser):
         # 拼接后大小包含2个图像，空白区域使用color颜色填充
         "color": {
             "type": enums.ArgType.STRING,
-            "default": "0000",
+            "default": "0000",  # 为了保证透明背景
             "regex": r"^([0-9a-fA-F]{6}|[0-9a-fA-F]{8}|[0-9a-fA-F]{3,4})$",
         },
     }
