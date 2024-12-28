@@ -1,7 +1,8 @@
 # Release Notes
 
-## 2.0.1
+## 1.2.0
 - feat: 支持处理链接地址资源
+    - 方法 `process_image_by_path` 名称变更为 `process_image`
 - fix: `settings` 在将处理参数对外开放场景下限制输入资源；默认无限制
     - `PROCESSOR_WORKSPACES` tuple, 限制水印等资源系统文件路径 （startswith匹配）
     - `PROCESSOR_ALLOW_DOMAINS` tuple, 限制链接地址域名 （endswith匹配）
