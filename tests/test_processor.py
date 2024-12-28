@@ -128,11 +128,12 @@ def test_main_color() -> None:
             "lenna-400x225.jpg",
             {
                 "actions": [
-                    {"key": "resize", "l": 100},
+                    {"key": "resize", "l": 50},
                     {
                         "key": "merge",
                         "image": "https://avatars.githubusercontent.com/u/5877158",
                         "actions": [{"key": "resize", "s": 150}],
+                        "g": "center",
                         "bg": 1,
                     },
                 ],
@@ -149,7 +150,8 @@ def test_main_color() -> None:
                     {
                         "key": "merge",
                         "image": "lenna-400x225.jpg",
-                        "actions": [{"key": "resize", "l": 100}],
+                        "actions": [{"key": "resize", "l": 50}],
+                        "g": "center",
                     },
                 ],
                 "format": "png",
