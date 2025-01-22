@@ -2,7 +2,7 @@
 branch = True
 data_file = .coverage/coverage
 source =
-    imgeditor
+    imgprocessor
 omit =
     *test*.py
 

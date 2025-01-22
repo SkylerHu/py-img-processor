@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.2.1
+- fix: 修复 `merge` 操作中参数 `p` 的处理，调整成在处理 `bg` 参数之后
+- docs: 修正文档说明
+
 ## 1.2.0
 - feat: 支持处理链接地址资源
     - 方法 `process_image_by_path` 名称变更为 `process_image`
