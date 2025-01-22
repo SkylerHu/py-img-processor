@@ -56,7 +56,7 @@ coverage: ## check code coverage quickly with the default Python
 	${PYTHON} -m coverage html
 	$(BROWSER) .coverage/htmlcov/index.html
 
-release: clean-build ## package and upload a release
+release: dist ## package and upload a release
 	${PYTHON} -m twine upload -r pypi dist/py*
 
 dist: clean-build ## builds source
