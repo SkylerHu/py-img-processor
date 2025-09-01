@@ -7,6 +7,7 @@ import re
 import tempfile
 import urllib.parse
 from urllib.request import urlretrieve
+from contextlib import contextmanager
 
 from PIL import Image, ImageOps
 
@@ -369,7 +370,17 @@ def validate_ori_im(ori_im: Image) -> None:
         raise ProcessLimitException(f"图像总像素不可超过{settings.PROCESSOR_MAX_PIXEL}像素，输入图像({src_w}, {src_h})")
 
 
-def trans_uri_to_im(uri: str) -> Image:
+def copy_full_img(ori_im: Image) -> Image:
+    out_im = ori_im.copy()
+    # 复制格式信息
+    out_im.format = ori_im.format
+    # 复制info中的元数据（包括ICC配置文件等）
+    out_im.info = ori_im.info.copy()
+    return out_im
+
+
+@contextmanager
+def trans_uri_to_im(uri: str) -> typing.Generator:
     """将输入资源转换成Image对象
 
     Args:
@@ -392,18 +403,19 @@ def trans_uri_to_im(uri: str) -> Image:
             if size > settings.PROCESSOR_MAX_FILE_SIZE * 1024 * 1024:
                 raise ProcessLimitException(f"图像文件大小不得超过{settings.PROCESSOR_MAX_FILE_SIZE}MB")
 
-            ori_im = Image.open(fp)
-            validate_ori_im(ori_im)
-            # 解决临时文件close后im对象不能正常使用得问题
-            ori_im = ori_im.copy()
+            with Image.open(fp) as uri_im:
+                validate_ori_im(uri_im)
+                # 解决临时文件close后im对象不能正常使用得问题
+                ori_im = copy_full_img(uri_im)
+                yield ori_im
     else:
         size = os.path.getsize(uri)
         if size > settings.PROCESSOR_MAX_FILE_SIZE * 1024 * 1024:
             raise ProcessLimitException(f"图像文件大小不得超过{settings.PROCESSOR_MAX_FILE_SIZE}MB")
-        ori_im = Image.open(uri)
-        validate_ori_im(ori_im)
-
-    return ori_im
+        with Image.open(uri) as uri_im:
+            validate_ori_im(uri_im)
+            ori_im = uri_im
+            yield ori_im
 
 
 class ImgSaveParser(BaseParser):

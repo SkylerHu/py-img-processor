@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.2.2
+- perf: 调整Image.open都使用with的方式使用，避免内存泄漏
+- fix: 修复函数 `trans_uri_to_im` 在 copy im 时丢失 info 信息的问题
+
 ## 1.2.1
 - fix: 修复 `merge` 操作中参数 `p` 的处理，调整成在处理 `bg` 参数之后
 - docs: 修正文档说明
