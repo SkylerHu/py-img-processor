@@ -10,25 +10,29 @@ from .base import BaseParser, pre_processing
 
 class ResizeParser(BaseParser):
 
-    KEY = enums.OpAction.RESIZE
+    KEY = enums.OpAction.RESIZE.value
     ARGS = {
-        "m": {"type": enums.ArgType.STRING, "default": enums.ResizeMode.LFIT, "choices": enums.ResizeMode},
-        "w": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-        "h": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-        "l": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-        "s": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-        "limit": {"type": enums.ArgType.INTEGER, "default": 1, "choices": [0, 1]},
+        "m": {
+            "type": enums.ArgType.STRING.value,
+            "default": enums.ResizeMode.LFIT.value,
+            "choices": enums.ResizeMode,
+        },
+        "w": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
+        "h": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
+        "l": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
+        "s": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
+        "limit": {"type": enums.ArgType.INTEGER.value, "default": 1, "choices": [0, 1]},
         "color": {
-            "type": enums.ArgType.STRING,
+            "type": enums.ArgType.STRING.value,
             "default": "FFFFFF",  # 默认白色
             "regex": r"^([0-9a-fA-F]{6}|[0-9a-fA-F]{8}|[0-9a-fA-F]{3,4})$",
         },
-        "p": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": 1000},
+        "p": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 1, "max": 1000},
     }
 
     def __init__(
         self,
-        m: str = enums.ResizeMode.LFIT,  # type: ignore
+        m: str = enums.ResizeMode.LFIT.value,
         w: int = 0,
         h: int = 0,
         l: int = 0,  # noqa: E741
@@ -50,13 +54,13 @@ class ResizeParser(BaseParser):
     def compute(self, src_w: int, src_h: int) -> tuple:
         """计算出`Image.resize`需要的参数"""
         if self.w or self.h:
-            if self.m in [enums.ResizeMode.FIXED, enums.ResizeMode.PAD, enums.ResizeMode.FIT]:
+            if self.m in [enums.ResizeMode.FIXED.value, enums.ResizeMode.PAD.value, enums.ResizeMode.FIT.value]:
                 # 有可能改变原图宽高比
                 if not (self.w and self.h):
                     raise ParamValidateException(f"当m={self.m}的模式下，参数w和h都必不可少且不能为0")
                 # w,h按指定的即可，无需计算
                 w, h = self.w, self.h
-            elif self.m == enums.ResizeMode.MFIT:
+            elif self.m == enums.ResizeMode.MFIT.value:
                 # 低版本Pillow未实现 ImageOps.cover 方法，自行处理
                 # 等比缩放
                 if self.w and self.h:
@@ -70,7 +74,7 @@ class ResizeParser(BaseParser):
                 else:
                     w, h = round(self.h * src_w / src_h), self.h
             else:
-                # 默认 enums.ResizeMode.LFIT
+                # 默认 enums.ResizeMode.LFIT.value
                 # 等比缩放
                 if self.w and self.h:
                     # 指定w与h的矩形内的最大图像
@@ -114,9 +118,9 @@ class ResizeParser(BaseParser):
         if size == im.size:
             # 大小没有变化直接返回
             return im
-        if self.m == enums.ResizeMode.PAD:
+        if self.m == enums.ResizeMode.PAD.value:
             out = ImageOps.pad(im, size, color=f"#{self.color}")
-        elif self.m == enums.ResizeMode.FIT:
+        elif self.m == enums.ResizeMode.FIT.value:
             out = ImageOps.fit(im, size)
         else:
             out = im.resize(size, resample=Image.LANCZOS)

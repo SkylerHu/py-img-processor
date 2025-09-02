@@ -17,28 +17,32 @@ from .base import (
 
 class MergeParser(BaseParser):
 
-    KEY = enums.OpAction.MERGE
+    KEY = enums.OpAction.MERGE.value
     ARGS = {
         # 要处理的图片
-        "image": {"type": enums.ArgType.URI, "required": True, "base64_encode": True},
+        "image": {"type": enums.ArgType.URI.value, "required": True, "base64_encode": True},
         # 对image的处理参数
-        "actions": {"type": enums.ArgType.ACTION, "base64_encode": True},
+        "actions": {"type": enums.ArgType.ACTION.value, "base64_encode": True},
         # 是否将imgae当做背景放在输入图像之下; 定义输入图像和image参数的拼接顺序
-        "bg": {"type": enums.ArgType.INTEGER, "default": 0, "choices": [0, 1]},
+        "bg": {"type": enums.ArgType.INTEGER.value, "default": 0, "choices": [0, 1]},
         # 使用输入图像的大小作为参照进行缩放,bg=1按照image缩放输入图像
-        "p": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": 1000},
+        "p": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 1, "max": 1000},
         # 对齐方式
-        "order": {"type": enums.ArgType.INTEGER, "choices": enums.PositionOrder},
-        "align": {"type": enums.ArgType.INTEGER, "default": enums.PositionAlign.BOTTOM, "choices": enums.PositionAlign},
-        "interval": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 1000},
+        "order": {"type": enums.ArgType.INTEGER.value, "choices": enums.PositionOrder},
+        "align": {
+            "type": enums.ArgType.INTEGER.value,
+            "default": enums.PositionAlign.BOTTOM.value,
+            "choices": enums.PositionAlign,
+        },
+        "interval": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": 1000},
         # 粘贴的位置
-        "g": {"type": enums.ArgType.STRING, "choices": enums.Geography},
-        "x": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
-        "y": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
-        "pf": {"type": enums.ArgType.STRING, "default": ""},
+        "g": {"type": enums.ArgType.STRING.value, "choices": enums.Geography},
+        "x": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "y": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "pf": {"type": enums.ArgType.STRING.value, "default": ""},
         # 拼接后大小包含2个图像，空白区域使用color颜色填充
         "color": {
-            "type": enums.ArgType.STRING,
+            "type": enums.ArgType.STRING.value,
             "default": "0000",  # 为了保证透明背景
             "regex": r"^([0-9a-fA-F]{6}|[0-9a-fA-F]{8}|[0-9a-fA-F]{3,4})$",
         },
@@ -86,7 +90,7 @@ class MergeParser(BaseParser):
                 raise ParamValidateException(f"merage操作中actions参数校验异常，其中 {e}")
 
     def compute(self, src_w: int, src_h: int, w2: int, h2: int) -> tuple:
-        if self.order in enums.PositionOrder:  # type: ignore
+        if self.order in enums.PositionOrder.values:
             order = typing.cast(int, self.order)
             w, h, x1, y1, x2, y2 = compute_splice_two_im(
                 src_w,

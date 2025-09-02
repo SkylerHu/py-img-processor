@@ -25,13 +25,13 @@ def test_handle_actions() -> None:
 @pytest.mark.usefixtures("clean_dir")
 def test_save_img() -> None:
     im = Image.new("RGBA", (1920, 1080))
-    ProcessorCtr.save_img_to_file(im, format=enums.ImageFormat.JPEG, quality=80)
-    im.format = enums.ImageFormat.PNG
+    ProcessorCtr.save_img_to_file(im, format=enums.ImageFormat.JPEG.value, quality=80)
+    im.format = enums.ImageFormat.PNG.value
     ProcessorCtr.save_img_to_file(im)
 
     im = Image.new("RGB", (1920, 1080))
-    im.format = enums.ImageFormat.JPEG
-    ProcessorCtr.save_img_to_file(im, format=enums.ImageFormat.JPEG)
+    im.format = enums.ImageFormat.JPEG.value
+    ProcessorCtr.save_img_to_file(im, format=enums.ImageFormat.JPEG.value)
     ProcessorCtr.save_img_to_file(im)
 
 

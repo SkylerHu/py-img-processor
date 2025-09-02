@@ -12,13 +12,13 @@ from imgprocessor.exceptions import ParamValidateException, ParamParseException
 
 def test_args_config() -> None:
     class TestParser(parser_base.BaseParser):
-        KEY = enums.OpAction.RESIZE
+        KEY = enums.OpAction.RESIZE.value
         ARGS = {
-            "m": {"type": enums.ArgType.STRING, "default": None, "choices": enums.ResizeMode},
+            "m": {"type": enums.ArgType.STRING.value, "default": None, "choices": enums.ResizeMode},
             "w": {"type": "xxx", "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-            "h": {"type": enums.ArgType.FLOAT, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-            "x": {"type": enums.ArgType.INTEGER, "required": True, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-            "t": {"type": enums.ArgType.STRING, "max_length": 2},
+            "h": {"type": enums.ArgType.FLOAT.value, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
+            "x": {"type": enums.ArgType.INTEGER.value, "required": True, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
+            "t": {"type": enums.ArgType.STRING.value, "max_length": 2},
         }
 
         def __init__(self, x: typing.Optional[int] = None, **kwargs: typing.Any) -> None:
@@ -56,23 +56,23 @@ def test_args_config() -> None:
     "params,expected",
     [
         (
-            (1920, 1080, 1920, 1080, enums.PositionAlign.TOP, enums.PositionOrder.BEFORE, 0),
+            (1920, 1080, 1920, 1080, enums.PositionAlign.TOP.value, enums.PositionOrder.BEFORE.value, 0),
             (3840, 1080, 0, 0, 1920, 0),
         ),
         (
-            (1920, 1080, 1920, 1080, enums.PositionAlign.TOP, enums.PositionOrder.AFTER, 0),
+            (1920, 1080, 1920, 1080, enums.PositionAlign.TOP.value, enums.PositionOrder.AFTER.value, 0),
             (3840, 1080, 1920, 0, 0, 0),
         ),
         (
-            (1920, 1080, 1920, 1080, enums.PositionAlign.LEFT, enums.PositionOrder.BEFORE, 0),
+            (1920, 1080, 1920, 1080, enums.PositionAlign.LEFT.value, enums.PositionOrder.BEFORE.value, 0),
             (1920, 2160, 0, 0, 0, 1080),
         ),
         (
-            (1920, 1080, 1920, 1080, enums.PositionAlign.RIGHT, enums.PositionOrder.AFTER, 0),
+            (1920, 1080, 1920, 1080, enums.PositionAlign.RIGHT.value, enums.PositionOrder.AFTER.value, 0),
             (1920, 2160, 0, 1080, 0, 0),
         ),
         (
-            (1920, 1080, 1280, 720, enums.PositionAlign.VERTIAL_CENTER, enums.PositionOrder.AFTER, 0),
+            (1920, 1080, 1280, 720, enums.PositionAlign.VERTIAL_CENTER.value, enums.PositionOrder.AFTER.value, 0),
             (1920, 1800, 0, 720, 320, 0),
         ),
     ],

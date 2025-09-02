@@ -17,16 +17,16 @@ from .watermark import WatermarkParser
 from .merge import MergeParser
 
 
-_ACTION_PARASER_MAP: dict[str, BaseParser] = {
-    enums.OpAction.RESIZE: ResizeParser,  # type: ignore
-    enums.OpAction.CROP: CropParser,  # type: ignore
-    enums.OpAction.CIRCLE: CircleParser,  # type: ignore
-    enums.OpAction.BLUR: BlurParser,  # type: ignore
-    enums.OpAction.ROTATE: RotateParser,  # type: ignore
-    enums.OpAction.ALPHA: AlphaParser,  # type: ignore
-    enums.OpAction.GRAY: GrayParser,  # type: ignore
-    enums.OpAction.WATERMARK: WatermarkParser,  # type: ignore
-    enums.OpAction.MERGE: MergeParser,  # type: ignore
+_ACTION_PARASER_MAP: dict[str, typing.Any] = {
+    enums.OpAction.RESIZE.value: ResizeParser,
+    enums.OpAction.CROP.value: CropParser,
+    enums.OpAction.CIRCLE.value: CircleParser,
+    enums.OpAction.BLUR.value: BlurParser,
+    enums.OpAction.ROTATE.value: RotateParser,
+    enums.OpAction.ALPHA.value: AlphaParser,
+    enums.OpAction.GRAY.value: GrayParser,
+    enums.OpAction.WATERMARK.value: WatermarkParser,
+    enums.OpAction.MERGE.value: MergeParser,
 }
 
 
@@ -77,7 +77,7 @@ class ProcessParams(object):
                 key, param_str = info
             if not key:
                 raise ParamParseException(f"参数必须指定操作类型 [{item}]不符合参数要求")
-            if key in [enums.OpAction.FORMAT, enums.OpAction.QUALITY, enums.OpAction.INTERLACE]:
+            if key in [enums.OpAction.FORMAT.value, enums.OpAction.QUALITY.value, enums.OpAction.INTERLACE.value]:
                 save_args.append(f"{key}_{param_str}")
             else:
                 action_cls = _ACTION_PARASER_MAP.get(key)

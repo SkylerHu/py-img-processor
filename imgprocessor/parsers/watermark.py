@@ -17,40 +17,52 @@ from .base import (
 
 class WatermarkParser(BaseParser):
 
-    KEY = enums.OpAction.WATERMARK
+    KEY = enums.OpAction.WATERMARK.value
     ARGS = {
         # 水印本身的不透明度，100表示完全不透明
-        "t": {"type": enums.ArgType.INTEGER, "default": 100, "min": 0, "max": 100},
-        "g": {"type": enums.ArgType.STRING, "choices": enums.Geography},
-        "x": {"type": enums.ArgType.INTEGER, "default": 10, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
-        "y": {"type": enums.ArgType.INTEGER, "default": 10, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "t": {"type": enums.ArgType.INTEGER.value, "default": 100, "min": 0, "max": 100},
+        "g": {"type": enums.ArgType.STRING.value, "choices": enums.Geography},
+        "x": {"type": enums.ArgType.INTEGER.value, "default": 10, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "y": {"type": enums.ArgType.INTEGER.value, "default": 10, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
         # percent field, eg: xy
-        "pf": {"type": enums.ArgType.STRING, "default": ""},
+        "pf": {"type": enums.ArgType.STRING.value, "default": ""},
         # 是否将图片水印或文字水印铺满原图; 值为1开启
-        "fill": {"type": enums.ArgType.INTEGER, "default": 0, "choices": [0, 1]},
-        "padx": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 4096},
-        "pady": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 4096},
+        "fill": {"type": enums.ArgType.INTEGER.value, "default": 0, "choices": [0, 1]},
+        "padx": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": 4096},
+        "pady": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": 4096},
         # 图片水印路径
-        "image": {"type": enums.ArgType.URI, "base64_encode": True},
+        "image": {"type": enums.ArgType.URI.value, "base64_encode": True},
         # 水印的原始设计参照尺寸，会根据原图大小缩放水印
-        "design": {"type": enums.ArgType.INTEGER, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
+        "design": {"type": enums.ArgType.INTEGER.value, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
         # 文字
-        "text": {"type": enums.ArgType.STRING, "base64_encode": True, "max_length": 64},
-        "font": {"type": enums.ArgType.STRING, "base64_encode": True},
+        "text": {"type": enums.ArgType.STRING.value, "base64_encode": True, "max_length": 64},
+        "font": {"type": enums.ArgType.STRING.value, "base64_encode": True},
         # 文字默认黑色
-        "color": {"type": enums.ArgType.STRING, "default": "000000", "regex": "^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"},
-        "size": {"type": enums.ArgType.INTEGER, "default": 40, "min": 1, "max": 1000},
+        "color": {
+            "type": enums.ArgType.STRING.value,
+            "default": "000000",
+            "regex": "^([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$",
+        },
+        "size": {"type": enums.ArgType.INTEGER.value, "default": 40, "min": 1, "max": 1000},
         # 文字水印的阴影透明度, 0表示没有阴影
-        "shadow": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 100},
+        "shadow": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": 100},
         # 顺时针旋转角度
-        "rotate": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 360},
+        "rotate": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": 360},
         # 图文混合水印参数
         # 文字和图片水印的前后顺序; 0表示图片水印在前；1表示文字水印在前
-        "order": {"type": enums.ArgType.INTEGER, "default": enums.PositionOrder.BEFORE, "choices": enums.PositionOrder},
+        "order": {
+            "type": enums.ArgType.INTEGER.value,
+            "default": enums.PositionOrder.BEFORE.value,
+            "choices": enums.PositionOrder,
+        },
         # 文字水印和图片水印的对齐方式; 0表示文字水印和图片水印上对齐; 1表示文字水印和图片水印中对齐; 2: 表示文字水印和图片水印下对齐
-        "align": {"type": enums.ArgType.INTEGER, "default": enums.PositionAlign.BOTTOM, "choices": enums.PositionAlign},
+        "align": {
+            "type": enums.ArgType.INTEGER.value,
+            "default": enums.PositionAlign.BOTTOM.value,
+            "choices": enums.PositionAlign,
+        },
         # 文字水印和图片水印间的间距
-        "interval": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 1000},
+        "interval": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": 1000},
     }
 
     def __init__(

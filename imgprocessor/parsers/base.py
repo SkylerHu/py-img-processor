@@ -11,6 +11,7 @@ from contextlib import contextmanager
 
 from PIL import Image, ImageOps
 
+from py_enum import ChoiceEnum
 from imgprocessor import settings, enums, utils
 from imgprocessor.exceptions import ParamValidateException, ParamParseException, ProcessLimitException
 
@@ -68,21 +69,23 @@ class BaseParser(object):
             else:
                 value = kwargs.get(key)
                 try:
-                    if _type == enums.ArgType.INTEGER:
+                    if _type == enums.ArgType.INTEGER.value:
                         value = cls._validate_number(value, **config)
-                    elif _type == enums.ArgType.FLOAT:
+                    elif _type == enums.ArgType.FLOAT.value:
                         value = cls._validate_number(value, use_float=True, **config)
-                    elif _type == enums.ArgType.STRING:
+                    elif _type == enums.ArgType.STRING.value:
                         value = cls._validate_str(value, enable_base64=enable_base64, **config)
-                    elif _type == enums.ArgType.URI:
+                    elif _type == enums.ArgType.URI.value:
                         value = cls._validate_uri(value, enable_base64=enable_base64, **config)
-                    elif _type == enums.ArgType.ACTION:
+                    elif _type == enums.ArgType.ACTION.value:
                         if value and isinstance(value, str):
                             value = cls._validate_str(value, enable_base64=enable_base64, **config)
 
                     choices = config.get("choices")
+                    if isinstance(choices, ChoiceEnum):
+                        choices = choices.values
                     if choices and value not in choices:
-                        raise ParamValidateException(f"{key}枚举值只能是其中之一 {choices.values}")
+                        raise ParamValidateException(f"{key}枚举值只能是其中之一 {choices}")
                 except ParamValidateException as e:
                     raise ParamValidateException(f"参数 {key}={value} 不符合要求：{e}")
                 data[key] = value
@@ -242,23 +245,23 @@ def compute_by_geography(
     src_w: int, src_h: int, x: int, y: int, w: int, h: int, g: typing.Optional[str], pf: str
 ) -> tuple[int, int]:
     """计算 大小(w,h)的图像相对于(src_w, src_h)图像的原点(x,y)位置"""
-    if g == enums.Geography.NW:
+    if g == enums.Geography.NW.value:
         x, y = 0, 0
-    elif g == enums.Geography.NORTH:
+    elif g == enums.Geography.NORTH.value:
         x, y = int(src_w / 2 - w / 2), 0
-    elif g == enums.Geography.NE:
+    elif g == enums.Geography.NE.value:
         x, y = src_w - w, 0
-    elif g == enums.Geography.WEST:
+    elif g == enums.Geography.WEST.value:
         x, y = 0, int(src_h / 2 - h / 2)
-    elif g == enums.Geography.CENTER:
+    elif g == enums.Geography.CENTER.value:
         x, y = int(src_w / 2 - w / 2), int(src_h / 2 - h / 2)
-    elif g == enums.Geography.EAST:
+    elif g == enums.Geography.EAST.value:
         x, y = src_w - w, int(src_h / 2 - h / 2)
-    elif g == enums.Geography.SW:
+    elif g == enums.Geography.SW.value:
         x, y = 0, src_h - h
-    elif g == enums.Geography.SOUTH:
+    elif g == enums.Geography.SOUTH.value:
         x, y = int(src_w / 2 - w / 2), src_h - h
-    elif g == enums.Geography.SE:
+    elif g == enums.Geography.SE.value:
         x, y = src_w - w, src_h - h
     elif pf:
         if "x" in pf:
@@ -303,8 +306,8 @@ def compute_splice_two_im(
     h1: int,
     w2: int,
     h2: int,
-    align: int = enums.PositionAlign.VERTIAL_CENTER,  # type: ignore
-    order: int = enums.PositionOrder.BEFORE,  # type: ignore
+    align: int = enums.PositionAlign.VERTIAL_CENTER.value,
+    order: int = enums.PositionOrder.BEFORE.value,
     interval: int = 0,
 ) -> tuple:
     """拼接2个图像，计算整体大小和元素原点位置；数值单位都是像素
@@ -326,33 +329,37 @@ def compute_splice_two_im(
         第2个元素的原点位置x2
         第2个元素的原点位置y2
     """
-    if align in [enums.PositionAlign.TOP, enums.PositionAlign.HORIZONTAL_CENTER, enums.PositionAlign.BOTTOM]:
+    if align in [
+        enums.PositionAlign.TOP.value,
+        enums.PositionAlign.HORIZONTAL_CENTER.value,
+        enums.PositionAlign.BOTTOM.value,
+    ]:
         # 水平顺序
         # 计算整体占位大小w,h
         w, h = w1 + w2 + interval, max(h1, h2)
 
-        if align == enums.PositionAlign.TOP:
+        if align == enums.PositionAlign.TOP.value:
             y1, y2 = 0, 0
-        elif align == enums.PositionAlign.BOTTOM:
+        elif align == enums.PositionAlign.BOTTOM.value:
             y1, y2 = h - h1, h - h2
         else:
             y1, y2 = int((h - h1) / 2), int((h - h2) / 2)
 
-        if order == enums.PositionOrder.BEFORE:
+        if order == enums.PositionOrder.BEFORE.value:
             x1, x2 = 0, w1 + interval
         else:
             x1, x2 = w2 + interval, 0
     else:
         # 垂直
         w, h = max(w1, w2), h1 + h2 + interval
-        if align == enums.PositionAlign.LEFT:
+        if align == enums.PositionAlign.LEFT.value:
             x1, x2 = 0, 0
-        elif align == enums.PositionAlign.RIGHT:
+        elif align == enums.PositionAlign.RIGHT.value:
             x1, x2 = w - w1, w - w2
         else:
             x1, x2 = int((w - w1) / 2), int((w - w2) / 2)
 
-        if order == enums.PositionOrder.BEFORE:
+        if order == enums.PositionOrder.BEFORE.value:
             y1, y2 = 0, h1 + interval
         else:
             y1, y2 = h2 + interval, 0
@@ -424,10 +431,10 @@ def trans_uri_to_im(uri: str, use_copy: bool = False) -> typing.Generator:
 class ImgSaveParser(BaseParser):
     KEY = ""
     ARGS = {
-        "format": {"type": enums.ArgType.STRING, "default": None},
-        "quality": {"type": enums.ArgType.INTEGER, "default": None, "min": 1, "max": 100},
+        "format": {"type": enums.ArgType.STRING.value, "default": None},
+        "quality": {"type": enums.ArgType.INTEGER.value, "default": None, "min": 1, "max": 100},
         # 1 表示将原图设置成渐进显示
-        "interlace": {"type": enums.ArgType.INTEGER, "default": 0, "choices": [0, 1]},
+        "interlace": {"type": enums.ArgType.INTEGER.value, "default": 0, "choices": [0, 1]},
     }
 
     def __init__(

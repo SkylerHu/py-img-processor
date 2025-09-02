@@ -10,9 +10,9 @@ from .base import BaseParser, pre_processing
 
 class CircleParser(BaseParser):
 
-    KEY = enums.OpAction.CIRCLE
+    KEY = enums.OpAction.CIRCLE.value
     ARGS = {
-        "r": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
+        "r": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
     }
 
     def __init__(

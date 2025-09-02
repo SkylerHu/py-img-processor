@@ -9,20 +9,20 @@ from .base import BaseParser, pre_processing, compute_by_geography, compute_by_r
 
 class CropParser(BaseParser):
 
-    KEY = enums.OpAction.CROP
+    KEY = enums.OpAction.CROP.value
     ARGS = {
-        "w": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-        "h": {"type": enums.ArgType.INTEGER, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
-        "ratio": {"type": enums.ArgType.STRING, "regex": r"^\d+:\d+$"},
-        "x": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
-        "y": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
-        "g": {"type": enums.ArgType.STRING, "choices": enums.Geography},
+        "w": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
+        "h": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 1, "max": settings.PROCESSOR_MAX_W_H},
+        "ratio": {"type": enums.ArgType.STRING.value, "regex": r"^\d+:\d+$"},
+        "x": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "y": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "g": {"type": enums.ArgType.STRING.value, "choices": enums.Geography},
         # percent field, eg: xywh
-        "pf": {"type": enums.ArgType.STRING, "default": ""},
+        "pf": {"type": enums.ArgType.STRING.value, "default": ""},
         # padding right
-        "padr": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "padr": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
         # padding bottom
-        "padb": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
+        "padb": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": settings.PROCESSOR_MAX_W_H},
         # 左和上通过x,y控制
     }
 

@@ -10,10 +10,10 @@ from .base import BaseParser, pre_processing
 
 class AlphaParser(BaseParser):
 
-    KEY = enums.OpAction.ALPHA
+    KEY = enums.OpAction.ALPHA.value
     ARGS = {
         # 不透明度, 为100时，完全不透明，即原图; 为0时，完全透明
-        "value": {"type": enums.ArgType.INTEGER, "default": 100, "min": 0, "max": 100},
+        "value": {"type": enums.ArgType.INTEGER.value, "default": 100, "min": 0, "max": 100},
     }
 
     def __init__(
