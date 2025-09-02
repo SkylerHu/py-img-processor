@@ -26,7 +26,7 @@ jobs:
 
       - name: Cache OpenCV
         id: opencv-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ./opencv-install
           key: ${{ runner.os }}-opencv-cache-3.9
