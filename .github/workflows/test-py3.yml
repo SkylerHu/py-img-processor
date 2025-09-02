@@ -38,19 +38,10 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Cache OpenCV
-        id: opencv-cache
-        uses: actions/cache@v4
-        with:
-          path: ./opencv-install
-          key: ${{ runner.os }}-opencv-cache-${{ matrix.python }}
-
-      - name: Install OpenCV
-        uses: rayandrews/with-opencv-action@v1
-        with:
-          dir: ./opencv-install
-          cached: ${{ steps.opencv-cache.outputs.cache-hit }}
-          opencv-version: '4.0.0'
+      - name: Install OpenCV system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libopencv-dev python3-opencv
 
       - name: Install tox and any other packages
         run: pip install tox coveralls
