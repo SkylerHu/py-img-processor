@@ -40,6 +40,7 @@ jobs:
 
       - name: Install OpenCV system dependencies
         run: |
+          sudo apt-get update
           sudo apt-get install -y python3-opencv
 
       - name: Install tox and any other packages
