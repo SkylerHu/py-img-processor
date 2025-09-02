@@ -179,6 +179,10 @@ def test_copy_im():
     img_path = "img-with-icc.png"
     with Image.open(img_path) as im:
         icc = im.info.get("icc_profile")
+        # 不为空
+        assert icc is not None
+
         out_im = copy_full_img(im)
         assert out_im.size == im.size
+        assert out_im.format == im.format
         assert out_im.info.get("icc_profile") == icc

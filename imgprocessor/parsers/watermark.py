@@ -12,7 +12,6 @@ from .base import (
     compute_splice_two_im,
     compute_by_geography,
     trans_uri_to_im,
-    copy_full_img,
 )
 
 
@@ -107,9 +106,8 @@ class WatermarkParser(BaseParser):
         w1, h1, w2, h2 = 0, 0, 0, 0
         icon = None
         if self.image:
-            with trans_uri_to_im(self.image) as _icon:
-                icon = copy_full_img(_icon)
-                icon = pre_processing(icon, use_alpha=True)
+            with trans_uri_to_im(self.image, use_copy=True) as _icon:
+                icon = pre_processing(_icon, use_alpha=True)
             if not self.text:
                 # 没有文字，直接返回
                 return icon

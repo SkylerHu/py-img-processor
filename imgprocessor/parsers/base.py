@@ -380,11 +380,12 @@ def copy_full_img(ori_im: Image) -> Image:
 
 
 @contextmanager
-def trans_uri_to_im(uri: str) -> typing.Generator:
+def trans_uri_to_im(uri: str, use_copy: bool = False) -> typing.Generator:
     """将输入资源转换成Image对象
 
     Args:
         uri: 文件路径 或者 可下载的链接地址
+        use_copy: 是否复制图像，使其不依赖打开的文件
 
     Raises:
         ProcessLimitException: 处理图像大小/像素限制
@@ -415,6 +416,8 @@ def trans_uri_to_im(uri: str) -> typing.Generator:
         with Image.open(uri) as uri_im:
             validate_ori_im(uri_im)
             ori_im = uri_im
+            if use_copy:
+                ori_im = copy_full_img(ori_im)
             yield ori_im
 
 

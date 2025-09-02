@@ -12,7 +12,6 @@ from .base import (
     compute_by_geography,
     compute_splice_two_im,
     trans_uri_to_im,
-    copy_full_img,
 )
 
 
@@ -116,9 +115,8 @@ class MergeParser(BaseParser):
         im = pre_processing(im, use_alpha=True)
 
         # 处理要合并的图像
-        with trans_uri_to_im(self.image) as _im2:
-            im2 = copy_full_img(_im2)
-            im2 = pre_processing(im2, use_alpha=True)
+        with trans_uri_to_im(self.image, use_copy=True) as _im2:
+            im2 = pre_processing(_im2, use_alpha=True)
 
         if self.actions:
             from imgprocessor.processor import ProcessorCtr
