@@ -72,7 +72,7 @@ def img_rotate_90_with_exif(img_origin: Image) -> Image:
     exif = img_origin.getexif()
     im = img_origin.convert("RGB")
     im = im.transpose(Image.ROTATE_90)
-    exif[0x0112] = enums.ImageOrientation.RIGHT_TOP
+    exif[0x0112] = enums.ImageOrientation.RIGHT_TOP.value
     im.save(path, exif=exif)
     im = Image.open(path)
     return im

@@ -10,10 +10,10 @@ from .base import BaseParser, pre_processing
 
 class RotateParser(BaseParser):
 
-    KEY = enums.OpAction.ROTATE
+    KEY = enums.OpAction.ROTATE.value
     ARGS = {
         # 顺时针旋转的度数
-        "value": {"type": enums.ArgType.INTEGER, "default": 0, "min": 0, "max": 360},
+        "value": {"type": enums.ArgType.INTEGER.value, "default": 0, "min": 0, "max": 360},
     }
 
     def __init__(

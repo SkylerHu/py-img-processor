@@ -10,7 +10,7 @@ from imgprocessor.utils import base64url_encode
 from imgprocessor import processor
 from imgprocessor.processor import ProcessorCtr
 from imgprocessor.parsers import ProcessParams
-from imgprocessor.parsers.base import trans_uri_to_im, validate_ori_im
+from imgprocessor.parsers.base import trans_uri_to_im, validate_ori_im, copy_full_img
 from imgprocessor.exceptions import ProcessLimitException
 
 from .base import compare_imgs_by_path
@@ -25,13 +25,13 @@ def test_handle_actions() -> None:
 @pytest.mark.usefixtures("clean_dir")
 def test_save_img() -> None:
     im = Image.new("RGBA", (1920, 1080))
-    ProcessorCtr.save_img_to_file(im, format=enums.ImageFormat.JPEG, quality=80)
-    im.format = enums.ImageFormat.PNG
+    ProcessorCtr.save_img_to_file(im, format=enums.ImageFormat.JPEG.value, quality=80)
+    im.format = enums.ImageFormat.PNG.value
     ProcessorCtr.save_img_to_file(im)
 
     im = Image.new("RGB", (1920, 1080))
-    im.format = enums.ImageFormat.JPEG
-    ProcessorCtr.save_img_to_file(im, format=enums.ImageFormat.JPEG)
+    im.format = enums.ImageFormat.JPEG.value
+    ProcessorCtr.save_img_to_file(im, format=enums.ImageFormat.JPEG.value)
     ProcessorCtr.save_img_to_file(im)
 
 
@@ -49,7 +49,8 @@ def test_limit_exception(monkeypatch, link_uri) -> None:
         with tempfile.NamedTemporaryFile() as fp:
             fp.write((settings.PROCESSOR_MAX_FILE_SIZE * 1024 * 1024 + 1) * b"b")
             fp.seek(0)
-            trans_uri_to_im(fp.name)
+            with trans_uri_to_im(fp.name) as im:
+                pass
 
     with pytest.raises(ProcessLimitException, match="图像宽和高单边像素不能超过"):
         im = Image.new("L", (settings.PROCESSOR_MAX_PIXEL + 1, 10))
@@ -61,7 +62,8 @@ def test_limit_exception(monkeypatch, link_uri) -> None:
 
     monkeypatch.setattr(os.path, "getsize", lambda x: settings.PROCESSOR_MAX_FILE_SIZE * 1024 * 1024 + 1)
     with pytest.raises(ProcessLimitException, match="图像文件大小不得超过"):
-        trans_uri_to_im(link_uri)
+        with trans_uri_to_im(link_uri) as im:
+            pass
 
 
 @pytest.mark.usefixtures("clean_dir")
@@ -170,3 +172,17 @@ def test_action(img_name: str, param_str: dict, expected_path: str) -> None:
     processor.process_image(img_name, target_path, param_str)
     # 比较结果
     compare_imgs_by_path(target_path, expected_path)
+
+
+@pytest.mark.usefixtures("clean_dir")
+def test_copy_im():
+    img_path = "img-with-icc.png"
+    with Image.open(img_path) as im:
+        icc = im.info.get("icc_profile")
+        # 不为空
+        assert icc is not None
+
+        out_im = copy_full_img(im)
+        assert out_im.size == im.size
+        assert out_im.format == im.format
+        assert out_im.info.get("icc_profile") == icc

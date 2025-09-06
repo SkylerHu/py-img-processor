@@ -39,7 +39,7 @@ setup(
         ]
     },
     install_requires=[
-        "py-enum>=1.1.1",
+        "py-enum>=2.1.1",
         "Pillow>=8",
     ],
     python_requires=">=3.9",

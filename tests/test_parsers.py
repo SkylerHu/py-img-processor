@@ -15,7 +15,7 @@ def test_parse_define() -> None:
         ins = cls()
         for key, config in cls.ARGS.items():
             _type = config["type"]
-            if _type == enums.ArgType.ACTION:
+            if _type == enums.ArgType.ACTION.value:
                 continue
             if not config.get("required"):
                 _default = config.get("default")
