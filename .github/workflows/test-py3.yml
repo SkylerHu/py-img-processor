@@ -51,7 +51,7 @@ jobs:
         run: tox run -e py$(echo ${{ matrix.python }} | tr -d .)-pillow$(echo ${{ matrix.pillow }} | tr -d .)
 
       - name: Upload coverage
-        if: ${{ matrix.python }} == '3.12' && ${{ matrix.pillow }} == '10'
+        if: ${{ matrix.python == '3.12' }}
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run:
