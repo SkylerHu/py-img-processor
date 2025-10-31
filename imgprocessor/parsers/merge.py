@@ -90,7 +90,7 @@ class MergeParser(BaseParser):
                 raise ParamValidateException(f"merage操作中actions参数校验异常，其中 {e}")
 
     def compute(self, src_w: int, src_h: int, w2: int, h2: int) -> tuple:
-        if self.order in enums.PositionOrder.values:
+        if self.order in enums.PositionOrder:
             order = typing.cast(int, self.order)
             w, h, x1, y1, x2, y2 = compute_splice_two_im(
                 src_w,

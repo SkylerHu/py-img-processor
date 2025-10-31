@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.2.3
+- fix: 修复`save_img_to_file`函数中im.format可能为空的问题
+
 ## 1.2.2
 - perf: 调整Image.open都使用with的方式使用，避免内存泄漏
 - fix: 修复函数 `trans_uri_to_im` 在 copy im 时丢失 info 信息的问题
