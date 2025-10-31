@@ -51,13 +51,12 @@ class ProcessorCtr(object):
         **kwargs: typing.Any,
     ) -> typing.Optional[typing.ByteString]:
         fmt = kwargs.get("format") or im.format
-        kwargs["format"] = fmt
 
-        if fmt.upper() == enums.ImageFormat.JPEG.value and im.mode == "RGBA":
+        if fmt and fmt.upper() == enums.ImageFormat.JPEG.value and im.mode == "RGBA":
             im = im.convert("RGB")
 
         if not kwargs.get("quality"):
-            if fmt.upper() == enums.ImageFormat.JPEG.value and im.format == enums.ImageFormat.JPEG.value:
+            if fmt and fmt.upper() == enums.ImageFormat.JPEG.value and im.format == enums.ImageFormat.JPEG.value:
                 kwargs["quality"] = "keep"
             else:
                 kwargs["quality"] = settings.PROCESSOR_DEFAULT_QUALITY
