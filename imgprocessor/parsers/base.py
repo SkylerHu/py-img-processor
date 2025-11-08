@@ -402,7 +402,7 @@ def trans_uri_to_im(uri: str, use_copy: bool = False) -> typing.Generator:
     """
     parsed_url = urllib.parse.urlparse(uri)
     if parsed_url.scheme in _ALLOW_SCHEMES:
-        # 可能包含 %20 (空格)
+        # 可能包含 %20 (空格) 等编码，需要 unquote
         filename = os.path.basename(urllib.parse.unquote(parsed_url.path))
         _, suffix = os.path.splitext(filename)
         with tempfile.NamedTemporaryFile(suffix=suffix, dir=settings.PROCESSOR_TEMP_DIR) as fp:
