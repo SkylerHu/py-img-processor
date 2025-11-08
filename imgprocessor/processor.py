@@ -68,7 +68,7 @@ class ProcessorCtr(object):
 
         # 没有传递保存的路径，返回文件内容
         suffix = fmt or "png"
-        with tempfile.NamedTemporaryFile(suffix=f".{suffix}") as fp:
+        with tempfile.NamedTemporaryFile(suffix=f".{suffix}", dir=settings.PROCESSOR_TEMP_DIR) as fp:
             im.save(fp.name, **kwargs)
             fp.seek(0)
             content = fp.read()
