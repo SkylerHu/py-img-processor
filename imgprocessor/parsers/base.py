@@ -402,8 +402,10 @@ def trans_uri_to_im(uri: str, use_copy: bool = False) -> typing.Generator:
     """
     parsed_url = urllib.parse.urlparse(uri)
     if parsed_url.scheme in _ALLOW_SCHEMES:
-        suffix = parsed_url.path.split(".")[-1]
-        with tempfile.NamedTemporaryFile(suffix=f".{suffix}", dir=settings.PROCESSOR_TEMP_DIR) as fp:
+        # 可能包含 %20 (空格)
+        filename = os.path.basename(urllib.parse.unquote(parsed_url.path))
+        _, suffix = os.path.splitext(filename)
+        with tempfile.NamedTemporaryFile(suffix=suffix, dir=settings.PROCESSOR_TEMP_DIR) as fp:
             # 输入值计算md5作为文件名；重复地址本地若存在不下载多次
             urlretrieve(uri, filename=fp.name)
             fp.seek(0)

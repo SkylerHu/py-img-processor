@@ -3,6 +3,7 @@
 ## 1.2.4
 - feat: 扩展配置`PROCESSOR_TEMP_DIR`设置临时目录
     - 可配置使用 /dev/shm 目录
+- fix: 输入地址是uri资源时，下载后保存临时文件尝试解析出uri中文件后缀用于suffix
 
 ## 1.2.3
 - fix: 修复`save_img_to_file`函数中im.format可能为空的问题
