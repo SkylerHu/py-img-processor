@@ -5,7 +5,7 @@ import importlib
 
 
 __all__ = ["settings", "VERSION"]
-__version__ = "1.2.3"
+__version__ = "1.2.4"
 
 
 VERSION = __version__
@@ -45,6 +45,8 @@ class SettingsProxy(object):
     PROCESSOR_WORKSPACES = ()
     # 当资源文件uri使用链接地址时，限制地址域名来源
     PROCESSOR_ALLOW_DOMAINS = ()
+    # 临时文件目录
+    PROCESSOR_TEMP_DIR = "/tmp"
 
     def __getattribute__(self, attr: str) -> typing.Any:
         try:
