@@ -46,7 +46,7 @@ class SettingsProxy(object):
     # 当资源文件uri使用链接地址时，限制地址域名来源
     PROCESSOR_ALLOW_DOMAINS = ()
     # 临时文件目录
-    PROCESSOR_TEMP_DIR = "/tmp"
+    PROCESSOR_TEMP_DIR = None
 
     def __getattribute__(self, attr: str) -> typing.Any:
         try:
