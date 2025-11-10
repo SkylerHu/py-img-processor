@@ -60,9 +60,11 @@ Image editor using Python and Pillow.
 
 ### 处理函数
 ```python
-from imgprocessor.processor import process_image
+from imgprocessor.processor import process_image, preocess_image_obj
 
 process_image(input_uri, params, out_path=out_path)
+# 或者
+preocess_image_obj(im, params, out_path=out_path)
 ```
 
 参数说明：
