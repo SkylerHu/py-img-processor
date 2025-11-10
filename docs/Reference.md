@@ -182,6 +182,7 @@
     options:
         members:
           - process_image
+          - process_image_obj
           - extract_main_color
 
 ::: utils

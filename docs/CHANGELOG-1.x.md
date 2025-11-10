@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.3.0
+- refactor: 枚举 `OpAction` 中移除了保存图像需要的参数key
+- fix: 调整方法 `process_image` 中参数位置，允许 `out_put` 可以为空，并增加 kwargs 透传Image.save函数的参数
+- feat: 新增 `preocess_image_obj` 直接可以处理 `Image` 对象作为输入参数；
+
+
 ## 1.2.4
 - feat: 扩展配置`PROCESSOR_TEMP_DIR`设置临时目录
     - 可配置使用 /dev/shm 目录

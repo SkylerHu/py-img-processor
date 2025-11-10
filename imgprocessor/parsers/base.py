@@ -433,6 +433,8 @@ def trans_uri_to_im(uri: str, use_copy: bool = False) -> typing.Generator:
 
 class ImgSaveParser(BaseParser):
     KEY = ""
+
+    # 定义的key注意和枚举 `OpAction` 中的key不能重复
     ARGS = {
         "format": {"type": enums.ArgType.STRING.value, "default": None},
         "quality": {"type": enums.ArgType.INTEGER.value, "default": None, "min": 1, "max": 100},

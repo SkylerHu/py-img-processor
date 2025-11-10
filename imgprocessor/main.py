@@ -95,7 +95,7 @@ def main(argv: typing.Optional[list[str]] = None) -> int:
             if not os.path.exists(cur_out_dir):
                 os.makedirs(cur_out_dir)
             try:
-                process_image(file_path, out_path, param_str)
+                process_image(file_path, param_str, out_path=out_path)
                 print(f"{tag}\t 成功", flush=True)
             except Exception as e:
                 print(f"{tag}\t \033[31m失败：{e}\033[0m", file=sys.stderr, flush=True)

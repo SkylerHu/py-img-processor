@@ -30,11 +30,6 @@ class ImageOrientation(ChoiceEnum):
 
 class OpAction(ChoiceEnum):
     """支持的操作类型"""
-
-    # 以下几个比较特殊，在保存文件时使用
-    FORMAT = ("format", "格式")
-    QUALITY = ("quality", "质量")
-    INTERLACE = ("interlace", "渐进显示")
     # 其他
     RESIZE = ("resize", "缩放")
     CROP = ("crop", "裁剪")

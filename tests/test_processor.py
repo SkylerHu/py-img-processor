@@ -39,9 +39,17 @@ def test_save_img() -> None:
 def test_by_path() -> None:
     params = ProcessParams.parse_str("resize,s_100/crop,w_10,h_10")
     output_path = "expected/test.jpg"
-    processor.process_image("lenna-400x225.jpg", output_path, params)
-    processor.process_image("lenna-400x225.jpg", output_path, "resize,s_100/crop,w_10,h_10/quality,80")
-    processor.process_image("lenna-400x225.jpg", output_path, {"actions": [{"key": "action", "w": 100}]})
+    processor.process_image("lenna-400x225.jpg", params, out_path=output_path)
+    processor.process_image("lenna-400x225.jpg", "resize,s_100/crop,w_10,h_10/quality,80", out_path=output_path)
+    processor.process_image("lenna-400x225.jpg", {"actions": [{"key": "action", "w": 100}]}, out_path=output_path)
+
+
+@pytest.mark.usefixtures("clean_dir")
+def test_process_obj() -> None:
+    params = ProcessParams.parse_str("resize,s_100/crop,w_10,h_10")
+    output_path = "expected/test.jpg"
+    with Image.open("lenna-400x225.jpg") as im:
+        processor.preocess_image_obj(im, params, out_path=output_path, quality=80)
 
 
 def test_limit_exception(monkeypatch, link_uri) -> None:
@@ -169,7 +177,7 @@ def test_action(img_name: str, param_str: dict, expected_path: str) -> None:
     if not os.path.isdir(target_dir):
         os.makedirs(target_dir)
     # 图像处理
-    processor.process_image(img_name, target_path, param_str)
+    processor.process_image(img_name, param_str, out_path=target_path)
     # 比较结果
     compare_imgs_by_path(target_path, expected_path)
 
