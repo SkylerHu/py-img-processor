@@ -85,7 +85,7 @@ def process_image(
     return ret
 
 
-def preocess_image_obj(
+def process_image_obj(
     ori_im: Image,
     params: typing.Union[ProcessParams, dict, str],
     out_path: typing.Optional[str] = None,

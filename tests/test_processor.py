@@ -49,7 +49,7 @@ def test_process_obj() -> None:
     params = ProcessParams.parse_str("resize,s_100/crop,w_10,h_10")
     output_path = "expected/test.jpg"
     with Image.open("lenna-400x225.jpg") as im:
-        processor.preocess_image_obj(im, params, out_path=output_path, quality=80)
+        processor.process_image_obj(im, params, out_path=output_path, quality=80)
 
 
 def test_limit_exception(monkeypatch, link_uri) -> None:
