@@ -60,16 +60,18 @@ Image editor using Python and Pillow.
 
 ### 处理函数
 ```python
-from imgprocessor.processor import process_image
+from imgprocessor.processor import process_image, preocess_image_obj
 
-process_image(input_uri, out_path, params)
+process_image(input_uri, params, out_path=out_path)
+# 或者
+preocess_image_obj(im, params, out_path=out_path)
 ```
 
 参数说明：
 
 - `input_uri` str，输入图像文件路径或者链接地址
-- `out_path` str, 输出图像保存路径
 - `params` str or json，图像处理参数，参数说明详见 [Reference.md](./docs/Reference.md)
+- `out_path` str, 输出图像保存路径, 默认为空，为空时返回二进制内容
 
 
 ### 图像处理参数为字符串
@@ -85,9 +87,9 @@ from imgprocessor.processor import process_image
 
 process_image(
     "docs/imgs/lenna-400x225.jpg",
-    "/tmp/output.png",
     # 对图片缩放、裁剪、生成圆角、并转成png存储
     f"resize,s_200/crop,w_200,h_200,g_center/watermark,text_{base64url_encode('Hello 世界')},color_FFF,size_20/circle,r_10/format,png",
+    out_path="/tmp/output.png",
 )
 ```
 
@@ -103,7 +105,6 @@ process_image(
 ```python
 process_image(
     "docs/imgs/lenna-400x225.jpg",
-    "/tmp/output.png",
     {
         "actions": [
             {"key": "resize", "s": 200},
@@ -114,6 +115,7 @@ process_image(
         ],
         "format": "png",
     },
+    out_path="/tmp/output.png",
 )
 ```
 该操作与上述字符串示例参数等效。

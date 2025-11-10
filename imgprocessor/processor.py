@@ -13,27 +13,6 @@ from imgprocessor.parsers.base import trans_uri_to_im
 
 class ProcessorCtr(object):
 
-    def __init__(self, input_uri: str, out_path: str, params: typing.Union[ProcessParams, dict, str]) -> None:
-        # 输入文件检验路径
-        self.input_uri = BaseParser._validate_uri(input_uri)
-        self.out_path = out_path
-        # 初始化处理参数
-        if isinstance(params, dict):
-            params = ProcessParams(**params)
-        elif isinstance(params, str):
-            params = ProcessParams.parse_str(params)
-        params = typing.cast(ProcessParams, params)
-        self.params = params
-
-    def run(self) -> typing.Optional[typing.ByteString]:
-        # 初始化输入
-        with trans_uri_to_im(self.input_uri) as ori_im:
-            # 处理图像
-            im = self.handle_img_actions(ori_im, self.params.actions)
-            # 输出、保存
-            kwargs = self.params.save_parser.compute(ori_im, im)
-            return self.save_img_to_file(im, out_path=self.out_path, **kwargs)
-
     @classmethod
     def handle_img_actions(cls, ori_im: Image, actions: list[BaseParser]) -> Image:
         im = ori_im
@@ -76,14 +55,17 @@ class ProcessorCtr(object):
 
 
 def process_image(
-    input_uri: str, out_path: str, params: typing.Union[ProcessParams, dict, str]
+    input_uri: str,
+    params: typing.Union[ProcessParams, dict, str],
+    out_path: typing.Optional[str] = None,
+    **kwargs: typing.Any,
 ) -> typing.Optional[typing.ByteString]:
     """处理图像
 
     Args:
         input_uri: 输入图像路径
-        out_path: 输出图像保存路径
         params: 图像处理参数
+        out_path: 输出图像保存路径
 
     Raises:
         ProcessLimitException: 超过处理限制会抛出异常
@@ -91,8 +73,40 @@ def process_image(
     Returns:
         默认输出直接存储无返回，仅当out_path为空时会返回处理后图像的二进制内容
     """
-    ctr = ProcessorCtr(input_uri, out_path, params)
-    return ctr.run()
+    # 初始化输入
+    params_obj: ProcessParams = ProcessParams.init(params)
+    with trans_uri_to_im(input_uri) as ori_im:
+        # 处理图像
+        im = ProcessorCtr.handle_img_actions(ori_im, params_obj.actions)
+        # 输出、保存
+        _kwargs = params_obj.save_parser.compute(ori_im, im)
+        _kwargs.update(kwargs)
+        ret = ProcessorCtr.save_img_to_file(im, out_path=out_path, **_kwargs)
+    return ret
+
+
+def preocess_image_obj(
+    ori_im: Image,
+    params: typing.Union[ProcessParams, dict, str],
+    out_path: typing.Optional[str] = None,
+    **kwargs: typing.Any,
+) -> Image:
+    """处理图像
+
+    Args:
+        ori_im: 输入图像为Image对象
+        params: 图像处理参数
+        out_path: 输出图像保存路径
+
+    Returns:
+        默认输出直接存储无返回，仅当out_path为空时会返回处理后图像的二进制内容
+    """
+    params_obj: ProcessParams = ProcessParams.init(params)
+    im = ProcessorCtr.handle_img_actions(ori_im, params_obj.actions)
+    _kwargs = params_obj.save_parser.compute(ori_im, im)
+    _kwargs.update(kwargs)
+    ret = ProcessorCtr.save_img_to_file(im, out_path=out_path, **_kwargs)
+    return ret
 
 
 def extract_main_color(img_path: str, delta_h: float = 0.3) -> str:

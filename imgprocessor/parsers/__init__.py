@@ -33,6 +33,14 @@ _ACTION_PARASER_MAP: dict[str, typing.Any] = {
 class ProcessParams(object):
     """图像处理输入参数"""
 
+    @classmethod
+    def init(cls, params: typing.Union["ProcessParams", dict, str]) -> "ProcessParams":
+        if isinstance(params, ProcessParams):
+            return params
+        if isinstance(params, dict):
+            return cls(**params)
+        return cls.parse_str(params)
+
     def __init__(
         self,
         enable_base64: bool = False,
@@ -66,6 +74,7 @@ class ProcessParams(object):
 
         save_args = [""]  # 加空字符串，是为了保证解析出key
 
+        save_keys = list(ImgSaveParser.ARGS.keys())
         for item in value.split("/"):
             if not item:
                 continue
@@ -77,7 +86,7 @@ class ProcessParams(object):
                 key, param_str = info
             if not key:
                 raise ParamParseException(f"参数必须指定操作类型 [{item}]不符合参数要求")
-            if key in [enums.OpAction.FORMAT.value, enums.OpAction.QUALITY.value, enums.OpAction.INTERLACE.value]:
+            if key in save_keys:
                 save_args.append(f"{key}_{param_str}")
             else:
                 action_cls = _ACTION_PARASER_MAP.get(key)
