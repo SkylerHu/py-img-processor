@@ -5,7 +5,7 @@ import importlib
 
 
 __all__ = ["settings", "VERSION"]
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 
 
 VERSION = __version__
