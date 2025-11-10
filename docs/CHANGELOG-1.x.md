@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.3.1
+- fix: 修复函数名称`process_image_obj`
+
 ## 1.3.0
 - refactor: 枚举 `OpAction` 中移除了保存图像需要的参数key
 - fix: 调整方法 `process_image` 中参数位置，允许 `out_put` 可以为空，并增加 kwargs 透传Image.save函数的参数
