@@ -30,6 +30,7 @@ class ImageOrientation(ChoiceEnum):
 
 class OpAction(ChoiceEnum):
     """支持的操作类型"""
+
     # 其他
     RESIZE = ("resize", "缩放")
     CROP = ("crop", "裁剪")

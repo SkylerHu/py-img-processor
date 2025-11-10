@@ -74,12 +74,12 @@ def process_image(
         默认输出直接存储无返回，仅当out_path为空时会返回处理后图像的二进制内容
     """
     # 初始化输入
-    params: ProcessParams = ProcessParams.init(params)
+    params_obj: ProcessParams = ProcessParams.init(params)
     with trans_uri_to_im(input_uri) as ori_im:
         # 处理图像
-        im = ProcessorCtr.handle_img_actions(ori_im, params.actions)
+        im = ProcessorCtr.handle_img_actions(ori_im, params_obj.actions)
         # 输出、保存
-        _kwargs = params.save_parser.compute(ori_im, im)
+        _kwargs = params_obj.save_parser.compute(ori_im, im)
         _kwargs.update(kwargs)
         ret = ProcessorCtr.save_img_to_file(im, out_path=out_path, **_kwargs)
     return ret
@@ -89,7 +89,7 @@ def preocess_image_obj(
     ori_im: Image,
     params: typing.Union[ProcessParams, dict, str],
     out_path: typing.Optional[str] = None,
-    kwargs: typing.Any = None,
+    **kwargs: typing.Any,
 ) -> Image:
     """处理图像
 
@@ -98,9 +98,9 @@ def preocess_image_obj(
         params: 图像处理参数
         out_path: 输出图像保存路径
     """
-    params: ProcessParams = ProcessParams.init(params)
-    im = ProcessorCtr.handle_img_actions(ori_im, params.actions)
-    _kwargs = params.save_parser.compute(ori_im, im)
+    params_obj: ProcessParams = ProcessParams.init(params)
+    im = ProcessorCtr.handle_img_actions(ori_im, params_obj.actions)
+    _kwargs = params_obj.save_parser.compute(ori_im, im)
     _kwargs.update(kwargs)
     ret = ProcessorCtr.save_img_to_file(im, out_path=out_path, **_kwargs)
     return ret
