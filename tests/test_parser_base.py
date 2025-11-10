@@ -112,3 +112,8 @@ def test_validate_uri(monkeypatch, link_uri) -> None:
         parser_base.BaseParser._validate_uri("http://")
     with pytest.raises(ParamValidateException, match="域名不合法"):
         parser_base.BaseParser._validate_uri("http://test.com/test.jpg")
+
+
+def test_save_parser_keys_not_in_opaction() -> None:
+    for k in parser_base.ImgSaveParser.ARGS.keys():
+        assert k not in enums.OpAction
