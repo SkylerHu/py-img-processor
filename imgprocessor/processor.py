@@ -64,8 +64,8 @@ def process_image(
 
     Args:
         input_uri: 输入图像路径
-        out_path: 输出图像保存路径
         params: 图像处理参数
+        out_path: 输出图像保存路径
 
     Raises:
         ProcessLimitException: 超过处理限制会抛出异常
@@ -94,9 +94,12 @@ def preocess_image_obj(
     """处理图像
 
     Args:
-        ori_im: 输入图像
+        ori_im: 输入图像为Image对象
         params: 图像处理参数
         out_path: 输出图像保存路径
+
+    Returns:
+        默认输出直接存储无返回，仅当out_path为空时会返回处理后图像的二进制内容
     """
     params_obj: ProcessParams = ProcessParams.init(params)
     im = ProcessorCtr.handle_img_actions(ori_im, params_obj.actions)
