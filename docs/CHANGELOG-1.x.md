@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.3.2
+- fix: 修复 `process_image_obj` 的返回值typing声明
+
 ## 1.3.1
 - fix: 修复函数名称`process_image_obj`
 
