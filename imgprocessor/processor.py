@@ -90,7 +90,7 @@ def process_image_obj(
     params: typing.Union[ProcessParams, dict, str],
     out_path: typing.Optional[str] = None,
     **kwargs: typing.Any,
-) -> Image:
+) -> typing.Optional[typing.ByteString]:
     """处理图像
 
     Args:
