@@ -2,7 +2,7 @@
 # coding=utf-8
 import typing
 
-from PIL import Image
+from PIL import ImageFile
 
 from imgprocessor import enums
 from .base import BaseParser
@@ -19,6 +19,6 @@ class GrayParser(BaseParser):
     ) -> None:
         pass
 
-    def do_action(self, im: Image) -> Image:
+    def do_action(self, im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         im = im.convert("L")
         return im

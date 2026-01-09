@@ -2,7 +2,7 @@
 # coding=utf-8
 import typing
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFile
 
 from imgprocessor import enums, settings
 from .base import BaseParser, pre_processing
@@ -32,7 +32,7 @@ class CircleParser(BaseParser):
 
         return r
 
-    def do_action(self, im: Image) -> Image:
+    def do_action(self, im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         im = pre_processing(im, use_alpha=True)
 
         src_w, src_h = im.size

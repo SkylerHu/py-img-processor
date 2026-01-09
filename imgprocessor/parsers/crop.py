@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 import typing
-from PIL import Image
+from PIL import ImageFile
 from imgprocessor import enums, settings
 from imgprocessor.exceptions import ParamValidateException
 from .base import BaseParser, pre_processing, compute_by_geography, compute_by_ratio
@@ -89,7 +89,7 @@ class CropParser(BaseParser):
 
         return x, y, w, h
 
-    def do_action(self, im: Image) -> Image:
+    def do_action(self, im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         im = pre_processing(im)
         x, y, w, h = self.compute(*im.size)
 

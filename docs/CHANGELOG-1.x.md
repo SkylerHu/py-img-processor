@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.3.2
+- fix: 设置 `Image.MAX_IMAGE_PIXELS` 使 `PROCESSOR_MAX_PIXEL` 真实生效
+- chore: 修复关于 `ImageFile` 对象的typing声明
+
 ## 1.3.1
 - fix: 修复函数名称`process_image_obj`
 

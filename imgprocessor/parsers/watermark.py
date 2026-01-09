@@ -2,7 +2,7 @@
 # coding=utf-8
 import typing
 
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont, ImageDraw, ImageFile
 
 from imgprocessor import enums, settings, utils
 from imgprocessor.exceptions import ParamValidateException
@@ -113,7 +113,7 @@ class WatermarkParser(BaseParser):
         if not self.image and not self.text:
             raise ParamValidateException("image或者text参数必须传递一个")
 
-    def get_watermark_im(self) -> Image:
+    def get_watermark_im(self) -> ImageFile.ImageFile:
         """初始化水印对象"""
         w1, h1, w2, h2 = 0, 0, 0, 0
         icon = None
@@ -171,7 +171,7 @@ class WatermarkParser(BaseParser):
 
         return mark
 
-    def do_action(self, im: Image) -> Image:
+    def do_action(self, im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         im = pre_processing(im, use_alpha=True)
         src_w, src_h = im.size
 

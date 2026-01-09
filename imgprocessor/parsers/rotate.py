@@ -2,7 +2,7 @@
 # coding=utf-8
 import typing
 
-from PIL import Image
+from PIL import ImageFile
 
 from imgprocessor import enums
 from .base import BaseParser, pre_processing
@@ -23,7 +23,7 @@ class RotateParser(BaseParser):
     ) -> None:
         self.value = value
 
-    def do_action(self, im: Image) -> Image:
+    def do_action(self, im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         im = pre_processing(im)
         if 0 < self.value < 360:
             # 函数提供的是逆时针旋转

@@ -4,7 +4,7 @@ import typing
 import tempfile
 import colorsys
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageFile
 
 from imgprocessor import enums, settings
 from imgprocessor.parsers import BaseParser, ProcessParams
@@ -14,7 +14,7 @@ from imgprocessor.parsers.base import trans_uri_to_im
 class ProcessorCtr(object):
 
     @classmethod
-    def handle_img_actions(cls, ori_im: Image, actions: list[BaseParser]) -> Image:
+    def handle_img_actions(cls, ori_im: ImageFile.ImageFile, actions: list[BaseParser]) -> ImageFile.ImageFile:
         im = ori_im
         # 解决旋转问题
         im = ImageOps.exif_transpose(im)
@@ -25,7 +25,7 @@ class ProcessorCtr(object):
     @classmethod
     def save_img_to_file(
         cls,
-        im: Image,
+        im: ImageFile.ImageFile,
         out_path: typing.Optional[str] = None,
         **kwargs: typing.Any,
     ) -> typing.Optional[typing.ByteString]:
@@ -86,11 +86,11 @@ def process_image(
 
 
 def process_image_obj(
-    ori_im: Image,
+    ori_im: ImageFile.ImageFile,
     params: typing.Union[ProcessParams, dict, str],
     out_path: typing.Optional[str] = None,
     **kwargs: typing.Any,
-) -> Image:
+) -> typing.Optional[typing.ByteString]:
     """处理图像
 
     Args:

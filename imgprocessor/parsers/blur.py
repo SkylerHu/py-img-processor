@@ -2,7 +2,7 @@
 # coding=utf-8
 import typing
 
-from PIL import Image, ImageFilter
+from PIL import ImageFilter, ImageFile
 
 from imgprocessor import enums
 from .base import BaseParser, pre_processing
@@ -23,7 +23,7 @@ class BlurParser(BaseParser):
     ) -> None:
         self.r = r
 
-    def do_action(self, im: Image) -> Image:
+    def do_action(self, im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         im = pre_processing(im)
         im = im.filter(ImageFilter.GaussianBlur(radius=self.r))
         return im
