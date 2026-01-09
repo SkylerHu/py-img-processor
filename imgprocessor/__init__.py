@@ -3,6 +3,8 @@ import os
 import traceback
 import importlib
 
+from PIL import Image
+
 
 __all__ = ["settings", "VERSION"]
 __version__ = "1.3.2"
@@ -72,3 +74,6 @@ class SettingsProxy(object):
 
 
 settings = SettingsProxy()
+
+
+Image.MAX_IMAGE_PIXELS = settings.PROCESSOR_MAX_PIXEL
