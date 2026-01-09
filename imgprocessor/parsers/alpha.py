@@ -2,7 +2,7 @@
 # coding=utf-8
 import typing
 
-from PIL import Image
+from PIL import ImageFile
 
 from imgprocessor import enums
 from .base import BaseParser, pre_processing
@@ -23,7 +23,7 @@ class AlphaParser(BaseParser):
     ) -> None:
         self.value = value
 
-    def do_action(self, im: Image) -> Image:
+    def do_action(self, im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         im = pre_processing(im, use_alpha=True)
         if self.value < 100:
             _, _, _, alpha_channel = im.split()

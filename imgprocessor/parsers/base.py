@@ -9,7 +9,7 @@ import urllib.parse
 from urllib.request import urlretrieve
 from contextlib import contextmanager
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageFile
 
 from py_enum import ChoiceEnum
 from imgprocessor import settings, enums, utils
@@ -43,7 +43,7 @@ class BaseParser(object):
         """由子类继承实现各类实例的数据校验"""
         pass
 
-    def do_action(self, im: Image) -> Image:
+    def do_action(self, im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         raise NotImplementedError
 
     def to_dict(self) -> dict:
@@ -214,7 +214,7 @@ class BaseParser(object):
         return params
 
 
-def pre_processing(im: Image, use_alpha: bool = False) -> Image:
+def pre_processing(im: ImageFile.ImageFile, use_alpha: bool = False) -> ImageFile.ImageFile:
     """预处理图像，默认转成`RGB`，若为`use_alpha=True`转为`RGBA`
 
     Args:
@@ -367,7 +367,7 @@ def compute_splice_two_im(
     return w, h, x1, y1, x2, y2
 
 
-def validate_ori_im(ori_im: Image) -> None:
+def validate_ori_im(ori_im: ImageFile.ImageFile) -> None:
     src_w, src_h = ori_im.size
     if src_w > settings.PROCESSOR_MAX_W_H or src_h > settings.PROCESSOR_MAX_W_H:
         raise ProcessLimitException(
@@ -377,7 +377,7 @@ def validate_ori_im(ori_im: Image) -> None:
         raise ProcessLimitException(f"图像总像素不可超过{settings.PROCESSOR_MAX_PIXEL}像素，输入图像({src_w}, {src_h})")
 
 
-def copy_full_img(ori_im: Image) -> Image:
+def copy_full_img(ori_im: ImageFile.ImageFile) -> ImageFile.ImageFile:
     out_im = ori_im.copy()
     # 复制格式信息
     out_im.format = ori_im.format
@@ -460,7 +460,7 @@ class ImgSaveParser(BaseParser):
             if self.format not in fmt_values:
                 raise ParamValidateException(f"参数 format 只能是其中之一：{fmt_values}")
 
-    def compute(self, in_im: Image, out_im: Image) -> dict:
+    def compute(self, in_im: ImageFile.ImageFile, out_im: ImageFile.ImageFile) -> dict:
         kwargs = {
             "format": self.format or in_im.format,
             # png 和 gif 格式的选项是 interlace（一般翻译成交错），jpeg(jpg) 的选项则是 progressive （翻译成 渐进）

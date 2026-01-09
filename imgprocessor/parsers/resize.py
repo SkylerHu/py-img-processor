@@ -2,7 +2,7 @@
 # coding=utf-8
 import typing
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageFile
 from imgprocessor import enums, settings
 from imgprocessor.exceptions import ParamValidateException, ProcessLimitException
 from .base import BaseParser, pre_processing
@@ -112,7 +112,7 @@ class ResizeParser(BaseParser):
             raise ProcessLimitException(f"缩放的目标图像总像素不可超过{settings.PROCESSOR_MAX_PIXEL}像素")
         return (w, h)
 
-    def do_action(self, im: Image) -> Image:
+    def do_action(self, im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         im = pre_processing(im)
         size = self.compute(*im.size)
         if size == im.size:

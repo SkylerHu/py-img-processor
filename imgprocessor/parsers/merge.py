@@ -2,7 +2,7 @@
 # coding=utf-8
 import typing
 
-from PIL import Image
+from PIL import Image, ImageFile
 
 from imgprocessor import enums, settings
 from imgprocessor.exceptions import ParamValidateException
@@ -115,7 +115,7 @@ class MergeParser(BaseParser):
 
         return w, h, x1, y1, x2, y2
 
-    def do_action(self, im: Image) -> Image:
+    def do_action(self, im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         im = pre_processing(im, use_alpha=True)
 
         # 处理要合并的图像
