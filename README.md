@@ -42,7 +42,7 @@ Image editor using Python and Pillow.
 | DEBUG | bool | 是否debug开发模式 | False |
 | PROCESSOR_MAX_FILE_SIZE | int | 处理原图的大小限制， 单位 MB | 20 |
 | PROCESSOR_MAX_W_H | int | 处理图像，原图宽高像素限制 | 30000 |
-| PROCESSOR_MAX_PIXEL | int | width x height总像素3亿，处理前后的值都被此配置限制 | 300000000 |
+| PROCESSOR_MAX_PIXEL | int | width x height总像素3亿，处理前后的值都被此配置限制，会覆盖`Image.MAX_IMAGE_PIXELS`设置 | 300000000 |
 | PROCESSOR_DEFAULT_QUALITY | int | 图像处理后的默认质量 | 75 |
 | PROCESSOR_TEXT_FONT | str | 默认字体文件，默认从系统中寻找；也可以直接传递字体文件路径 | Arial Unicode.ttf |
 | PROCESSOR_WORKSPACES | tuple | 限制水印等资源路径 （startswith匹配）， 默认无限制 | `()` |
