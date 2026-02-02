@@ -31,7 +31,7 @@ class ProcessorCtr(object):
     ) -> typing.Optional[typing.ByteString]:
         fmt = kwargs.get("format") or im.format
 
-        if fmt and fmt.upper() == enums.ImageFormat.JPEG.value and im.mode == "RGBA":
+        if fmt and fmt.upper() == enums.ImageFormat.JPEG.value and im.mode not in ["GBA", "L"]:
             im = im.convert("RGB")
 
         if not kwargs.get("quality"):

@@ -8,7 +8,7 @@ class ImageFormat(ChoiceEnum):
 
     JPEG = ("JPEG", "JPEG")
     PNG = ("PNG", "PNG")
-    WEBP = ("WebP", "WebP")
+    WEBP = ("WEBP", "WebP")
 
 
 class ImageOrientation(ChoiceEnum):
