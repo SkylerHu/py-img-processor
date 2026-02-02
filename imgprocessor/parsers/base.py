@@ -9,7 +9,7 @@ import urllib.parse
 from urllib.request import urlretrieve
 from contextlib import contextmanager
 
-from PIL import Image, ImageOps, ImageFile
+from PIL import Image, ImageOps, ImageFile, ImageSequence
 
 from py_enum import ChoiceEnum
 from imgprocessor import settings, enums, utils
@@ -431,6 +431,18 @@ def trans_uri_to_im(uri: str, use_copy: bool = False) -> typing.Generator:
             yield ori_im
 
 
+def has_transparency(im: ImageFile.ImageFile) -> bool:
+    # RGBA 和 LA 模式直接表示有透明通道
+    if im.mode in ("RGBA", "LA"):
+        return True
+
+    # P 模式（调色板）需要检查 info 字典里是否有 'transparency' 字段
+    if im.mode == "P" and "transparency" in im.info:
+        return True
+
+    return False
+
+
 class ImgSaveParser(BaseParser):
     KEY = ""
 
@@ -440,6 +452,8 @@ class ImgSaveParser(BaseParser):
         "quality": {"type": enums.ArgType.INTEGER.value, "default": None, "min": 1, "max": 100},
         # 1 表示将原图设置成渐进显示
         "interlace": {"type": enums.ArgType.INTEGER.value, "default": 0, "choices": [0, 1]},
+        # 1 表示保留动画
+        "animation": {"type": enums.ArgType.INTEGER.value, "default": 0, "choices": [0, 1]},
     }
 
     def __init__(
@@ -447,11 +461,13 @@ class ImgSaveParser(BaseParser):
         format: typing.Optional[str] = None,
         quality: typing.Optional[int] = None,
         interlace: int = 0,
+        animation: int = 0,
         **kwargs: typing.Any,
     ) -> None:
         self.format = format
         self.quality = quality
         self.interlace = interlace
+        self.animation = animation
 
     def validate(self) -> None:
         super().validate()
@@ -467,6 +483,24 @@ class ImgSaveParser(BaseParser):
             "progressive": True if self.interlace else False,
             "interlace": self.interlace,
         }
+        if self.animation == 1 and getattr(in_im, "is_animated", False):
+            frames = []
+            durations = []
+            for frame in ImageSequence.Iterator(in_im):
+                if has_transparency(frame):
+                    frames.append(frame.convert("RGBA"))
+                else:
+                    frames.append(frame.copy())
+                # 确保每一帧的时间都是整数
+                durations.append(int(frame.info.get("duration", 100)))
+            kwargs.update(
+                {
+                    "save_all": True,  # 保存所有帧
+                    "loop": 0,  # 无限循环
+                    "append_images": frames[1:],
+                    "duration": durations,
+                }
+            )
         # 为了解决色域问题
         icc_profile = in_im.info.get("icc_profile")
         if icc_profile:
