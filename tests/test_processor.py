@@ -168,6 +168,12 @@ def test_main_color() -> None:
             },
             "expected/lenna-merge-v2.png",
         ),
+        # model=P 转 jpeg
+        (
+            "img-mode-p-animation.png",
+            "format,jpeg",
+            "expected/img-mode-p-animation.jpg",
+        ),
     ],
 )
 def test_action(img_name: str, param_str: dict, expected_path: str) -> None:

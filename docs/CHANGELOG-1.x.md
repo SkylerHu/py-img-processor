@@ -1,4 +1,8 @@
 # Release Notes
+## 1.3.3
+- fix: 调整`blur`取值范围，从`[1,50]`调整为`[1,512]`
+- fix: 修复`mode=P`的图片保存`JPEG`报错的问题
+    - JPEG 仅支持真彩色（RGB）或灰度图（L）
 
 ## 1.3.2
 - fix: 设置 `Image.MAX_IMAGE_PIXELS` 使 `PROCESSOR_MAX_PIXEL` 真实生效
