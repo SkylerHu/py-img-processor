@@ -174,6 +174,11 @@ def test_main_color() -> None:
             "format,jpeg",
             "expected/img-mode-p-animation.jpg",
         ),
+        (
+            "img-mode-p-animation.png",
+            "animation,1/format,webp/quality,70",
+            "expected/img-mode-p-animation.webp",
+        ),
     ],
 )
 def test_action(img_name: str, param_str: dict, expected_path: str) -> None:

@@ -1,4 +1,8 @@
 # Release Notes
+
+## 1.3.4
+- feat: 支持`animation`参数保留动画效果
+
 ## 1.3.3
 - fix: 调整`blur`取值范围，从`[1,50]`调整为`[1,512]`
 - fix: 修复`mode=P`的图片保存`JPEG`报错的问题
