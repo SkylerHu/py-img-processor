@@ -32,7 +32,7 @@ class ProcessorCtr(object):
         fmt = kwargs.get("format") or im.format
 
         if fmt:
-            if fmt.upper() == enums.ImageFormat.JPEG.value and im.mode not in ["GBA", "L"]:
+            if fmt.upper() == enums.ImageFormat.JPEG.value and im.mode not in ["RGB", "L"]:
                 im = im.convert("RGB")
             elif fmt.upper() == enums.ImageFormat.WEBP.value and im.mode == "P" and has_transparency(im):
                 im = im.convert("RGBA")
