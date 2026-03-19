@@ -13,6 +13,7 @@
 | format | 否 | 格式转换 | jpeg<br>png<br>webp |
 | quality | 否 | 质量变换 | [1,100]<br>默认值：`settings.PROCESSOR_DEFAULT_QUALITY`（75）<br>支持JPG和WebP |
 | interlace | 否 | 渐进显示 | `0`：（默认值）表示将原图设置成标准显示<br>`1`：表示将原图设置成渐进显示 |
+| animation | 否 | 保留动画 | `0`：（默认值）表示不保留动画<br>`1`：表示保留动画效果 |
 
 > 注意：多个操作key放在一起说明，使用都需要`/`隔开；从1.2开始都是单个操作说明；
 

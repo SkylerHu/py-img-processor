@@ -8,7 +8,7 @@ from PIL import Image, ImageOps, ImageFile
 
 from imgprocessor import enums, settings
 from imgprocessor.parsers import BaseParser, ProcessParams
-from imgprocessor.parsers.base import trans_uri_to_im
+from imgprocessor.parsers.base import trans_uri_to_im, has_transparency
 
 
 class ProcessorCtr(object):
@@ -31,8 +31,15 @@ class ProcessorCtr(object):
     ) -> typing.Optional[typing.ByteString]:
         fmt = kwargs.get("format") or im.format
 
-        if fmt and fmt.upper() == enums.ImageFormat.JPEG.value and im.mode not in ["GBA", "L"]:
-            im = im.convert("RGB")
+        if fmt:
+            if fmt.upper() == enums.ImageFormat.JPEG.value:
+                if im.mode not in ("RGB", "L"):
+                    # jpeg 一般支持 RGB、L
+                    im = im.convert("RGB")
+            elif fmt.upper() in [enums.ImageFormat.WEBP.value, enums.ImageFormat.PNG.value]:
+                if im.mode not in ("RGBA", "LA") and has_transparency(im):
+                    # 透明场景通常使用RGBA(首选,全彩) 、LA(黑白); P模式可能会丢失info中的透明信息
+                    im = im.convert("RGBA")
 
         if not kwargs.get("quality"):
             if fmt and fmt.upper() == enums.ImageFormat.JPEG.value and im.format == enums.ImageFormat.JPEG.value:

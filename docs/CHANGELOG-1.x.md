@@ -1,4 +1,11 @@
 # Release Notes
+
+## 1.3.4
+- feat: 支持`animation`参数保留动画效果
+- fix: 调整 `ProcessorCtr.save_img_to_file` 根据 format 处理 mode
+    - JPEG场景判断中单词拼写错误 `im.mode not in ("GBA", "L")` --> `im.mode not in ("RGB", "L")`
+    - 增加透明场景对mode判断的处理，主要是解决 `P` 场景下丢失info中的透明信息
+
 ## 1.3.3
 - fix: 调整`blur`取值范围，从`[1,50]`调整为`[1,512]`
 - fix: 修复`mode=P`的图片保存`JPEG`报错的问题
