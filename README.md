@@ -1,18 +1,18 @@
 # py-img-processor
 
-[![PyPI - Version](https://img.shields.io/pypi/v/py-img-processor)](https://github.com/SkylerHu/py-img-processor)
-[![GitHub Actions Workflow Status](https://github.com/SkylerHu/py-img-processor/actions/workflows/pre-commit.yml/badge.svg?branch=master)](https://github.com/SkylerHu/py-img-processor)
-[![GitHub Actions Workflow Status](https://github.com/SkylerHu/py-img-processor/actions/workflows/test-py3.yml/badge.svg?branch=master)](https://github.com/SkylerHu/py-img-processor)
-[![Coveralls](https://img.shields.io/coverallsCoverage/github/SkylerHu/py-img-processor?branch=master)](https://github.com/SkylerHu/py-img-processor)
-[![PyPI - Wheel](https://img.shields.io/pypi/wheel/py-img-processor)](https://github.com/SkylerHu/py-img-processor)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/py-img-processor)](https://github.com/SkylerHu/py-img-processor)
-[![PyPI - Implementation](https://img.shields.io/pypi/implementation/py-img-processor)](https://github.com/SkylerHu/py-img-processor)
-[![GitHub License](https://img.shields.io/github/license/SkylerHu/py-img-processor)](https://github.com/SkylerHu/py-img-processor)
+[![PyPI - Version](https://img.shields.io/pypi/v/py-img-processor)](https://pypi.org/project/py-img-processor/)
+[![GitHub Actions Workflow Status](https://github.com/skylerhu/py-img-processor/actions/workflows/pre-commit.yml/badge.svg?branch=master)](https://github.com/skylerhu/py-img-processor)
+[![GitHub Actions Workflow Status](https://github.com/skylerhu/py-img-processor/actions/workflows/test-py3.yml/badge.svg?branch=master)](https://github.com/skylerhu/py-img-processor)
+[![Coveralls](https://img.shields.io/coverallsCoverage/github/SkylerHu/py-img-processor?branch=master)](https://github.com/skylerhu/py-img-processor)
+[![PyPI - Wheel](https://img.shields.io/pypi/wheel/py-img-processor)](https://github.com/skylerhu/py-img-processor)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/py-img-processor)](https://github.com/skylerhu/py-img-processor)
+[![PyPI - Implementation](https://img.shields.io/pypi/implementation/py-img-processor)](https://github.com/skylerhu/py-img-processor)
+[![GitHub License](https://img.shields.io/github/license/SkylerHu/py-img-processor)](https://github.com/skylerhu/py-img-processor)
 
 
 Image editor using Python and Pillow.
 
-依赖Pillow开发的Python库，用于图像编辑处理。
+依赖Pillow开发的Python库，用于图像编辑处理。支持缩放、裁剪、圆角、模糊、旋转、透明度、灰度图、水印、合并等操作。
 
 
 ## 1. 安装
@@ -33,7 +33,7 @@ Image editor using Python and Pillow.
 ## 2.1 运行配置
 可以通过指定环境变量`PY_SETTINGS_MODULE`加载配置文件：
 
-    export PY_SETTINGS_MODULE=${your_project.settings_file.py}
+    export PY_SETTINGS_MODULE=your_project.settings
 
 支持的配置项有：
 
