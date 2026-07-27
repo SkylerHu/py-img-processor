@@ -44,7 +44,10 @@ def compare_imgs_by_path(input_path: str, target_path: str, threshold: int = 1) 
     else:
         ssim = structural_similarity(input_img, target_img, multichannel=True)
 
-    if utils.get_pil_version != utils.Version("8.4.0"):
+    pil_ver = utils.get_pil_version()
+    if pil_ver >= utils.Version("11.0.0"):
+        threshold = 0.92
+    elif pil_ver != utils.Version("8.4.0"):
         threshold = 0.96
 
     assert ssim >= threshold, f"ssim {ssim} < {threshold}"

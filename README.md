@@ -168,31 +168,9 @@ extract_main_color("docs/imgs/lenna-400x225.jpg")
 
 ## 其他格式支持
 
-本库基于 Pillow，处理 HEIF（.heic）和 AVIF（.avif）格式图片需要安装额外依赖并注册解码器。
+本库基于 Pillow，默认支持 JPEG、PNG、WEBP 格式。如需处理 HEIF（.heic）或 AVIF（.avif）格式图片，可通过以下方式扩展：
 
-### 方式一：pillow-heif（同时支持 HEIF 和 AVIF）
+- **AVIF**：`Pillow >= 12.0.0` 已内置 AVIF 支持，无需额外安装插件；低版本可使用 [pillow-avif-plugin](https://pypi.org/project/pillow-avif-plugin/)
+- **HEIF**：安装 [pillow-heif](https://pypi.org/project/pillow-heif/)（同时支持 HEIF 和 AVIF）
 
-```bash
-pip install pillow-heif
-```
-
-```python
-from pillow_heif import register_heif_opener
-register_heif_opener()
-```
-
-### 方式二：pillow-avif-plugin（仅 AVIF）
-
-```bash
-pip install pillow-avif-plugin
-```
-
-```python
-import pillow_avif  # noqa: F401
-```
-
-在项目入口处执行上述注册代码后，即可正常处理对应格式的图片。
-
-> 注意：`pillow-heif` 依赖系统级别的 `libheif` 库，部分系统可能需要先安装：
-> - macOS: `brew install libheif`
-> - Ubuntu/Debian: `apt install libheif-dev`
+> 注意：不同版本的插件 API 可能存在差异，请参照对应仓库文档完成安装和解码器注册。
