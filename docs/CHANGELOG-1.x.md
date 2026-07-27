@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.3.5
+- fix: 修复 `ImageOps.exif_transpose` 处理 multistrip 图像时抛出 `NotImplementedError` 的问题
+    - 新增 `transpose_im` 函数封装 EXIF 方向转置逻辑，优先使用 `exif_transpose`，失败时回退到手动读取 Orientation 标签进行转置
+    - `pre_processing` 和 `ProcessorCtr.handle_img_actions` 统一使用 `transpose_im` 替代原有的方向处理逻辑
+
 ## 1.3.4
 - feat: 支持`animation`参数保留动画效果
 - fix: 调整 `ProcessorCtr.save_img_to_file` 根据 format 处理 mode

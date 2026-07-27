@@ -9,7 +9,7 @@ import urllib.parse
 from urllib.request import urlretrieve
 from contextlib import contextmanager
 
-from PIL import Image, ImageOps, ImageFile, ImageSequence
+from PIL import Image, ImageOps, ImageFile, ImageSequence, ExifTags
 
 from py_enum import ChoiceEnum
 from imgprocessor import settings, enums, utils
@@ -214,6 +214,35 @@ class BaseParser(object):
         return params
 
 
+def transpose_im(im: ImageFile.ImageFile) -> ImageFile.ImageFile:
+    """转置图像
+
+    Args:
+        im: 输入图像
+
+    Returns:
+        转置后的图像
+    """
+    try:
+        im = ImageOps.exif_transpose(im)
+    except NotImplementedError:
+        # 保留exif信息可能出现报错，eg: NotImplementedError: multistrip support not yet implemented
+        # 可丢弃 exif 信息进行重试一次
+        orientation = im.getexif().get(ExifTags.Base.Orientation, 1)
+        method = {
+            2: Image.Transpose.FLIP_LEFT_RIGHT,
+            3: Image.Transpose.ROTATE_180,
+            4: Image.Transpose.FLIP_TOP_BOTTOM,
+            5: Image.Transpose.TRANSPOSE,
+            6: Image.Transpose.ROTATE_270,
+            7: Image.Transpose.TRANSVERSE,
+            8: Image.Transpose.ROTATE_90,
+        }.get(orientation)
+        if method is not None:
+            im = im.transpose(method)
+    return im
+
+
 def pre_processing(im: ImageFile.ImageFile, use_alpha: bool = False) -> ImageFile.ImageFile:
     """预处理图像，默认转成`RGB`，若为`use_alpha=True`转为`RGBA`
 
@@ -224,10 +253,7 @@ def pre_processing(im: ImageFile.ImageFile, use_alpha: bool = False) -> ImageFil
     Returns:
         输出图像
     """
-    # 去掉方向信息
-    orientation = im.getexif().get(0x0112)
-    if orientation and 2 <= orientation <= 8:
-        im = ImageOps.exif_transpose(im)
+    im = transpose_im(im)
 
     if im.mode not in ["RGB", "RGBA"]:
         # 统一处理成RGBA进行操作:

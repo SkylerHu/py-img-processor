@@ -4,11 +4,11 @@ import typing
 import tempfile
 import colorsys
 
-from PIL import Image, ImageOps, ImageFile
+from PIL import Image, ImageFile
 
 from imgprocessor import enums, settings
 from imgprocessor.parsers import BaseParser, ProcessParams
-from imgprocessor.parsers.base import trans_uri_to_im, has_transparency
+from imgprocessor.parsers.base import trans_uri_to_im, has_transparency, transpose_im
 
 
 class ProcessorCtr(object):
@@ -17,7 +17,7 @@ class ProcessorCtr(object):
     def handle_img_actions(cls, ori_im: ImageFile.ImageFile, actions: list[BaseParser]) -> ImageFile.ImageFile:
         im = ori_im
         # 解决旋转问题
-        im = ImageOps.exif_transpose(im)
+        im = transpose_im(im)
         for parser in actions:
             im = parser.do_action(im)
         return im

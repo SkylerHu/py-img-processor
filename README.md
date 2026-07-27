@@ -1,13 +1,13 @@
 # py-img-processor
 
-[![PyPI - Version](https://img.shields.io/pypi/v/py-img-processor)](https://pypi.org/project/py-img-processor/)
+[![PyPI - Version](https://img.shields.io/pypi/v/py-img-processor)](https://github.com/skylerhu/py-img-processor)
 [![GitHub Actions Workflow Status](https://github.com/skylerhu/py-img-processor/actions/workflows/pre-commit.yml/badge.svg?branch=master)](https://github.com/skylerhu/py-img-processor)
 [![GitHub Actions Workflow Status](https://github.com/skylerhu/py-img-processor/actions/workflows/test-py3.yml/badge.svg?branch=master)](https://github.com/skylerhu/py-img-processor)
-[![Coveralls](https://img.shields.io/coverallsCoverage/github/SkylerHu/py-img-processor?branch=master)](https://github.com/skylerhu/py-img-processor)
+[![Coveralls](https://img.shields.io/coverallsCoverage/github/skylerhu/py-img-processor?branch=master)](https://github.com/skylerhu/py-img-processor)
 [![PyPI - Wheel](https://img.shields.io/pypi/wheel/py-img-processor)](https://github.com/skylerhu/py-img-processor)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/py-img-processor)](https://github.com/skylerhu/py-img-processor)
 [![PyPI - Implementation](https://img.shields.io/pypi/implementation/py-img-processor)](https://github.com/skylerhu/py-img-processor)
-[![GitHub License](https://img.shields.io/github/license/SkylerHu/py-img-processor)](https://github.com/skylerhu/py-img-processor)
+[![GitHub License](https://img.shields.io/github/license/skylerhu/py-img-processor)](https://github.com/skylerhu/py-img-processor)
 
 
 Image editor using Python and Pillow.
@@ -165,3 +165,34 @@ from imgprocessor.processor import extract_main_color
 extract_main_color("docs/imgs/lenna-400x225.jpg")
 # 输出： "905C4C"
 ```
+
+## 其他格式支持
+
+本库基于 Pillow，处理 HEIF（.heic）和 AVIF（.avif）格式图片需要安装额外依赖并注册解码器。
+
+### 方式一：pillow-heif（同时支持 HEIF 和 AVIF）
+
+```bash
+pip install pillow-heif
+```
+
+```python
+from pillow_heif import register_heif_opener
+register_heif_opener()
+```
+
+### 方式二：pillow-avif-plugin（仅 AVIF）
+
+```bash
+pip install pillow-avif-plugin
+```
+
+```python
+import pillow_avif  # noqa: F401
+```
+
+在项目入口处执行上述注册代码后，即可正常处理对应格式的图片。
+
+> 注意：`pillow-heif` 依赖系统级别的 `libheif` 库，部分系统可能需要先安装：
+> - macOS: `brew install libheif`
+> - Ubuntu/Debian: `apt install libheif-dev`
