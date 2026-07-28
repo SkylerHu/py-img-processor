@@ -1,5 +1,5 @@
 site_name: 图像处理Python库
-repo_url: https://github.com/SkylerHu/py-img-processor
+repo_url: https://github.com/skylerhu/py-img-processor
 docs_dir: .
 
 theme:
