@@ -1,14 +1,10 @@
 # Release Notes
 
 ## 1.3.6
-<<<<<<< Updated upstream
-- fix: `transpose_im` 异常捕获从 `NotImplementedError` 扩大为 `Exception`，兼容 EXIF 数据损坏或截断导致的 `OSError` 等异常
-=======
 - fix: `transpose_im` 增强异常兜底能力
     - 异常捕获从 `NotImplementedError` 扩大为 `Exception`，兼容 EXIF 数据损坏、字节截断等导致的 `OSError` 等异常
     - 回退分支转置完成后丢弃已损坏的 EXIF 信息，避免残留方向标签导致二次旋转
     - 使用 EXIF tag 常量 `0x0112` 替代 `ExifTags.Base.Orientation`，兼容 Pillow 8
->>>>>>> Stashed changes
 
 ## 1.3.5
 - fix: 修复 `ImageOps.exif_transpose` 处理 multistrip 图像时抛出 `NotImplementedError` 的问题

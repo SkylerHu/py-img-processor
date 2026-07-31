@@ -242,6 +242,7 @@ def transpose_im(im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         }.get(orientation)
         if method is not None:
             im = im.transpose(method)
+            im.info.pop("exif", None)
     return im
 
 
