@@ -90,6 +90,23 @@ def test_pre_processing(img_rotate_90_with_exif: Image) -> None:
     assert im.getexif().get(0x0112) is None
 
 
+@pytest.mark.usefixtures("clean_dir")
+def test_transpose_im_fallback(img_rotate_90_with_exif: Image, monkeypatch) -> None:
+    """exif_transpose 抛出异常时，回退到手动读取 Orientation 进行转置"""
+    from PIL import ImageOps
+
+    orig_size = img_rotate_90_with_exif.size
+    orientation = img_rotate_90_with_exif.getexif().get(0x0112)
+    assert orientation is not None and orientation > 1
+
+    def mock_exif_transpose(im, **kwargs):
+        raise OSError(-2, "corrupted EXIF data")
+
+    monkeypatch.setattr(ImageOps, "exif_transpose", mock_exif_transpose)
+    im = parser_base.transpose_im(img_rotate_90_with_exif)
+    assert im.size == (orig_size[1], orig_size[0])
+
+
 def test_process_params() -> None:
     p = ProcessParams.parse_str("interlace,1/format,png")
     im = Image.new("RGBA", (200, 200))

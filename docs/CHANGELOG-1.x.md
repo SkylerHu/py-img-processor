@@ -1,5 +1,8 @@
 # Release Notes
 
+## 1.3.6
+- fix: `transpose_im` 异常捕获从 `NotImplementedError` 扩大为 `Exception`，兼容 EXIF 数据损坏或截断导致的 `OSError` 等异常
+
 ## 1.3.5
 - fix: 修复 `ImageOps.exif_transpose` 处理 multistrip 图像时抛出 `NotImplementedError` 的问题
     - 新增 `transpose_im` 函数封装 EXIF 方向转置逻辑，优先使用 `exif_transpose`，失败时回退到手动读取 Orientation 标签进行转置

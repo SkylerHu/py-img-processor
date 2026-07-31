@@ -225,8 +225,9 @@ def transpose_im(im: ImageFile.ImageFile) -> ImageFile.ImageFile:
     """
     try:
         im = ImageOps.exif_transpose(im)
-    except NotImplementedError:
+    except Exception:
         # 保留exif信息可能出现报错，eg: NotImplementedError: multistrip support not yet implemented
+        # 图片的 EXIF 块内部数据损坏、字节截断或格式不规范 抛出 OSError(-2)
         # 可丢弃 exif 信息进行重试一次
         orientation = im.getexif().get(ExifTags.Base.Orientation, 1)
         method = {
