@@ -241,6 +241,8 @@ def transpose_im(im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         }.get(orientation)
         if method is not None:
             im = im.transpose(method)
+            # 丢弃损坏的exif信息，包含去掉旋转信息
+            im.info.pop("exif", None)
     return im
 
 
