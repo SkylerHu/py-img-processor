@@ -1,10 +1,11 @@
 # Release Notes
 
 ## 1.3.6
-- fix: `transpose_im` 增强异常兜底能力
+- fix: `transpose_im` 增强异常兜底与版本兼容能力
     - 异常捕获从 `NotImplementedError` 扩大为 `Exception`，兼容 EXIF 数据损坏、字节截断等导致的 `OSError` 等异常
     - 回退分支转置完成后丢弃已损坏的 EXIF 信息，避免残留方向标签导致二次旋转
-    - 兼容 Pillow 8：使用 `0x0112` 替代 `ExifTags.Base.Orientation`，使用 `getattr(Image, "Transpose", Image)` 替代 `Image.Transpose`
+    - 兼容 Pillow 8：`ExifTags.Base.Orientation` 替换为常量 `0x0112`，`Image.Transpose` 通过 `getattr` 回退到 `Image`
+- fix: `save_img_to_file` 当 `im.format` 为空时默认使用 `JPEG`，避免 `fmt` 为 `None` 导致 `AttributeError`
 
 ## 1.3.5
 - fix: 修复 `ImageOps.exif_transpose` 处理 multistrip 图像时抛出 `NotImplementedError` 的问题
