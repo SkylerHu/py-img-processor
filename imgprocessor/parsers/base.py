@@ -9,7 +9,7 @@ import urllib.parse
 from urllib.request import urlretrieve
 from contextlib import contextmanager
 
-from PIL import Image, ImageOps, ImageFile, ImageSequence, ExifTags
+from PIL import Image, ImageOps, ImageFile, ImageSequence
 
 from py_enum import ChoiceEnum
 from imgprocessor import settings, enums, utils
@@ -229,7 +229,8 @@ def transpose_im(im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         # 保留exif信息可能出现报错，eg: NotImplementedError: multistrip support not yet implemented
         # 图片的 EXIF 块内部数据损坏、字节截断或格式不规范 抛出 OSError(-2)
         # 可丢弃 exif 信息进行重试一次
-        orientation = im.getexif().get(ExifTags.Base.Orientation, 1)
+        # 标识应该是：ExifTags.Base.Orientation，为了版本兼容写死
+        orientation = im.getexif().get(0x0112, 1)
         method = {
             2: Image.Transpose.FLIP_LEFT_RIGHT,
             3: Image.Transpose.ROTATE_180,
@@ -241,8 +242,6 @@ def transpose_im(im: ImageFile.ImageFile) -> ImageFile.ImageFile:
         }.get(orientation)
         if method is not None:
             im = im.transpose(method)
-            # 丢弃损坏的exif信息，包含去掉旋转信息
-            im.info.pop("exif", None)
     return im
 
 
