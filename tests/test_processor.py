@@ -33,6 +33,7 @@ def test_save_img() -> None:
     im.format = enums.ImageFormat.JPEG.value
     ProcessorCtr.save_img_to_file(im, format=enums.ImageFormat.JPEG.value)
     ProcessorCtr.save_img_to_file(im)
+    ProcessorCtr.save_img_to_file(im, format="GIF")
 
 
 @pytest.mark.usefixtures("clean_dir")
