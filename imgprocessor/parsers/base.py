@@ -9,7 +9,7 @@ import urllib.parse
 from urllib.request import urlretrieve
 from contextlib import contextmanager
 
-from PIL import Image, ImageOps, ImageFile, ImageSequence, ExifTags
+from PIL import Image, ImageOps, ImageFile, ImageSequence
 
 from py_enum import ChoiceEnum
 from imgprocessor import settings, enums, utils
@@ -225,21 +225,25 @@ def transpose_im(im: ImageFile.ImageFile) -> ImageFile.ImageFile:
     """
     try:
         im = ImageOps.exif_transpose(im)
-    except NotImplementedError:
+    except Exception:
         # 保留exif信息可能出现报错，eg: NotImplementedError: multistrip support not yet implemented
+        # 图片的 EXIF 块内部数据损坏、字节截断或格式不规范 抛出 OSError(-2)
         # 可丢弃 exif 信息进行重试一次
-        orientation = im.getexif().get(ExifTags.Base.Orientation, 1)
+        # 标识应该是：ExifTags.Base.Orientation，为了版本兼容写死
+        orientation = im.getexif().get(0x0112, 1)
+        _t = getattr(Image, "Transpose", Image)
         method = {
-            2: Image.Transpose.FLIP_LEFT_RIGHT,
-            3: Image.Transpose.ROTATE_180,
-            4: Image.Transpose.FLIP_TOP_BOTTOM,
-            5: Image.Transpose.TRANSPOSE,
-            6: Image.Transpose.ROTATE_270,
-            7: Image.Transpose.TRANSVERSE,
-            8: Image.Transpose.ROTATE_90,
+            2: _t.FLIP_LEFT_RIGHT,
+            3: _t.ROTATE_180,
+            4: _t.FLIP_TOP_BOTTOM,
+            5: _t.TRANSPOSE,
+            6: _t.ROTATE_270,
+            7: _t.TRANSVERSE,
+            8: _t.ROTATE_90,
         }.get(orientation)
         if method is not None:
             im = im.transpose(method)
+            im.info.pop("exif", None)
     return im
 
 

@@ -90,6 +90,69 @@ def test_pre_processing(img_rotate_90_with_exif: Image) -> None:
     assert im.getexif().get(0x0112) is None
 
 
+@pytest.mark.usefixtures("clean_dir")
+def test_transpose_im_fallback(img_rotate_90_with_exif: Image, monkeypatch) -> None:
+    """exif_transpose 抛出异常时，回退到手动读取 Orientation 进行转置"""
+    from PIL import ImageOps
+
+    orig_size = img_rotate_90_with_exif.size
+    orientation = img_rotate_90_with_exif.getexif().get(0x0112)
+    assert orientation is not None and orientation > 1
+
+    def mock_exif_transpose(im, **kwargs):
+        raise OSError(-2, "corrupted EXIF data")
+
+    monkeypatch.setattr(ImageOps, "exif_transpose", mock_exif_transpose)
+    im = parser_base.transpose_im(img_rotate_90_with_exif)
+    assert im.size == (orig_size[1], orig_size[0])
+
+
+def test_transpose_im_fallback_without_orientation(monkeypatch) -> None:
+    """exif_transpose 抛出异常且无可用 Orientation 时，保持原图不变"""
+    from PIL import ImageOps
+
+    im = Image.new("RGB", (20, 10))
+
+    def mock_exif_transpose(_im, **kwargs):
+        raise OSError(-2, "corrupted EXIF data")
+
+    monkeypatch.setattr(ImageOps, "exif_transpose", mock_exif_transpose)
+    out = parser_base.transpose_im(im)
+    assert out.size == (20, 10)
+    assert out.getexif().get(0x0112) is None
+
+
+def test_validate_args_choiceenum_instance_branch(monkeypatch) -> None:
+    """覆盖 validate_args 中 ChoiceEnum 分支"""
+
+    class TestParser(parser_base.BaseParser):
+        KEY = "test"
+        ARGS = {
+            "m": {"type": enums.ArgType.STRING.value, "choices": enums.ResizeMode},
+        }
+
+    # 在测试里将 ChoiceEnum 调整为 type，模拟 choices 为枚举类时走 values 分支
+    monkeypatch.setattr(parser_base, "ChoiceEnum", type)
+    assert TestParser.validate_args(m="lfit") == {"m": "lfit"}
+
+
+@pytest.mark.usefixtures("clean_dir")
+def test_has_transparency_and_animation_frame_copy() -> None:
+    assert parser_base.has_transparency(Image.new("RGBA", (2, 2))) is True
+
+    frame1 = Image.new("RGB", (8, 8), color=(255, 0, 0))
+    frame2 = Image.new("RGB", (8, 8), color=(0, 0, 255))
+    gif_path = "rgb-animation.gif"
+    frame1.save(gif_path, save_all=True, append_images=[frame2], loop=0, duration=[80, 120], format="GIF")
+
+    with Image.open(gif_path) as im:
+        kwargs = parser_base.ImgSaveParser(animation=1).compute(im, im)
+        assert kwargs["save_all"] is True
+        assert len(kwargs["append_images"]) == im.n_frames - 1
+        assert len(kwargs["duration"]) == im.n_frames
+        assert all(isinstance(d, int) for d in kwargs["duration"])
+
+
 def test_process_params() -> None:
     p = ProcessParams.parse_str("interlace,1/format,png")
     im = Image.new("RGBA", (200, 200))

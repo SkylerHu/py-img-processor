@@ -7,7 +7,7 @@ from PIL import Image
 
 
 __all__ = ["settings", "VERSION"]
-__version__ = "1.3.5"
+__version__ = "1.3.6"
 
 
 VERSION = __version__
