@@ -10,9 +10,13 @@
 [![GitHub License](https://img.shields.io/github/license/skylerhu/py-img-processor)](https://github.com/skylerhu/py-img-processor)
 
 
-Image editor using Python and Pillow.
+## 项目简介
 
-依赖Pillow开发的Python库，用于图像编辑处理。支持缩放、裁剪、圆角、模糊、旋转、透明度、灰度图、水印、合并等操作。
+### 参数配置化图像处理库（Python API + CLI）
+
+`py-img-processor` 是一个面向服务端与脚本场景的参数配置化图像处理库，支持以字符串或 JSON 参数驱动图片处理流程，并同时提供 Python API 与 `img-processor` CLI。当前实现覆盖缩放、裁剪、圆角、模糊、旋转、透明度、灰度图、水印、拼接/合并、格式转换及主色提取等常见能力。
+
+`py-img-processor` is a parameter-configurable image processing library for backend services and automation scripts. It supports string- or JSON-based transformation pipelines and provides both a Python API and the `img-processor` CLI for tasks such as resize, crop, rounded corners, blur, rotate, opacity, grayscale, watermark, merge/composite, format conversion, and dominant color extraction.
 
 
 ## 1. 安装
