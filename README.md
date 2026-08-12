@@ -1,7 +1,7 @@
 # py-img-processor
 
 [![PyPI - Version](https://img.shields.io/pypi/v/py-img-processor)](https://pypi.org/project/py-img-processor/)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/py-img-processor)](https://pypi.org/project/py-img-processor/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/py-img-processor)](https://pypistats.org/packages/py-img-processor)
 [![GitHub Actions Workflow Status](https://github.com/skylerhu/py-img-processor/actions/workflows/pre-commit.yml/badge.svg?branch=master)](https://github.com/skylerhu/py-img-processor)
 [![GitHub Actions Workflow Status](https://github.com/skylerhu/py-img-processor/actions/workflows/test-py3.yml/badge.svg?branch=master)](https://github.com/skylerhu/py-img-processor)
 [![Codecov](https://codecov.io/gh/skylerhu/py-img-processor/graph/badge.svg?token=ELSP6KWXDQ)](https://codecov.io/gh/skylerhu/py-img-processor)
