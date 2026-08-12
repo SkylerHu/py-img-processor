@@ -1,6 +1,7 @@
 # py-img-processor
 
 [![PyPI - Version](https://img.shields.io/pypi/v/py-img-processor)](https://pypi.org/project/py-img-processor/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/py-img-processor)](https://pypi.org/project/py-img-processor/)
 [![GitHub Actions Workflow Status](https://github.com/skylerhu/py-img-processor/actions/workflows/pre-commit.yml/badge.svg?branch=master)](https://github.com/skylerhu/py-img-processor)
 [![GitHub Actions Workflow Status](https://github.com/skylerhu/py-img-processor/actions/workflows/test-py3.yml/badge.svg?branch=master)](https://github.com/skylerhu/py-img-processor)
 [![Codecov](https://codecov.io/gh/skylerhu/py-img-processor/graph/badge.svg?token=ELSP6KWXDQ)](https://codecov.io/gh/skylerhu/py-img-processor)
@@ -8,6 +9,8 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/py-img-processor)](https://pypi.org/project/py-img-processor/)
 [![PyPI - Implementation](https://img.shields.io/pypi/implementation/py-img-processor)](https://pypi.org/project/py-img-processor/)
 [![GitHub License](https://img.shields.io/github/license/skylerhu/py-img-processor)](https://github.com/skylerhu/py-img-processor/blob/master/LICENSE)
+[![Read the Docs](https://img.shields.io/readthedocs/py-img-processor)](https://py-img-processor.readthedocs.io/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 **用一行字符串参数或一段 JSON 驱动整条图像处理流水线。**
 
@@ -221,3 +224,9 @@ export PY_SETTINGS_MODULE=your_project.settings
 ## Changelog
 
 查看版本变更记录：[CHANGELOG](./docs/CHANGELOG-1.x.md)
+
+---
+
+## License
+
+[MIT](./LICENSE) © [SkylerHu](https://github.com/skylerhu)
