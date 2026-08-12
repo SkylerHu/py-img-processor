@@ -10,7 +10,7 @@ theme:
 
 nav:
   - 首页: README.md
-  - 使用(Usage): docs/Reference.md
+  - 图像处理参数: docs/Reference.md
   - Release Notes: docs/CHANGELOG-1.x.md
   - 贡献者指南: docs/CONTRIBUTING.md
 
