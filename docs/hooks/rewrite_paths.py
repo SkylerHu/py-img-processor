@@ -24,13 +24,13 @@ def on_page_markdown(markdown: str, page: Any, config: Any, files: Any) -> str:
     # 示例: "](./docs/imgs/foo.png)" → "](imgs/foo.png)"
     markdown = re.sub(r"\]\(\./docs/", "](", markdown)
 
-    # 将语言切换链接重写为 i18n 插件生成的 URL
-    # 中文页: [English](README.md) → [English](../)
-    # 英文页: [中文文档](README.zh.md) → [中文文档](../zh/)
+    # 将语言切换链接重写为相对路径（兼容 Read the Docs 多版本 URL）
+    # 中文页 (/zh/): [English](README.md) → [English](../)   从 /zh/ 向上回到根
+    # 英文页 (/):    [中文文档](README.zh.md) → [中文文档](zh/) 从根进入 /zh/
     locale = getattr(page.file, "locale", None)
     if locale == "zh":
         markdown = re.sub(r"\]\(README\.md\)", "](../)", markdown)
     else:
-        markdown = re.sub(r"\]\(README\.zh\.md\)", "](../zh/)", markdown)
+        markdown = re.sub(r"\]\(README\.zh\.md\)", "](zh/)", markdown)
 
     return markdown

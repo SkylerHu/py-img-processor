@@ -35,8 +35,8 @@ nav:
 extra_css:
   - css/custom.css
 
-# extra_javascript:
-#   - js/lang-redirect.js
+extra_javascript:
+  - js/lang-redirect.js
 
 plugins:
   - search
