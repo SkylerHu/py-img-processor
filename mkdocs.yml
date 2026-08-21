@@ -16,6 +16,15 @@ theme:
     - navigation.tabs
     - toc.integrate
 
+extra:
+  alternate:
+    - name: English
+      link: "."
+      lang: en
+    - name: 中文
+      link: "zh/"
+      lang: zh
+
 nav:
   - Home: README.md
   - Reference: Reference.md
@@ -26,8 +35,8 @@ nav:
 extra_css:
   - css/custom.css
 
-extra_javascript:
-  - js/lang-redirect.js
+# extra_javascript:
+#   - js/lang-redirect.js
 
 plugins:
   - search
