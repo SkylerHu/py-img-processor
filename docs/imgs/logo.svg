@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- 背景渐变：紫蓝色调 -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#722ED1" />
+      <stop offset="100%" stop-color="#2F54EB" />
+    </linearGradient>
+
+    <!-- 图像背景渐变（天空） -->
+    <linearGradient id="sky-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1890FF" />
+      <stop offset="100%" stop-color="#E6F7FF" />
+    </linearGradient>
+
+    <!-- 山峰渐变 -->
+    <linearGradient id="mountain-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#006D75" />
+      <stop offset="100%" stop-color="#002329" />
+    </linearGradient>
+
+    <!-- 功能点缀渐变 -->
+    <linearGradient id="point-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#13C2C2" />
+      <stop offset="100%" stop-color="#36CFC9" />
+    </linearGradient>
+
+    <!-- 卡片基础阴影 -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#301080" flood-opacity="0.3" />
+    </filter>
+
+    <!-- 控件投影，提升层级立体感 -->
+    <filter id="arrow-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+
+    <!-- 裁切路径：确保风景画面在原始图像框内 -->
+    <clipPath id="image-clip">
+      <rect x="-105" y="-105" width="210" height="210" rx="8" />
+    </clipPath>
+  </defs>
+
+  <!-- 底座背景 -->
+  <rect x="32" y="32" width="448" height="448" rx="40" fill="url(#bg-grad)" filter="url(#shadow)" />
+
+  <g transform="translate(256, 256)">
+    <!-- ================= 形象化图像画面 ================= -->
+    <g clip-path="url(#image-clip)">
+      <!-- 天空背景 -->
+      <rect x="-105" y="-105" width="210" height="210" fill="url(#sky-grad)" />
+      <!-- 太阳 -->
+      <circle cx="45" cy="-45" r="24" fill="#FFD666" opacity="0.9" />
+      <!-- 远山 -->
+      <path d="M -105 105 L -50 -10 L 20 105 Z" fill="#36CFC9" opacity="0.6" />
+      <!-- 近山 -->
+      <path d="M -30 105 L 35 15 L 105 105 Z" fill="url(#mountain-grad)" />
+    </g>
+
+    <!-- 原始图像边框 -->
+    <rect x="-110" y="-110" width="220" height="220" rx="12" fill="none" stroke="#FFFFFF" stroke-width="8" opacity="0.9"/>
+
+    <!-- 裁剪虚线框 -->
+    <rect x="-65" y="-65" width="130" height="130" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="12 8" opacity="0.8"/>
+
+    <!-- ================= 右上角：紧凑型缩放角标（缩小间隙） ================= -->
+    <g filter="url(#arrow-shadow)" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <g transform="translate(110, -110)">
+        <!-- 外扩角角标 (指向右上) -->
+        <path d="M -4 -24 L 24 -24 L 24 4" />
+        <!-- 内缩角角标 (指向左下) -->
+        <path d="M 4 24 L -24 24 L -24 -4" />
+      </g>
+    </g>
+
+    <!-- ================= 左下角：旋转弧形箭头 ================= -->
+    <g filter="url(#arrow-shadow)">
+      <!-- 旋转弧线轨迹（左下角弧度） -->
+      <path d="M 20 140 A 140 140 0 0 1 -140 -20" fill="none" stroke="#85A5FF" stroke-width="18" stroke-linecap="round"/>
+
+      <!-- 切向指示箭头头部 -->
+      <path d="M -140 -45 L -175 -2 L -120 8 Z" fill="#85A5FF" stroke="#85A5FF" stroke-width="3" stroke-linejoin="round"/>
+    </g>
+
+    <!-- 左下角控制圆点 -->
+    <circle cx="-110" cy="110" r="20" fill="url(#point-grad)" stroke="#FFFFFF" stroke-width="5" filter="url(#arrow-shadow)" />
+  </g>
+</svg>

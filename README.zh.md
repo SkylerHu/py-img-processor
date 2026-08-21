@@ -212,7 +212,7 @@ export PY_SETTINGS_MODULE=your_project.settings
 
 ---
 
-## 扩展格式支持
+## <a id="扩展格式支持"></a>扩展格式支持
 
 本库基于 Pillow，默认支持 JPEG、PNG、WebP。如需处理 HEIF（`.heic`）或 AVIF（`.avif`），可通过插件扩展：
 

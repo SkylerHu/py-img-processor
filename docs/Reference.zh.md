@@ -27,7 +27,7 @@
 ### 1.2 缩放 `resize`
 | 参数 | 必选 | 描述 | 取值范围 |
 | - |  - |  - |  - |
-| m | 否 | 缩放模式，需设置`w`或`h`才会生效 | `lfit`(默认值) 等比缩放，缩放图限制为指定w与h的矩形内的最大图像<br>`mfit` 等比缩放，缩放图为延伸出指定w与h的矩形框外的最小图像<br>`fit` 将原图等比缩放为延伸出指定w与h的矩形框外的最小图像，然后将超出的部分进行居中裁剪<br>`pad` 将原图缩放为指定w与h的矩形内的最大图像，然后使用指定颜色居中填充空白部分<br>`fixed` 固定宽高，强制缩放<br>参照枚举 [ResizeMode](#resizemode--缩放模式) |
+| m | 否 | 缩放模式，需设置`w`或`h`才会生效 | `lfit`(默认值) 等比缩放，缩放图限制为指定w与h的矩形内的最大图像<br>`mfit` 等比缩放，缩放图为延伸出指定w与h的矩形框外的最小图像<br>`fit` 将原图等比缩放为延伸出指定w与h的矩形框外的最小图像，然后将超出的部分进行居中裁剪<br>`pad` 将原图缩放为指定w与h的矩形内的最大图像，然后使用指定颜色居中填充空白部分<br>`fixed` 固定宽高，强制缩放<br>参照枚举 [ResizeMode](#resizemode) |
 | w | 否 | 目标缩放图的宽度 | [1, `settings.PROCESSOR_MAX_W_H`] |
 | h | 否 | 目标缩放图的高度 | [1, `settings.PROCESSOR_MAX_W_H`] |
 | l | 否 | 目标缩放图的最长边，优先级低于`w、h`配置 | [1, `settings.PROCESSOR_MAX_W_H`] |
@@ -144,8 +144,8 @@
 | size | 否 | 字体大小 | [1, 1000]<br>默认：40 |
 | shadow | 否 | 文字水印的阴影透明度 | [0,100]<br>默认值：0，表示没有阴影 |
 | rotate | 否 | 水印顺时针旋转角度 | [0,360]<br>默认值：0，表示不旋转 |
-| order | 否 | 文字和图片水印的前后顺序 | 0（默认值）：表示图片水印在左/在上<br>1：表示文字水印在左/在上<br>见 [PositionOrder](#positionorder--元素顺序) |
-| align | 否 | 文字和图片水印的对齐方式 | 0：表示文字水印和图片水印上对齐<br>1：表示文字水印和图片水印中对齐<br>2（默认值）：表示文字水印和图片水印下对齐<br>3：垂直左对齐<br>4：垂直居中对齐<br>5：垂直右对齐 <br>见 [PositionAlign](#positionalign--对齐方式) |
+| order | 否 | 文字和图片水印的前后顺序 | 0（默认值）：表示图片水印在左/在上<br>1：表示文字水印在左/在上<br>见 [PositionOrder](#positionorder) |
+| align | 否 | 文字和图片水印的对齐方式 | 0：表示文字水印和图片水印上对齐<br>1：表示文字水印和图片水印中对齐<br>2（默认值）：表示文字水印和图片水印下对齐<br>3：垂直左对齐<br>4：垂直居中对齐<br>5：垂直右对齐 <br>见 [PositionAlign](#positionalign) |
 | interval | 否 | 文字和图片水印间的间距 | [0,1000]，默认值：0；单位：px |
 | t | 否 | 水印的不透明度 | [0, 100]，100不透明 |
 | design | 否 | 水印尺寸的设计参照尺寸；<br>design=1000意思是水印按照短边1000图像设计的；<br>需参照图像和design的比例进行缩放水印 | [1, `settings.PROCESSOR_MAX_W_H`]<br>当design=1000，若水印100x100，原图1080x720，则将水印缩放为72x72 |
@@ -162,8 +162,8 @@
 | actions | 否 | 对`image`按照字符串参数进行预处理，需 [base64url_encode](#base64url_encode) 编码 |
 | bg | 否 | 是否将imgae当做背景放在输入图像之下；定义输入图像和image参数的拼接顺序 | `0` (默认值) 否，顺序为(输入图像,image)； `1` 是，将image当做背景，顺序为(image,输入图像) |
 | p | 否 | 按输入图像的百分比缩放`image`图像,bg=1按照image缩放输入图像 | [1, 1000]<br>小于100为缩小，大于100为放大 |
-| order | 否 | 图像和`image`的前后顺序 | 0：该`image`在右/在下<br>1：该`image`在左/在上<br>不传递该参数align和interval不生效<br>见 [PositionOrder](#positionorder--元素顺序) |
-| align | 否 | 图像和`image`的对齐方式 | 0：水平上对齐<br>1：水平居中对齐<br>2（默认值）：水平下对齐<br>3：垂直左对齐<br>4：垂直居中对齐<br>5：垂直右对齐<br>见 [PositionAlign](#positionalign--对齐方式) |
+| order | 否 | 图像和`image`的前后顺序 | 0：该`image`在右/在下<br>1：该`image`在左/在上<br>不传递该参数align和interval不生效<br>见 [PositionOrder](#positionorder) |
+| align | 否 | 图像和`image`的对齐方式 | 0：水平上对齐<br>1：水平居中对齐<br>2（默认值）：水平下对齐<br>3：垂直左对齐<br>4：垂直居中对齐<br>5：垂直右对齐<br>见 [PositionAlign](#positionalign) |
 | interval | 否 | 图像和`image`间的间距 | [0,1000]，默认值：0；单位：px |
 | g | 否 | 按照九宫格计算水印的位置，优先级高于`x、y` | |
 | x | 否 | `image`在图像上的起点横坐标 | [0, 图像边界]<br>默认 `0` |
@@ -301,7 +301,7 @@ base64url_decode(value: str) -> str
 | `WATERMARK` | `watermark` | 水印 |
 | `MERGE` | `merge` | 合并图像 |
 
-#### `ResizeMode` — 缩放模式
+#### <a id="resizemode"></a>`ResizeMode` — 缩放模式
 
 | 枚举值 | Key | 说明 |
 | --- | --- | --- |
@@ -325,14 +325,14 @@ base64url_decode(value: str) -> str
 | `SOUTH` | `south` | 中下 |
 | `SE` | `se` | 右下 |
 
-#### `PositionOrder` — 元素顺序
+#### <a id="positionorder"></a>`PositionOrder` — 元素顺序
 
 | 枚举值 | 值 | 说明 |
 | --- | --- | --- |
 | `BEFORE` | `0` | 第一输入元素在前/在上 |
 | `AFTER` | `1` | 第一输入元素在后/在下 |
 
-#### `PositionAlign` — 对齐方式
+#### <a id="positionalign"></a>`PositionAlign` — 对齐方式
 
 | 枚举值 | 值 | 说明 |
 | --- | --- | --- |

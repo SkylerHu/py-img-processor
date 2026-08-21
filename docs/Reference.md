@@ -27,7 +27,7 @@ Examples:
 ### 1.2 Resize `resize`
 | Parameter | Required | Description | Range |
 | - |  - |  - |  - |
-| m | No | Resize mode; takes effect only when `w` or `h` is set | `lfit` (default) proportional resize, image fits within the specified w×h rectangle<br>`mfit` proportional resize, smallest image that extends beyond the specified w×h rectangle<br>`fit` proportionally scale to the smallest size extending beyond the w×h rectangle, then center-crop the overflow<br>`pad` scale to the largest image within the w×h rectangle, then pad with the specified color<br>`fixed` fixed width and height, forced scaling<br>See enum [ResizeMode](#resizemode--resize-modes) |
+| m | No | Resize mode; takes effect only when `w` or `h` is set | `lfit` (default) proportional resize, image fits within the specified w×h rectangle<br>`mfit` proportional resize, smallest image that extends beyond the specified w×h rectangle<br>`fit` proportionally scale to the smallest size extending beyond the w×h rectangle, then center-crop the overflow<br>`pad` scale to the largest image within the w×h rectangle, then pad with the specified color<br>`fixed` fixed width and height, forced scaling<br>See enum [ResizeMode](#resizemode) |
 | w | No | Target width | [1, `settings.PROCESSOR_MAX_W_H`] |
 | h | No | Target height | [1, `settings.PROCESSOR_MAX_W_H`] |
 | l | No | Target longest side; lower priority than `w`, `h` | [1, `settings.PROCESSOR_MAX_W_H`] |
@@ -144,8 +144,8 @@ Examples:
 | size | No | Font size | [1, 1000]<br>Default: 40 |
 | shadow | No | Text shadow opacity | [0,100]<br>Default: 0 (no shadow) |
 | rotate | No | Clockwise rotation angle for the watermark | [0,360]<br>Default: 0 (no rotation) |
-| order | No | Stacking order of text and image watermarks | 0 (default): image watermark left/above<br>1: text watermark left/above<br>see [PositionOrder](#positionorder--element-ordering) |
-| align | No | Alignment of text and image watermarks | 0: top-aligned<br>1: center-aligned<br>2 (default): bottom-aligned<br>3: vertical left-aligned<br>4: vertical center-aligned<br>5: vertical right-aligned<br>see [PositionAlign](#positionalign--alignment) |
+| order | No | Stacking order of text and image watermarks | 0 (default): image watermark left/above<br>1: text watermark left/above<br>see [PositionOrder](#positionorder) |
+| align | No | Alignment of text and image watermarks | 0: top-aligned<br>1: center-aligned<br>2 (default): bottom-aligned<br>3: vertical left-aligned<br>4: vertical center-aligned<br>5: vertical right-aligned<br>see [PositionAlign](#positionalign) |
 | interval | No | Spacing between text and image watermarks | [0,1000], default 0; unit: px |
 | t | No | Watermark opacity | [0, 100]; 100 is fully opaque |
 | design | No | Reference design size for watermark dimensions;<br>`design=1000` means the watermark was designed for a 1000px short side;<br>watermark is scaled according to the ratio between the source image and `design` | [1, `settings.PROCESSOR_MAX_W_H`]<br>When design=1000, if the watermark is 100×100 and the source is 1080×720, the watermark is scaled to 72×72 |
@@ -162,8 +162,8 @@ Examples:
 | actions | No | Pre-process `image` with string parameters; must be [base64url_encode](#base64url_encode) encoded |
 | bg | No | Whether to treat `image` as background beneath the input image; defines merge order | `0` (default) no; order is (input image, image); `1` yes; order is (image, input image) |
 | p | No | Scale `image` by percentage of the input image; when bg=1, scale the input image relative to `image` | [1, 1000]<br>Below 100 shrinks; above 100 enlarges |
-| order | No | Stacking order of the input image and `image` | 0: `image` right/below<br>1: `image` left/above<br>`align` and `interval` have no effect if this is unset<br>see [PositionOrder](#positionorder--element-ordering) |
-| align | No | Alignment of the input image and `image` | 0: top-aligned horizontally<br>1: center-aligned horizontally<br>2 (default): bottom-aligned horizontally<br>3: left-aligned vertically<br>4: center-aligned vertically<br>5: right-aligned vertically<br>see [PositionAlign](#positionalign--alignment) |
+| order | No | Stacking order of the input image and `image` | 0: `image` right/below<br>1: `image` left/above<br>`align` and `interval` have no effect if this is unset<br>see [PositionOrder](#positionorder) |
+| align | No | Alignment of the input image and `image` | 0: top-aligned horizontally<br>1: center-aligned horizontally<br>2 (default): bottom-aligned horizontally<br>3: left-aligned vertically<br>4: center-aligned vertically<br>5: right-aligned vertically<br>see [PositionAlign](#positionalign) |
 | interval | No | Spacing between the input image and `image` | [0,1000], default: 0; unit: px |
 | g | No | Position by nine-grid; higher priority than `x`, `y` | |
 | x | No | Start x-coordinate of `image` on the canvas | [0, image boundary]<br>Default `0` |
@@ -301,7 +301,7 @@ Decode a URL-safe Base64 encoded string.
 | `WATERMARK` | `watermark` | Watermark |
 | `MERGE` | `merge` | Merge images |
 
-#### `ResizeMode` — Resize modes
+#### <a id="resizemode"></a>`ResizeMode` — Resize modes
 
 | Name | Key | Description |
 | --- | --- | --- |
@@ -325,14 +325,14 @@ Decode a URL-safe Base64 encoded string.
 | `SOUTH` | `south` | Bottom-center |
 | `SE` | `se` | Bottom-right |
 
-#### `PositionOrder` — Element ordering
+#### <a id="positionorder"></a>`PositionOrder` — Element ordering
 
 | Name | Value | Description |
 | --- | --- | --- |
 | `BEFORE` | `0` | First input element before / on top |
 | `AFTER` | `1` | First input element after / below |
 
-#### `PositionAlign` — Alignment
+#### <a id="positionalign"></a>`PositionAlign` — Alignment
 
 | Name | Value | Description |
 | --- | --- | --- |
