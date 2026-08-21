@@ -1,206 +1,352 @@
-# 图像处理参数
+# Image Processing Parameters
 
-## 1. 图像处理参数
+## 1. Image Processing Parameters
 
-- 斜线 `/` 隔开，区分不同的操作；
-- 逗号 `,` 隔开，区分操作中不同的参数；
-- 下划线 `_` 隔开，`key_value` 的形式，区分参数的Key和Value；
-- `value`是复杂参数时，需要进行`base64url_encode`，是否需要encode查看文档参数详细说明；
+- Slash `/` separates different actions;
+- Comma `,` separates different parameters within an action;
+- Underscore `_` separates key and value in `key_value` form;
+- When `value` is complex, use `base64url_encode`; see each parameter's description for whether encoding is required;
 
-### 1.1 图像保存时需要的参数
-| 参数 | 必选 | 描述 | 取值范围 |
+### 1.1 Image Save Parameters
+| Parameter | Required | Description | Range |
 | - |  - |  - |  - |
-| format | 否 | 格式转换 | jpeg<br>png<br>webp |
-| quality | 否 | 质量变换 | [1,100]<br>默认值：`settings.PROCESSOR_DEFAULT_QUALITY`（75）<br>支持JPG和WebP |
-| interlace | 否 | 渐进显示 | `0`：（默认值）表示将原图设置成标准显示<br>`1`：表示将原图设置成渐进显示 |
-| animation | 否 | 保留动画 | `0`：（默认值）表示不保留动画<br>`1`：表示保留动画效果 |
+| format | No | Format conversion | jpeg<br>png<br>webp |
+| quality | No | Quality adjustment | [1,100]<br>Default: `settings.PROCESSOR_DEFAULT_QUALITY` (75)<br>Supported for JPG and WebP |
+| interlace | No | Progressive display | `0`: (default) standard display<br>`1`: progressive display |
+| animation | No | Preserve animation | `0`: (default) do not preserve animation<br>`1`: preserve animation |
 
-> 注意：多个操作key放在一起说明，使用都需要`/`隔开；从1.2开始都是单个操作说明；
+> Note: When multiple action keys are listed together, separate them with `/`. From section 1.2 onward, each section describes a single action.
 
-示例：
+Examples:
 
-- `format,webp` `webp`能节省图像大小；
-- `format,png` 需要透明度使用`png`格式；
-- `interlace,1/quality,70/format,jpeg` 设置为质量75渐近显示的jpeg图像
+- `format,webp` — WebP can reduce file size;
+- `format,png` — use PNG when transparency is needed;
+- `interlace,1/quality,70/format,jpeg` — JPEG with quality 70 and progressive display
 
 
-### 1.2 缩放 `resize`
-| 参数 | 必选 | 描述 | 取值范围 |
+### 1.2 Resize `resize`
+| Parameter | Required | Description | Range |
 | - |  - |  - |  - |
-| m | 否 | 缩放模式，需设置`w`或`h`才会生效 | `lfit`(默认值) 等比缩放，缩放图限制为指定w与h的矩形内的最大图像<br>`mfit` 等比缩放，缩放图为延伸出指定w与h的矩形框外的最小图像<br>`fit` 将原图等比缩放为延伸出指定w与h的矩形框外的最小图像，然后将超出的部分进行居中裁剪<br>`pad` 将原图缩放为指定w与h的矩形内的最大图像，然后使用指定颜色居中填充空白部分<br>`fixed` 固定宽高，强制缩放<br>参照枚举 [ResizeMode](./#enums.ResizeMode) |
-| w | 否 | 目标缩放图的宽度 | [1, `settings.PROCESSOR_MAX_W_H`] |
-| h | 否 | 目标缩放图的高度 | [1, `settings.PROCESSOR_MAX_W_H`] |
-| l | 否 | 目标缩放图的最长边，优先级低于`w、h`配置 | [1, `settings.PROCESSOR_MAX_W_H`] |
-| s | 否 | 目标缩放图的最短边，优先级低于`l`配置 | [1, `settings.PROCESSOR_MAX_W_H`] |
-| p | 否 | 按百分比缩放图像，优先级低于`s`配置 | [1, 1000]<br>小于100为缩小，大于100为放大 |
-| limit | 否 | 当目标图像分辨率大于原图分辨率时，是否进行缩放 | `1` (默认值)不放大<br>`0` 按照指定参数进行缩放 |
-| color | 否 | 填充的颜色，仅当`m=pad`时有效 | 默认值：FFFFFF（白色）<br>支持3、4、6或8位16进制颜色码 |
+| m | No | Resize mode; takes effect only when `w` or `h` is set | `lfit` (default) proportional resize, image fits within the specified w×h rectangle<br>`mfit` proportional resize, smallest image that extends beyond the specified w×h rectangle<br>`fit` proportionally scale to the smallest size extending beyond the w×h rectangle, then center-crop the overflow<br>`pad` scale to the largest image within the w×h rectangle, then pad with the specified color<br>`fixed` fixed width and height, forced scaling<br>See enum [ResizeMode](#resizemode) |
+| w | No | Target width | [1, `settings.PROCESSOR_MAX_W_H`] |
+| h | No | Target height | [1, `settings.PROCESSOR_MAX_W_H`] |
+| l | No | Target longest side; lower priority than `w`, `h` | [1, `settings.PROCESSOR_MAX_W_H`] |
+| s | No | Target shortest side; lower priority than `l` | [1, `settings.PROCESSOR_MAX_W_H`] |
+| p | No | Scale by percentage; lower priority than `s` | [1, 1000]<br>Below 100 shrinks; above 100 enlarges |
+| limit | No | Whether to scale when target resolution exceeds source resolution | `1` (default) do not upscale<br>`0` scale according to the specified parameters |
+| color | No | Fill color; only valid when `m=pad` | Default: FFFFFF (white)<br>Supports 3-, 4-, 6-, or 8-digit hex color codes |
 
- 注意：`settings.PROCESSOR_MAX_W_H` 默认值为 `30000`。
+ Note: `settings.PROCESSOR_MAX_W_H` defaults to `30000`.
 
-示例：
+Examples:
 
-- `resize,m_fixed,w_1000,h_1000,l_700` 其中`l`优先级低不会生效，原图1980x1080会强制缩放成1000x1000的图像
+- `resize,m_fixed,w_1000,h_1000,l_700` — `l` has lower priority and is ignored; a 1980×1080 source is forced to 1000×1000
 
 
-### 1.3 裁剪 `crop`
-| 参数 | 必选 | 描述 | 取值范围 |
+### 1.3 Crop `crop`
+| Parameter | Required | Description | Range |
 | - |  - |  - |  - |
-| x | 否 | 裁剪起点横坐标（默认左上角为原点） | [0, 图像边界]，默认为0 |
-| y | 否 | 裁剪起点纵坐标 | [0, 图像边界]，默认为0 |
-| w | 否 | 目标图的宽度 | [1, 图像宽度]，默认为最大值 |
-| h | 否 | 目标图的高度 | [1, 图像高度]，默认为最大值 |
-| ratio | 否 | 根据原图按照比例计算目标宽高；<br>优先级高于`w、h` | 格式：`w:h`，eg: `4:3` |
-| g | 否 | 按照九宫格的位置裁剪 | 见下图所示 |
-| pf | 否 | `xywh`相应字段按照比例计算；<br>设置后相应字段取值范围为[0,100]；<br>设置了`g`该参数无效 | `xywh`4个字母的任意组合 |
-| padr | 否 | 图像右边裁边 | [0, 图像宽度]，不设置不裁边 |
-| padb | 否 | 图像底部裁边<br>（左和上裁边可以通过x,y控制） | [0, 图像高度]，不设置不裁边 |
+| x | No | Crop start x-coordinate (origin at top-left by default) | [0, image boundary], default 0 |
+| y | No | Crop start y-coordinate | [0, image boundary], default 0 |
+| w | No | Target width | [1, image width], default maximum |
+| h | No | Target height | [1, image height], default maximum |
+| ratio | No | Compute target width/height from source aspect ratio;<br>higher priority than `w`, `h` | Format: `w:h`, e.g. `4:3` |
+| g | No | Crop by nine-grid position | See diagram below |
+| pf | No | Compute the corresponding `xywh` fields as percentages;<br>when set, those fields use range [0,100];<br>ignored when `g` is set | Any combination of the 4 letters `xywh` |
+| padr | No | Crop from the right edge | [0, image width]; no crop if unset |
+| padb | No | Crop from the bottom edge<br>(left and top crops are controlled by x, y) | [0, image height]; no crop if unset |
 
 ![](./imgs/geographical.jpg)
 
-示例：
+Examples:
 
-- `crop,ratio_4:3,g_center` 原图是500x300会居中裁剪成400x300
-- `crop,x_25,y_25,w_50,h_50,pf_xywh` 原图是500x400根据百分比计算，会居中裁剪成250x200
-- `crop,x_10,y_10,padr_10,padb_10` 原图四周裁剪10像素
+- `crop,ratio_4:3,g_center` — a 500×300 source is center-cropped to 400×300
+- `crop,x_25,y_25,w_50,h_50,pf_xywh` — a 500×400 source is center-cropped to 250×200 using percentage fields
+- `crop,x_10,y_10,padr_10,padb_10` — crop 10 pixels from all four sides
 
 
-### 1.4 圆角 `circle`
-| 参数 | 必选 | 描述 | 取值范围 |
+### 1.4 Rounded Corners `circle`
+| Parameter | Required | Description | Range |
 | - |  - |  - |  - |
-| r | 否 | 将图像切出圆角，指定圆角的半径<br>没有设置或是超过最大内切圆的半径，按照最大内切圆的半径处理 | [1, 图像边界] |
+| r | No | Corner radius for rounded corners;<br>if unset or larger than the maximum inscribed circle, the maximum inscribed radius is used | [1, image boundary] |
 
-> 注意：一般结合`format,png`使用，否则无透明度；
+> Note: Usually combined with `format,png`; otherwise there is no transparency.
 
-示例：
+Examples:
 
-- `circle/format,png` 不设置r值，原图800x800，会裁剪成圆形，尺寸还是800x800；
-- `circle,r_10/format,png` 原图800x800，原图四角有半径为10的圆角；
-- `circle,r_1000/format,png` 原图800x800，r值超过边界，结果输出圆形图像；
+- `circle/format,png` — without `r`, an 800×800 source becomes a circle at 800×800;
+- `circle,r_10/format,png` — an 800×800 source gets corners with radius 10;
+- `circle,r_1000/format,png` — an 800×800 source with `r` exceeding bounds outputs a circular image;
 
 
-### 1.5 模糊效果 `blur`
-| 参数 | 必选 | 描述 | 取值范围 |
+### 1.5 Blur `blur`
+| Parameter | Required | Description | Range |
 | - |  - |  - |  - |
-| r | 是 | 高斯模糊半径，值越大图像越模糊 | [1, 512] |
+| r | Yes | Gaussian blur radius; larger values produce more blur | [1, 512] |
 
-示例：
+Examples:
 
 - `blur,r_2`
 
 
-### 1.6 旋转 `rotate`
-| 参数 | 必选 | 描述 | 取值范围 |
+### 1.6 Rotate `rotate`
+| Parameter | Required | Description | Range |
 | - |  - |  - |  - |
-| [value] | 否 | 图像按顺时针旋转的角度 | [0,360]<br>默认值：0，表示不旋转 |
+| [value] | No | Clockwise rotation angle in degrees | [0,360]<br>Default: 0 (no rotation) |
 
-> 注意：该操作参数无key，直接逗号后跟数值即可
+> Note: This action has no key; put the value directly after the comma.
 
-示例：
+Examples:
 
-- `rotate` 相当于 `rotate,0`，不旋转
-- `rotate,90` 图像顺时针旋转90度
-- `rotate,45` 图像顺时针旋转45度，会改变原有图像宽高比
+- `rotate` is equivalent to `rotate,0` (no rotation)
+- `rotate,90` rotates the image 90° clockwise
+- `rotate,45` rotates 45° clockwise and changes the aspect ratio
 
 
-### 1.7 透明度 `alpha`
-| 参数 | 必选 | 描述 | 取值范围 |
+### 1.7 Opacity `alpha`
+| Parameter | Required | Description | Range |
 | - |  - |  - |  - |
-| [value] | 否 | 图像的不透明度 | [0,100]<br>默认值：100，完全不透明 |
+| [value] | No | Image opacity | [0,100]<br>Default: 100 (fully opaque) |
 
-> 注意：该操作参数无key，直接逗号后跟数值即可；若原图非`png`图像，需结合`format,png`使用
+> Note: This action has no key; put the value directly after the comma. For non-PNG sources, combine with `format,png`.
 
-示例：
+Examples:
 
-- `alpha` 相当于 `alpha,100`，完全不透明
-- `alpha,0` 图像完全透明
-- `alpha,50/format,png` 图像透明度50%
-
-
-### 1.8 灰度图 `gray`
-
-无任何参数
-
-示例：
-
-- `gray` 图像会置灰
-- `gray/format,jpeg/quality,75` 一般会结合转换成jpeg并设置质量减少原图大小（非强制）
+- `alpha` is equivalent to `alpha,100` (fully opaque)
+- `alpha,0` makes the image fully transparent
+- `alpha,50/format,png` sets 50% opacity
 
 
-### 1.9 水印 `watermark`
-| 参数 | 必选 | 描述 | 取值范围 |
+### 1.8 Grayscale `gray`
+
+No parameters.
+
+Examples:
+
+- `gray` converts the image to grayscale
+- `gray/format,jpeg/quality,75` is often combined with JPEG conversion and quality settings to reduce file size (optional)
+
+
+### 1.9 Watermark `watermark`
+| Parameter | Required | Description | Range |
 | - |  - |  - |  - |
-| x | 否 | 水印在原图上的起点横坐标 | [0, 图像边界]<br>默认 `10` |
-| y | 否 | 水印在原图上的起点纵坐标 | [0, 图像边界]<br>默认 `10` |
-| g | 否 | 按照九宫格计算水印的位置，优先级高于`x、y` | |
-| pf | 否 | `xy`相应字段按照比例计算；<br>设置后相应字段取值范围为[0,100]；<br>设置了`g`该参数无效 | `xy`2个字母的任意组合 |
-| fill | 否 | 水印铺满原图 | `0` (原图) 不铺满<br>`1` 铺满全图 |
-| padx | 否 | 平铺时单个水印间的水平间隔，仅在水印平铺开启时有效 | [0,4096]，默认 `0` |
-| pady | 否 | 平铺时单个水印间的垂直间隔，仅在水印平铺开启时有效 | [0,4096]，默认 `0` |
-| image | 是 | 图片水印的文件路径，需 [base64url_encode](./#utils.base64url_encode) 编码 |
-| text | 是 | 文字水印内容，text和image必须传递一个<br>需 [base64url_encode](./#utils.base64url_encode) 编码 | 编码前文字内容长度不超过 `64` |
-| font | 否 | 字体文件路径，需 [base64url_encode](./#utils.base64url_encode) 编码 | |
-| color | 否 | 字体颜色 | 默认：000000 (黑色)<br>支持3或6位16进制颜色码 |
-| size | 否 | 字体大小 | [1, 1000]<br>默认：40 |
-| shadow | 否 | 文字水印的阴影透明度 | [0,100]<br>默认值：0，表示没有阴影 |
-| rotate | 否 | 水印顺时针旋转角度 | [0,360]<br>默认值：0，表示不旋转 |
-| order | 否 | 文字和图片水印的前后顺序 | 0（默认值）：表示图片水印在左/在上<br>1：表示文字水印在左/在上<br>see [PositionOrder](./#enums.PositionOrder) |
-| align | 否 | 文字和图片水印的对齐方式 | 0：表示文字水印和图片水印上对齐<br>1：表示文字水印和图片水印中对齐<br>2（默认值）：表示文字水印和图片水印下对齐<br>3：垂直左对齐<br>4：垂直居中对齐<br>5：垂直右对齐 <br>see [PositionAlign](./#enums.PositionAlign) |
-| interval 否 | | 文字和图片水印间的间距 | [0,1000]，默认值：0；单位：px |
-| t | 否 | 水印的不透明度 | [0, 100]，100不透明 |
-| design | 否 | 水印尺寸的设计参照尺寸；<br>design=1000意思是水印按照短边1000图像设计的；<br>需参照图像和design的比例进行缩放水印 | [1, `settings.PROCESSOR_MAX_W_H`]<br>当design=1000，若水印100x100，原图1080x720，则将水印缩放为72x72 |
+| x | No | Watermark start x-coordinate on the source image | [0, image boundary]<br>Default `10` |
+| y | No | Watermark start y-coordinate on the source image | [0, image boundary]<br>Default `10` |
+| g | No | Position watermark by nine-grid; higher priority than `x`, `y` | |
+| pf | No | Compute the corresponding `xy` fields as percentages;<br>when set, those fields use range [0,100];<br>ignored when `g` is set | Any combination of the 2 letters `xy` |
+| fill | No | Tile watermark across the entire image | `0` (default) do not tile<br>`1` tile across the image |
+| padx | No | Horizontal spacing between tiled watermarks; only when tiling is enabled | [0,4096], default `0` |
+| pady | No | Vertical spacing between tiled watermarks; only when tiling is enabled | [0,4096], default `0` |
+| image | Yes | Image watermark file path; must be [base64url_encode](#base64url_encode) encoded |
+| text | Yes | Text watermark content; either `text` or `image` is required<br>Must be [base64url_encode](#base64url_encode) encoded | Max length 64 characters before encoding |
+| font | No | Font file path; must be [base64url_encode](#base64url_encode) encoded | |
+| color | No | Text color | Default: 000000 (black)<br>Supports 3- or 6-digit hex color codes |
+| size | No | Font size | [1, 1000]<br>Default: 40 |
+| shadow | No | Text shadow opacity | [0,100]<br>Default: 0 (no shadow) |
+| rotate | No | Clockwise rotation angle for the watermark | [0,360]<br>Default: 0 (no rotation) |
+| order | No | Stacking order of text and image watermarks | 0 (default): image watermark left/above<br>1: text watermark left/above<br>see [PositionOrder](#positionorder) |
+| align | No | Alignment of text and image watermarks | 0: top-aligned<br>1: center-aligned<br>2 (default): bottom-aligned<br>3: vertical left-aligned<br>4: vertical center-aligned<br>5: vertical right-aligned<br>see [PositionAlign](#positionalign) |
+| interval | No | Spacing between text and image watermarks | [0,1000], default 0; unit: px |
+| t | No | Watermark opacity | [0, 100]; 100 is fully opaque |
+| design | No | Reference design size for watermark dimensions;<br>`design=1000` means the watermark was designed for a 1000px short side;<br>watermark is scaled according to the ratio between the source image and `design` | [1, `settings.PROCESSOR_MAX_W_H`]<br>When design=1000, if the watermark is 100×100 and the source is 1080×720, the watermark is scaled to 72×72 |
 
-示例：
+Examples:
 
-- `watermark,text_SGVsbG8g5LiW55WM,color_FFFFFF,size_80` 文字水印其中`SGVsbG8g5LiW55WM`是`Hello 世界`编码后的
+- `watermark,text_SGVsbG8g5LiW55WM,color_FFFFFF,size_80` — text watermark where `SGVsbG8g5LiW55WM` is the encoded form of `Hello 世界`
 
 
-### 1.10 合并图像 `merge`
-| 参数 | 必选 | 描述 | 取值范围 |
+### 1.10 Merge `merge`
+| Parameter | Required | Description | Range |
 | - |  - |  - |  - |
-| image | 是 | 要参与合并的图像文件路径，需 [base64url_encode](./#utils.base64url_encode) 编码 | |
-| actions | 否 | 对`iamge`按照字符串参数进行预处理，需 [base64url_encode](./#utils.base64url_encode) 编码 |
-| bg | 否 | 是否将imgae当做背景放在输入图像之下；定义输入图像和image参数的拼接顺序 | `0` (默认值) 否，顺序为(输入图像,image)； `1` 是，将image当做背景，顺序为(image,输入图像) |
-| p | 否 | 按输入图像的百分比缩放`image`图像,bg=1按照image缩放输入图像 | [1, 1000]<br>小于100为缩小，大于100为放大 |
-| order | 否 | 图像和`image`的前后顺序 | 0：该`image`在右/在下<br>1：该`image`在左/在上<br>不传递该参数align和interval不生效<br>see [PositionOrder](./#enums.PositionOrder) |
-| align | 否 | 图像和`image`的对齐方式 | 0：水平上对齐<br>1：水平居中对齐<br>2（默认值）：水平下对齐<br>3：垂直左对齐<br>4：垂直居中对齐<br>5：垂直右对齐<br>see [PositionAlign](./#enums.PositionAlign) |
-| interval | 否 | 图像和`image`间的间距 | [0,1000] | 默认值：0；单位：px |
-| g | 否 | 按照九宫格计算水印的位置，优先级高于`x、y` | |
-| x | 否 | `image`在图像上的起点横坐标 | [0, 图像边界]<br>默认 `0` |
-| y | 否 | `image`在图像上的起点纵坐标 | [0, 图像边界]<br>默认 `0` |
-| pf | 否 | `xy`相应字段按照比例计算；<br>设置后相应字段取值范围为[0,100]；<br>设置了`g`该参数无效 | `xy`2个字母的任意组合 |
-| color | 否 | 拼接后扩展部分的填充颜色 | 默认： 0000 (透明)<br>支持3、4、6或8位16进制颜色码 |
+| image | Yes | Path to the image to merge; must be [base64url_encode](#base64url_encode) encoded | |
+| actions | No | Pre-process `image` with string parameters; must be [base64url_encode](#base64url_encode) encoded |
+| bg | No | Whether to treat `image` as background beneath the input image; defines merge order | `0` (default) no; order is (input image, image); `1` yes; order is (image, input image) |
+| p | No | Scale `image` by percentage of the input image; when bg=1, scale the input image relative to `image` | [1, 1000]<br>Below 100 shrinks; above 100 enlarges |
+| order | No | Stacking order of the input image and `image` | 0: `image` right/below<br>1: `image` left/above<br>`align` and `interval` have no effect if this is unset<br>see [PositionOrder](#positionorder) |
+| align | No | Alignment of the input image and `image` | 0: top-aligned horizontally<br>1: center-aligned horizontally<br>2 (default): bottom-aligned horizontally<br>3: left-aligned vertically<br>4: center-aligned vertically<br>5: right-aligned vertically<br>see [PositionAlign](#positionalign) |
+| interval | No | Spacing between the input image and `image` | [0,1000], default: 0; unit: px |
+| g | No | Position by nine-grid; higher priority than `x`, `y` | |
+| x | No | Start x-coordinate of `image` on the canvas | [0, image boundary]<br>Default `0` |
+| y | No | Start y-coordinate of `image` on the canvas | [0, image boundary]<br>Default `0` |
+| pf | No | Compute the corresponding `xy` fields as percentages;<br>when set, those fields use range [0,100];<br>ignored when `g` is set | Any combination of the 2 letters `xy` |
+| color | No | Fill color for expanded areas after merge | Default: 0000 (transparent)<br>Supports 3-, 4-, 6-, or 8-digit hex color codes |
 
-> 注： 参数 `bg` 取值 `1` 时，order之后的参数则是：图像在image上的坐标/数值。
+> Note: When `bg` is `1`, parameters after `order` specify the position/values of the input image on `image`.
 
-示例：
+Examples:
 
-- `merge,image_dGVzdHMvaW1ncy9sZW5uYS00MDB4MjI1LmpwZw,g_ne,color_FFFF/format,png` 其中image是`tests/imgs/lenna-400x225.jpg`编码后的，`FFFF` 表示填充全透明
+- `merge,image_dGVzdHMvaW1ncy9sZW5uYS00MDB4MjI1LmpwZw,g_ne,color_FFFF/format,png` — `image` is the encoded form of `tests/imgs/lenna-400x225.jpg`; `FFFF` means fully transparent fill
 
 
-## 2. 图像处理函数
-::: processor
-    options:
-        members:
-          - process_image
-          - process_image_obj
-          - extract_main_color
+## 2. Image Processing Functions
 
-::: utils
-    options:
-        members:
-          - base64url_encode
-          - base64url_decode
+### `process_image`
 
-::: exceptions
+```python
+process_image(
+    input_uri: str,
+    params: Union[ProcessParams, dict, str],
+    out_path: Optional[str] = None,
+    **kwargs,
+) -> Optional[ByteString]
+```
 
-::: enums
-    options:
-        show_source: true
-        members:
-            - OpAction
-            - ResizeMode
-            - Geography
-            - PositionOrder
-            - PositionAlign
-            - ImageFormat
+Process an image.
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `input_uri` | `str` | Path or URL to the input image |
+| `params` | `ProcessParams / dict / str` | Image processing parameters |
+| `out_path` | `str` (optional) | Path to save the output image |
+| `**kwargs` | | Additional keyword arguments passed through to `Image.save` |
+
+**Raises**: `ProcessLimitException` when processing limits are exceeded.
+
+**Returns**: `None` by default when saving to disk; returns binary content of the processed image only when `out_path` is empty.
+
+---
+
+### `process_image_obj`
+
+```python
+process_image_obj(
+    ori_im: ImageFile,
+    params: Union[ProcessParams, dict, str],
+    out_path: Optional[str] = None,
+    **kwargs,
+) -> Optional[ByteString]
+```
+
+Process a Pillow `Image` object directly. Parameters and return value are the same as `process_image`, except `ori_im` accepts an already-opened Image object.
+
+---
+
+### `extract_main_color`
+
+```python
+extract_main_color(img_path: str, delta_h: float = 0.3) -> str
+```
+
+Extract the dominant color of an image.
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `img_path` | `str` | Path to the input image |
+| `delta_h` | `float` | Hue difference threshold; only pixels whose hue differs from the average hue by less than this value are used; range [0, 1] |
+
+**Returns**: Hex color string, e.g. `"FFFFFF"`.
+
+---
+
+### `base64url_encode`
+
+```python
+base64url_encode(value: str) -> str
+```
+
+Perform URL-safe Base64 encoding:
+
+- Replace `+` with `-`
+- Replace `/` with `_`
+- Strip trailing `=` padding
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `value` | `str` | Input string |
+
+**Returns**: Encoded string.
+
+---
+
+### `base64url_decode`
+
+```python
+base64url_decode(value: str) -> str
+```
+
+Decode a URL-safe Base64 encoded string.
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `value` | `str` | Encoded string |
+
+**Returns**: Decoded string.
+
+---
+
+### Exceptions
+
+| Exception | Parent | Description |
+| --- | --- | --- |
+| `ProcessException` | `Exception` | Base exception for image processing |
+| `ProcessLimitException` | `Exception` | Image processing limit exceeded (file size / pixel count) |
+| `ParamParseException` | `ProcessException` | Parameter parsing error |
+| `ParamValidateException` | `ProcessException` | Parameter validation error |
+
+---
+
+### Enums
+
+#### `OpAction` — Supported operation types
+
+| Name | Key | Description |
+| --- | --- | --- |
+| `RESIZE` | `resize` | Resize |
+| `CROP` | `crop` | Crop |
+| `CIRCLE` | `circle` | Rounded corners |
+| `BLUR` | `blur` | Blur |
+| `ROTATE` | `rotate` | Rotate |
+| `ALPHA` | `alpha` | Opacity |
+| `GRAY` | `gray` | Grayscale |
+| `WATERMARK` | `watermark` | Watermark |
+| `MERGE` | `merge` | Merge images |
+
+#### <a id="resizemode"></a>`ResizeMode` — Resize modes
+
+| Name | Key | Description |
+| --- | --- | --- |
+| `LFIT` | `lfit` | Scale proportionally to fit within the given w×h rectangle |
+| `MFIT` | `mfit` | Scale proportionally to cover the given w×h rectangle |
+| `FIT` | `fit` | Scale proportionally to cover the rectangle, then center-crop the overflow |
+| `PAD` | `pad` | Scale proportionally to fit within the rectangle, then pad with the given color |
+| `FIXED` | `fixed` | Fixed width and height; force scale to exact dimensions |
+
+#### `Geography` — Nine-grid positions
+
+| Name | Key | Description |
+| --- | --- | --- |
+| `NW` | `nw` | Top-left |
+| `NORTH` | `north` | Top-center |
+| `NE` | `ne` | Top-right |
+| `WEST` | `west` | Middle-left |
+| `CENTER` | `center` | Center |
+| `EAST` | `east` | Middle-right |
+| `SW` | `sw` | Bottom-left |
+| `SOUTH` | `south` | Bottom-center |
+| `SE` | `se` | Bottom-right |
+
+#### <a id="positionorder"></a>`PositionOrder` — Element ordering
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `BEFORE` | `0` | First input element before / on top |
+| `AFTER` | `1` | First input element after / below |
+
+#### <a id="positionalign"></a>`PositionAlign` — Alignment
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `TOP` | `0` | Align to top horizontally |
+| `HORIZONTAL_CENTER` | `1` | Align to horizontal center |
+| `BOTTOM` | `2` | Align to bottom horizontally |
+| `LEFT` | `3` | Align to left vertically |
+| `VERTIAL_CENTER` | `4` | Align to vertical center |
+| `RIGHT` | `5` | Align to right vertically |
+
+#### `ImageFormat` — Image formats
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `JPEG` | `JPEG` | JPEG format |
+| `PNG` | `PNG` | PNG format |
+| `WEBP` | `WEBP` | WebP format |

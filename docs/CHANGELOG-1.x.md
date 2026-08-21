@@ -1,74 +1,139 @@
-# Release Notes
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/),
+and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## 1.3.6
-- fix: `transpose_im` 增强异常兜底与版本兼容能力
-    - 异常捕获从 `NotImplementedError` 扩大为 `Exception`，兼容 EXIF 数据损坏、字节截断等导致的 `OSError` 等异常
-    - 回退分支转置完成后丢弃已损坏的 EXIF 信息，避免残留方向标签导致二次旋转
-    - 兼容 Pillow 8：`ExifTags.Base.Orientation` 替换为常量 `0x0112`，`Image.Transpose` 通过 `getattr` 回退到 `Image`
-- fix: `save_img_to_file` 当 `im.format` 为空时默认使用 `JPEG`，避免 `fmt` 为 `None` 导致 `AttributeError`
+
+### Fixed
+
+- Improve fallback and version compatibility in `transpose_im`:
+  - Broaden exception handling from `NotImplementedError` to `Exception` to handle `OSError` caused by corrupted or truncated EXIF data.
+  - Discard corrupted EXIF after fallback transpose to avoid double rotation from stale orientation tags.
+  - Pillow 8 compatibility: replace `ExifTags.Base.Orientation` with constant `0x0112`; fall back from `Image.Transpose` to `Image` via `getattr`.
+- Default to `JPEG` in `save_img_to_file` when `im.format` is empty, avoiding `AttributeError` when `fmt` is `None`.
 
 ## 1.3.5
-- fix: 修复 `ImageOps.exif_transpose` 处理 multistrip 图像时抛出 `NotImplementedError` 的问题
-    - 新增 `transpose_im` 函数封装 EXIF 方向转置逻辑，优先使用 `exif_transpose`，失败时回退到手动读取 Orientation 标签进行转置
-    - `pre_processing` 和 `ProcessorCtr.handle_img_actions` 统一使用 `transpose_im` 替代原有的方向处理逻辑
+
+### Fixed
+
+- Fix `NotImplementedError` when `ImageOps.exif_transpose` handles multistrip images.
+  - Add `transpose_im` to encapsulate EXIF orientation transpose logic: prefer `exif_transpose`, fall back to manual Orientation tag handling.
+  - Use `transpose_im` in both `pre_processing` and `ProcessorCtr.handle_img_actions`.
 
 ## 1.3.4
-- feat: 支持`animation`参数保留动画效果
-- fix: 调整 `ProcessorCtr.save_img_to_file` 根据 format 处理 mode
-    - JPEG场景判断中单词拼写错误 `im.mode not in ("GBA", "L")` --> `im.mode not in ("RGB", "L")`
-    - 增加透明场景对mode判断的处理，主要是解决 `P` 场景下丢失info中的透明信息
+
+### Added
+
+- Support `animation` parameter to preserve animated frames.
+
+### Fixed
+
+- Adjust `ProcessorCtr.save_img_to_file` mode handling by format:
+  - Fix typo in JPEG mode check: `"GBA"` → `"RGB"`.
+  - Add mode handling for transparency to fix loss of transparency info for mode `P`.
 
 ## 1.3.3
-- fix: 调整`blur`取值范围，从`[1,50]`调整为`[1,512]`
-- fix: 修复`mode=P`的图片保存`JPEG`报错的问题
-    - JPEG 仅支持真彩色（RGB）或灰度图（L）
-- fix: 修复 `ImageFormat.WEBP` 的值，`WebP`统一调整为大写`WEBP`
+
+### Fixed
+
+- Extend `blur` radius range from `[1, 50]` to `[1, 512]`.
+- Fix JPEG save error for images with `mode=P` (JPEG only supports RGB and L).
+- Fix `ImageFormat.WEBP` value; unify to uppercase `WEBP`.
 
 ## 1.3.2
-- fix: 设置 `Image.MAX_IMAGE_PIXELS` 使 `PROCESSOR_MAX_PIXEL` 真实生效
-- chore: 修复关于 `ImageFile` 对象的typing声明
+
+### Fixed
+
+- Set `Image.MAX_IMAGE_PIXELS` so `PROCESSOR_MAX_PIXEL` takes effect.
+- Fix typing declarations for `ImageFile` objects.
 
 ## 1.3.1
-- fix: 修复函数名称`process_image_obj`
+
+### Fixed
+
+- Fix function name `process_image_obj`.
 
 ## 1.3.0
-- refactor: 枚举 `OpAction` 中移除了保存图像需要的参数key
-- fix: 调整方法 `process_image` 中参数位置，允许 `out_put` 可以为空，并增加 kwargs 透传Image.save函数的参数
-- feat: 新增 `preocess_image_obj` 直接可以处理 `Image` 对象作为输入参数；
 
+### Added
+
+- Add `process_image_obj` to accept a Pillow `Image` object directly as input.
+
+### Changed
+
+- Remove image-save parameter keys from `OpAction` enum.
+- Adjust parameter order in `process_image`; allow `out_path` to be `None` and pass through `kwargs` to `Image.save`.
 
 ## 1.2.4
-- feat: 扩展配置`PROCESSOR_TEMP_DIR`设置临时目录
-    - 可配置使用 /dev/shm 目录
-- fix: 输入地址是url链接资源时，下载后保存临时文件前尝试解析出url中文件后缀用于suffix
+
+### Added
+
+- Add `PROCESSOR_TEMP_DIR` setting for configurable temporary directory (e.g. `/dev/shm`).
+
+### Fixed
+
+- Parse file suffix from URL before saving downloaded temp file.
 
 ## 1.2.3
-- fix: 修复`save_img_to_file`函数中im.format可能为空的问题
+
+### Fixed
+
+- Handle case where `im.format` may be empty in `save_img_to_file`.
 
 ## 1.2.2
-- perf: 调整Image.open都使用with的方式使用，避免内存泄漏
-- fix: 修复函数 `trans_uri_to_im` 在 copy im 时丢失 info 信息的问题
-- chore: 调整依赖 `py-enum>=2.1.1` 解决 mypy 检测枚举的问题
+
+### Changed
+
+- Use `with` context manager for all `Image.open` calls to avoid memory leaks.
+- Bump dependency to `py-enum>=2.1.1` to fix mypy enum checks.
+
+### Fixed
+
+- Fix `trans_uri_to_im` losing `info` when copying the image.
 
 ## 1.2.1
-- fix: 修复 `merge` 操作中参数 `p` 的处理，调整成在处理 `bg` 参数之后
-- docs: 修正文档说明
+
+### Fixed
+
+- Fix handling of `p` in `merge` action; apply after `bg` is processed.
+- Correct documentation.
 
 ## 1.2.0
-- feat: 支持处理链接地址资源
-    - 方法 `process_image_by_path` 名称变更为 `process_image`
-- fix: `settings` 在将处理参数对外开放场景下限制输入资源；默认无限制
-    - `PROCESSOR_WORKSPACES` tuple, 限制水印等资源系统文件路径 （startswith匹配）
-    - `PROCESSOR_ALLOW_DOMAINS` tuple, 限制链接地址域名 （endswith匹配）
+
+### Added
+
+- Support URL-based image resources.
+
+### Changed
+
+- Rename `process_image_by_path` to `process_image`.
+- Restrict input resources via settings when exposing processing parameters externally (no restrictions by default):
+  - `PROCESSOR_WORKSPACES` — restrict filesystem paths (`startswith` match).
+  - `PROCESSOR_ALLOW_DOMAINS` — restrict URL domains (`endswith` match).
 
 ## 1.1.0
-- fix: 修复 `resize` 等场景按照比例计算像素时，用 `round` 替换 `int` 操作
+
+### Fixed
+
+- Use `round` instead of `int` when computing pixel dimensions from ratios in `resize` and similar operations.
 
 ## 1.0.3
-- fix: 去掉对`typing_extensions`的依赖
+
+### Fixed
+
+- Remove dependency on `typing_extensions`.
 
 ## 1.0.1
-- fix: 修复命令行`img-processor`输出文件命名的问题
 
-## 1.0.0 (2024-06-23)
-- build: lib发版
+### Fixed
+
+- Fix output file naming in the `img-processor` CLI.
+
+## 1.0.0 - 2024-06-23
+
+### Added
+
+- Initial release.

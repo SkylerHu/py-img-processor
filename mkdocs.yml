@@ -1,32 +1,48 @@
-site_name: 图像处理Python库
+site_name: py-img-processor
 repo_url: https://github.com/skylerhu/py-img-processor
-docs_dir: .
+docs_dir: docs
+
+hooks:
+  - docs/hooks/rewrite_paths.py
 
 theme:
-  name: readthedocs
-#  name: material
-#  name: mkdocs
-  language: zh
+  name: material
+  logo: imgs/logo.svg
+  favicon: imgs/favicon.ico
+  palette:
+    scheme: default
+  features:
+    - navigation.tabs
+    - toc.integrate
 
 nav:
-  - 首页: README.md
-  - 图像处理参数: docs/Reference.md
-  - Release Notes: docs/CHANGELOG-1.x.md
-  - 贡献者指南: docs/CONTRIBUTING.md
+  - Home: README.md
+  - Reference: Reference.md
+  - FAQ: FAQ.md
+  - Changelog: CHANGELOG-1.x.md
+  - Contributing: CONTRIBUTING.md
+
+extra_css:
+  - css/custom.css
+
+extra_javascript:
+  - js/lang-redirect.js
 
 plugins:
-  - same-dir
   - search
-  - autorefs
-  - mkdocstrings:
-      default_handler: python
-      handlers:
-        python:
-          paths: [imgprocessor]
-          options:
-            heading_level: 3
-            show_root_heading: true
-            show_symbol_type_heading: true
-            show_source: false
-          selection:
-            docstring_style: google
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: zh
+          name: 中文
+          build: true
+          nav_translations:
+            Home: 首页
+            Reference: 图像处理参数
+            FAQ: 常见问题
+            Changelog: 更新日志
+            Contributing: 贡献者指南
