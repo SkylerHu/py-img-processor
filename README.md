@@ -121,7 +121,7 @@ from imgprocessor.processor import extract_main_color
 extract_main_color("photo.jpg")  # => "905C4C"
 ```
 
-> Result: ![#905C4C](https://placehold.co/16x16/905C4C/905C4C.png) `#905C4C`
+![#905C4C](https://img.shields.io/static/v1?label=&message=%23905C4C&color=905C4C&style=flat-square)
 
 ---
 
