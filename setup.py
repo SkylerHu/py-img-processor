@@ -14,7 +14,11 @@ def read(file_name: str) -> str:
 version = re.search("__version__ = ['\"]([^'\"]+)['\"]", read("imgprocessor/__init__.py")).group(1)  # type: ignore
 
 read_me = read("README.md")
-# 替换文档的相对路径为绝对路径地址
+# 图片使用 raw 地址以便 PyPI 直接渲染
+read_me = read_me.replace(
+    "(./docs/imgs/", "(https://raw.githubusercontent.com/skylerhu/py-img-processor/master/docs/imgs/"
+)
+# 其他相对路径替换为 GitHub blob 页面地址
 read_me = read_me.replace("(./", "(https://github.com/skylerhu/py-img-processor/blob/master/")
 
 

@@ -68,11 +68,11 @@ process_image(
 
 Input `photo.jpg` (400x225):
 
-![lenna-400x225.jpg](https://github.com/user-attachments/assets/2f0da5ab-2a9b-4ec9-9746-857ecfebb095)
+![](./docs/imgs/lenna-400x225.jpg)
 
 Output `output.png` (200x200):
 
-![lenna-edit.png](https://github.com/user-attachments/assets/49ab0652-7d19-424a-bce6-8e0fed3ee19e)
+![](./docs/imgs/lenna-edit.png)
 
 > Values in `text_SGVsbG8` must be Base64 URL encoded. Use the built-in helper:
 >
@@ -121,6 +121,8 @@ from imgprocessor.processor import extract_main_color
 extract_main_color("photo.jpg")  # => "905C4C"
 ```
 
+> Result: <span style="display:inline-block;width:14px;height:14px;background:#905C4C;border-radius:3px;vertical-align:middle;"></span> `#905C4C`
+
 ---
 
 ## CLI
@@ -155,11 +157,11 @@ Output:
 
 `/tmp/lenna-400x225-0.webp` (355x200)
 
-![lenna-400x225-0.webp](https://github.com/user-attachments/assets/29f9631e-1cd9-481e-9e44-51e3dd9eb06e)
+![](./docs/imgs/lenna-400x225-0.webp)
 
 `/tmp/lenna-400x225-1.png` (225x225)
 
-![lenna-400x225-1.png](https://github.com/user-attachments/assets/d3cf139b-f83b-4755-a379-d81b751a1bc8)
+![](./docs/imgs/lenna-400x225-1.png)
 
 ---
 

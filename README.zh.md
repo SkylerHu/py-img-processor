@@ -121,6 +121,8 @@ from imgprocessor.processor import extract_main_color
 extract_main_color("photo.jpg")  # => "905C4C"
 ```
 
+> 结果: <span style="display:inline-block;width:14px;height:14px;background:#905C4C;border-radius:3px;vertical-align:middle;"></span> `#905C4C`
+
 ---
 
 ## 命令行工具
