@@ -1,6 +1,6 @@
 # py-img-processor
 
-[中文文档](README.zh.md) | **English**
+[中文文档](./README.zh.md) | **English**
 
 [![PyPI - Version](https://img.shields.io/pypi/v/py-img-processor)](https://pypi.org/project/py-img-processor/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/py-img-processor)](https://pypistats.org/packages/py-img-processor)
@@ -68,11 +68,11 @@ process_image(
 
 Input `photo.jpg` (400x225):
 
-![](./docs/imgs/lenna-400x225.jpg)
+![lenna-400x225.jpg](https://github.com/user-attachments/assets/2f0da5ab-2a9b-4ec9-9746-857ecfebb095)
 
 Output `output.png` (200x200):
 
-![](./docs/imgs/lenna-edit.png)
+![lenna-edit.png](https://github.com/user-attachments/assets/49ab0652-7d19-424a-bce6-8e0fed3ee19e)
 
 > Values in `text_SGVsbG8` must be Base64 URL encoded. Use the built-in helper:
 >
@@ -155,11 +155,11 @@ Output:
 
 `/tmp/lenna-400x225-0.webp` (355x200)
 
-![](./docs/imgs/lenna-400x225-0.webp)
+![lenna-400x225-0.webp](https://github.com/user-attachments/assets/29f9631e-1cd9-481e-9e44-51e3dd9eb06e)
 
 `/tmp/lenna-400x225-1.png` (225x225)
 
-![](./docs/imgs/lenna-400x225-1.png)
+![lenna-400x225-1.png](https://github.com/user-attachments/assets/d3cf139b-f83b-4755-a379-d81b751a1bc8)
 
 ---
 

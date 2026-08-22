@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.3.7
+
+### Changed
+
+- Rewrite README in English with bilingual (EN/ZH) support.
+- Migrate MkDocs theme from readthedocs to Material; add `mkdocs-static-i18n` for i18n and browser-based language auto-redirect.
+- Add bilingual documentation: Reference, FAQ, Contributing Guide, and Changelog.
+- Switch CI coverage reporting from Coveralls to Codecov.
+- Generalize relative-path replacement in `setup.py` to handle all `./` prefixed links (not only `./docs/`).
+
 ## 1.3.6
 
 ### Fixed

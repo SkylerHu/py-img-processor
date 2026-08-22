@@ -1,6 +1,6 @@
 # py-img-processor
 
-**中文** | [English](README.md)
+**中文** | [English](./README.md)
 
 [![PyPI - Version](https://img.shields.io/pypi/v/py-img-processor)](https://pypi.org/project/py-img-processor/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/py-img-processor)](https://pypistats.org/packages/py-img-processor)

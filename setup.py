@@ -15,7 +15,7 @@ version = re.search("__version__ = ['\"]([^'\"]+)['\"]", read("imgprocessor/__in
 
 read_me = read("README.md")
 # 替换文档的相对路径为绝对路径地址
-read_me = read_me.replace("(./docs/", "(https://github.com/skylerhu/py-img-processor/blob/master/docs/")
+read_me = read_me.replace("(./", "(https://github.com/skylerhu/py-img-processor/blob/master/")
 
 
 setup(
