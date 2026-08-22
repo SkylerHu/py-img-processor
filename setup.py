@@ -28,7 +28,7 @@ setup(
     url="https://github.com/skylerhu/py-img-processor.git",
     author="SkylerHu",
     author_email="skylerhu@qq.com",
-    description="Image editor using Python and Pillow.",
+    description="Parameter-driven image processing library built on Pillow.",
     keywords=["image", "img-processor", "image-processor", "imgprocessor", "img-editor", "image-editor"],
     long_description=read_me,
     long_description_content_type="text/markdown",

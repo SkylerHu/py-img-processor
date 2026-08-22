@@ -18,5 +18,5 @@ typing_extensions==4.12.2
 # 打包需要
 setuptools==70.0.0
 wheel==0.43.0
-twine==5.1.0
+twine==6.2.0
 pip-tools==7.5.1
