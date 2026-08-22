@@ -5,6 +5,16 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## 1.3.7
+
+### 变更
+
+- 重写 README 为英文版本，新增中英文双语支持。
+- MkDocs 主题从 readthedocs 迁移至 Material，集成 `mkdocs-static-i18n` 实现多语言及浏览器语言自动跳转。
+- 新增双语文档：图像处理参数、常见问题、贡献者指南、更新日志。
+- CI 覆盖率报告从 Coveralls 切换为 Codecov。
+- 优化 `setup.py` 中相对路径替换逻辑，统一处理所有 `./` 前缀链接（不再仅限于 `./docs/`）。
+
 ## 1.3.6
 
 ### 修复
