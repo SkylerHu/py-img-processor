@@ -121,7 +121,7 @@ from imgprocessor.processor import extract_main_color
 extract_main_color("photo.jpg")  # => "905C4C"
 ```
 
-> Result: <span style="display:inline-block;width:14px;height:14px;background:#905C4C;border-radius:3px;vertical-align:middle;"></span> `#905C4C`
+> Result: ![#905C4C](https://placehold.co/16x16/905C4C/905C4C.png) `#905C4C`
 
 ---
 
